@@ -1,0 +1,25 @@
+# Dependencies must never enter the Docker build context.
+node_modules
+node_modules/**
+**/node_modules
+**/node_modules/**
+
+# Generated output
+**/dist
+**/dist/**
+coverage
+**/coverage/**
+
+# Local/runtime files
+.git
+.github
+.env
+.env.*
+!.env.example
+*.log
+.DS_Store
+.vscode
+.idea
+
+# Local AWS artifact
+imagedefinitions.json
