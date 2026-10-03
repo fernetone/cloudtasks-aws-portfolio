@@ -11,7 +11,7 @@ A ordem abaixo segue o escopo do portfólio. Marcações anteriores de infraestr
 
 - [x] TypeScript, lint, testes API/frontend e GitHub Actions.
 - [x] Lockfile e `npm ci` incluídos na versão 1.7.1.
-- [ ] Executar o novo job Windows de regressões PowerShell 5.1 no GitHub.
+- [x] Executar CI Ubuntu/Docker e o job Windows de regressões PowerShell 5.1 no GitHub; [evidência](EVIDENCE-GITHUB.json).
 - [ ] Resolver a dívida de formatação e revisar advisory das dependências de teste.
 
 ## 3. ECR
@@ -49,11 +49,16 @@ A ordem abaixo segue o escopo do portfólio. Marcações anteriores de infraestr
 - [x] Repetir com alteração real: novo Source, build, imagem/digest e revisão, visíveis na aplicação.
 - [x] Demonstrar CodeBuild `FAILED` por quality gate e ausência de Deploy; manter revisão saudável.
 - [x] Registrar versão/digest e evidência sanitizada em docs/EVIDENCE-CICD.json.
-- [ ] Publicar a evidência no GitHub; publicação não foi executada.
+- [x] Publicar código e evidência no GitHub pela [PR #1](https://github.com/fernetone/cloudtasks-aws-portfolio/pull/1), com CI real aprovado.
 
 ## 9. Blue/Green
 
-- [ ] Desenhar e validar troca de tráfego/rollback com componentes apropriados.
+- [x] Consultar documentação oficial e testar APIs de leitura na versão instalada, preservando ECS/ALB.
+- [x] Registrar desenho AWS, alternativas e limites do laboratório em [BLUE-GREEN.md](BLUE-GREEN.md).
+- [ ] Implementar e provar duas revisões simultâneas, teste isolado, troca de tráfego e rollback.
+- [ ] Provar o controlador AWS nativo e sua integração CI/CD. Bloqueado no laboratório atual: CodeDeploy mockado, ação sem troca Blue/Green e APIs de service deployments ECS não implementadas na cobertura documentada.
+
+O diagnóstico de viabilidade não conclui a etapa 9. Uma demonstração manual local deverá ser identificada como tal e não certificará o controlador nativo.
 
 ## 10. CloudFront
 

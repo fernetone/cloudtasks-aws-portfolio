@@ -1,6 +1,6 @@
 # CloudTasks — portfólio AWS/DevOps
 
-Versão 1.7.4. React 19 + TypeScript + Vite, Node 24 + Express 5 e PostgreSQL.
+Versão 1.7.5. React 19 + TypeScript + Vite, Node 24 + Express 5 e PostgreSQL.
 
 CloudTasks usa uma aplicação de tarefas para demonstrar entrega de software, containers, rede, dados e balanceamento. A arquitetura alvo é AWS; o laboratório executável usa LocalStack Pro/Student e Docker Desktop, sem provisionar recursos faturáveis em uma conta AWS.
 
@@ -20,6 +20,10 @@ Alvo: GitHub/CodeConnections → CodePipeline → CodeBuild → Docker/ECR → E
 Aplicação, GitHub Actions, Docker, ECR, rede, RDS/Secrets, duas réplicas compartilhando o banco, CloudWatch Logs, ALB/TG, failover, HTTP e HTTPS/ACM têm execução anterior relatada pelo responsável pelo laboratório. **A etapa 8, CI/CD, foi homologada neste laboratório em 03/10/2026.** Blue/Green, CloudFront e Amazon Q/MCP são etapas posteriores.
 
 A versão 1.7.4 usa UUID v4 gerado no CodeBuild e valida a imagem pelo artifact nativo imagedefinitions.json. Na máquina Windows, 39 scripts passaram no parser e 37 regressões passaram com serviços externos simulados. A homologação real comprovou duas entregas, mudança visível por HTTPS, CodeBuild FAILED por quality gate sem iniciar Deploy e uma entrega limpa final. Evidências: [docs/EVIDENCE-CICD.json](docs/EVIDENCE-CICD.json).
+
+A entrega 1.7.5 consolida esse código no [GitHub](https://github.com/fernetone/cloudtasks-aws-portfolio/pull/1) e preserva os cinco arquivos AWS que já existiam no repositório. O [CI executado](https://github.com/fernetone/cloudtasks-aws-portfolio/actions/runs/37134970506) passou no Ubuntu e no Windows PowerShell 5.1; resultados separados em [EVIDENCE-GITHUB.json](docs/EVIDENCE-GITHUB.json). A publicação não conecta automaticamente o GitHub ao LocalStack pessoal: o Source local continua sendo o snapshot S3 revisado.
+
+A etapa 9 está em análise de viabilidade, com desenho e critério de aceite em [BLUE-GREEN.md](docs/BLUE-GREEN.md). CodeDeploy é mockado no LocalStack e sua ação Blue/Green apenas atualiza o service. A consulta local de deployments nativos ECS também falhou. Nenhuma troca Blue/Green ou rollback de tráfego foi homologado, e o service saudável da etapa 8 foi preservado.
 
 ## Executar a aplicação local
 
@@ -83,6 +87,7 @@ O diagnóstico diferencia o build vinculado à ação de um candidato recente se
 - Leitura: `status-*` e `diagnose-*`; verificação executável: `test-*`.
 - Manutenção excepcional: `repair-*`, `update-localstack.ps1` e `change-token.ps1`.
 - Regressões isoladas: `.\scripts\localstack\validate-scripts.ps1` e `.\scripts\tests\test-regressions.ps1`. Não requerem AWS/LocalStack em execução; Node 24 é necessário para as fixtures.
+- `scripts/aws` e `aws`: arquivos existentes da etapa 3 para uma conta AWS real, preservados separadamente. Não fazem parte dos comandos do laboratório e não foram executados nesta entrega.
 - [Arquitetura](docs/ARCHITECTURE.md), [decisões](docs/DECISIONS.md), [roadmap oficial de 13 etapas](docs/ROADMAP.md), [CI/CD](docs/CI-CD.md), [LocalStack](docs/LOCALSTACK.md), [runtime](docs/RUNTIME-RECOVERY.md).
 - [Rede](docs/NETWORK.md), [banco](docs/DATABASE.md), [ECS](docs/ECS.md), [ALB](docs/LOAD-BALANCING.md), [HTTPS](docs/HTTPS.md), [segurança](SECURITY.md).
 

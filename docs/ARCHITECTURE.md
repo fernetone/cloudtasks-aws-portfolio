@@ -57,6 +57,6 @@ A task definition referencia `cloudtasks/database` no Secrets Manager. `DATABASE
 
 `PERSISTENCE=0` e bind por sessão permitem reconstruir recursos, sem restaurar snapshots antigos. Isso descarta dados locais e não representa durabilidade RDS da AWS real. O bind permanece necessário ao executor CodeBuild.
 
-CloudWatch Logs básico já foi exercitado; métricas, alarmes e dashboard pertencem à etapa 11. Etapa atual: 8, CI/CD. Blue/Green (9), CloudFront (10), Amazon Q/MCP (12) e polimento (13) aguardam a aprovação nativa do fluxo.
+CloudWatch Logs básico já foi exercitado; métricas, alarmes e dashboard pertencem à etapa 11. A etapa 8 foi homologada no Windows/LocalStack e publicada com CI real do GitHub. A etapa atual é 9, Blue/Green: o desenho está registrado, mas a execução nativa está bloqueada pelas limitações documentadas do emulador. CloudFront (10), Amazon Q/MCP (12) e polimento (13) permanecem posteriores; consulte [BLUE-GREEN.md](BLUE-GREEN.md).
 
 [PIPELINE.md](PIPELINE.md), [DECISIONS.md](DECISIONS.md), [ROADMAP.md](ROADMAP.md) e [AUDIT.md](AUDIT.md) registram decisões e evidências.

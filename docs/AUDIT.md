@@ -1,4 +1,4 @@
-# CloudTasks — auditoria técnica e entrega 1.7.4
+# CloudTasks — auditoria técnica, homologação 1.7.4 e consolidação 1.7.5
 
 Atualização: 03/10/2026. Base auditada: projeto 1.7.0. Parecer: **preservar a arquitetura, corrigir o verificador e exigir CI/CD nativo; etapa 8 homologada no laboratório em 03/10/2026, com evidências na seção 16.**
 
@@ -449,7 +449,7 @@ A consulta de ações antigas do LocalStack devolveu ações de outra execução
 
 ### NÃO VALIDADO / PRÓXIMAS VALIDAÇÕES
 
-- Novo job GitHub Actions e histórico Git: não houve publicação ou repositório Git nesta pasta.
+- À época desta homologação nativa, o novo job GitHub Actions ainda não havia sido executado. A consolidação posterior está na seção 17; não houve auditoria exaustiva de todos os commits históricos.
 - AWS real: EC2/ASG, TG instance, CodeConnections, IAM e TLS de ALB reais não foram executados.
 - Reconstrução fria de uma nova sessão LocalStack não foi repetida nesta homologação, para preservar o runtime saudável. PERSISTENCE=0 continua sendo a decisão do laboratório.
 - Blue/Green, CloudFront, observabilidade ampliada e Amazon Q/MCP permanecem nas etapas seguintes.
@@ -465,4 +465,16 @@ powershell.exe -NoProfile -ExecutionPolicy Bypass -File "C:\Users\barro\Download
 
 Resultado esperado: execução nativa Succeeded, Source/Build/Deploy Succeeded, artifact/hash/digest corretos, 2/2 tasks e targets saudáveis e CRUD HTTPS/RDS aprovado. Se houver uma nova sessão LocalStack, os recursos precisam ser reconstruídos antes de usar metadados dessa sessão anterior.
 
-A etapa 8 está concluída tecnicamente no laboratório porque as três provas exigidas foram obtidas sem bypass. A publicação das evidências no GitHub permanece uma atividade de portfólio, não um resultado já executado.
+A etapa 8 está concluída tecnicamente no laboratório porque as três provas exigidas foram obtidas sem bypass. A publicação posterior do código e das evidências está registrada a seguir.
+
+## 17. Publicação e viabilidade Blue/Green — entrega 1.7.5
+
+O repositório `fernetone/cloudtasks-aws-portfolio` estava na versão 1.1.3. A PR #1 publicou os 98 arquivos revisados da entrega 1.7.4 e preservou cinco arquivos AWS existentes ausentes do ZIP fornecido: duas políticas, dois scripts e o documento ECR. Os scripts AWS foram apenas preservados e analisados, sem executar operações numa conta AWS real.
+
+O run GitHub `37134970506`, ligado ao commit `a97b045da0a5b7131137975005f45544e6793755`, terminou `success`: Ubuntu executou instalação, `npm run verify` e Docker build; Windows executou parser e regressões PowerShell 5.1. A evidência desse run está em [EVIDENCE-GITHUB.json](EVIDENCE-GITHUB.json). Runs de commits posteriores podem ser consultados na mesma PR. O job GitHub usa fixtures para os serviços externos; não substitui a evidência nativa do laboratório.
+
+Na etapa 9, foram consultadas as documentações oficiais e executadas apenas APIs de leitura na sessão existente. `DescribeTaskSets` retornou cinco registros, que não comprovam duas revisões simultâneas atendendo tráfego. `ListServiceDeployments` falhou com exit 255 e código `InternalFailure`, tanto com nomes quanto com ARNs completos. A CLI reconheceu a operação; não se observou uma resposta 501 nem uma mensagem explícita de API não implementada.
+
+A documentação informa separadamente que CodeDeploy é mockado e que a ação CodePipeline Blue/Green só atualiza o service e aguarda estabilidade. A cobertura ECS registra as APIs de service deployments como não implementadas. Inferência: o ambiente atual não fornece evidência suficiente para homologar um controlador Blue/Green nativo. O erro observado não foi atribuído a um defeito no ECS da aplicação; o service continuou Desired 2 / Running 2 / Pending 0, na revisão 5.
+
+[BLUE-GREEN.md](BLUE-GREEN.md) separa AWS alvo, comportamento documentado, observação local e critério objetivo de aceite. Nenhum service, Target Group, listener ou controlador de deploy foi alterado por essa investigação. A etapa 9 permanece pendente; não foram antecipadas as etapas seguintes.

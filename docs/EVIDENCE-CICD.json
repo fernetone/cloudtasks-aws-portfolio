@@ -88,7 +88,7 @@
                },
     "limits":  [
                    "AWS real deployment was not executed.",
-                   "A new GitHub Actions run and Git history were not supplied.",
+                   "This native laboratory snapshot was recorded before GitHub publication; GitHub checks are tracked separately in docs/EVIDENCE-GITHUB.json.",
                    "Cold reconstruction in a new LocalStack session was not repeated; the healthy session was preserved.",
                    "Direct Docker CDN TLS connectivity was not claimed repaired; the verified official CodeBuild image is cached.",
                    "An INSTALL ECONNRESET execution was rejected and was not counted as the deliberate quality-gate proof.",

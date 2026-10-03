@@ -6,7 +6,7 @@ A aprovação exige execução nativa da CodePipeline V1: Source S3 → CodeBuil
 
 Não existe aprovação por runner Docker, tag ECR mais recente, build iniciado diretamente ou deploy externo quando a pipeline não completa suas ações. Uma execução futura sem Build ou Deploy nativos é recusada e a sessão é preservada para diagnóstico.
 
-**Estado em 03/10/2026:** etapa 8 concluída tecnicamente no Windows/LocalStack, com duas entregas reais, alteração confirmada por HTTPS, quality gate falho sem iniciar Deploy e entrega limpa final. Os identificadores e resultados estão em [EVIDENCE-CICD.json](EVIDENCE-CICD.json). AWS real e novo GitHub Actions não foram executados.
+**Estado em 03/10/2026:** etapa 8 concluída tecnicamente no Windows/LocalStack, com duas entregas reais, alteração confirmada por HTTPS, quality gate falho sem iniciar Deploy e entrega limpa final. Os identificadores e resultados estão em [EVIDENCE-CICD.json](EVIDENCE-CICD.json). O código foi publicado com CI real do GitHub, registrado separadamente em [EVIDENCE-GITHUB.json](EVIDENCE-GITHUB.json). AWS real não foi executada.
 
 ## Responsabilidades
 
@@ -86,7 +86,7 @@ Há um lock local para impedir dois `create-cicd.ps1` simultâneos e uma recusa 
 3. Demonstrar bloqueio de Deploy por quality gate falho, conforme o procedimento abaixo. A imagem/task definition da versão saudável deve continuar em uso.
 4. Registrar a versão/digest do LocalStack e as evidências sanitizadas da sessão.
 
-Esses critérios foram cumpridos nesta homologação. A publicação do código e das evidências no GitHub permanece uma atividade de portfólio, após revisar arquivos rastreados; não foi executada nesta entrega.
+Esses critérios foram cumpridos nesta homologação. Código e evidências foram publicados pela PR #1 com CI Ubuntu e Windows aprovado. Essa publicação não muda o Source S3 do laboratório nem representa GitHub/CodeConnections real integrado à sessão pessoal.
 
 Nenhuma aprovação apenas por contadores ECS 2/2, existência de imagem ou logs de runner atende esse critério. Blue/Green, CloudFront e Q/MCP permanecem fora desta etapa.
 
