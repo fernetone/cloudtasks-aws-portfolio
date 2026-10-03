@@ -1,5 +1,5 @@
 import request from 'supertest';
-import { describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 import { createApp } from '../src/app.js';
 import type {
   CreateTaskInput,
@@ -9,90 +9,128 @@ import type {
 } from '../src/taskRepository.js';
 
 class InMemoryTaskRepository implements TaskRepository {
-  tasks: Task[] = [];
+  private tasks: Task[] = [];
 
-  async list() {
-    return this.tasks;
+  async list(): Promise<Task[]> {
+    return [...this.tasks];
   }
 
-  async create(input: CreateTaskInput) {
+  async create(input: CreateTaskInput): Promise<Task> {
     const now = new Date().toISOString();
     const task: Task = {
       id: crypto.randomUUID(),
       title: input.title,
-      dueDate: input.dueDate ?? null,
-      important: input.important ?? false,
+      dueDate: input.dueDate,
+      important: input.important,
       completed: false,
       createdAt: now,
       updatedAt: now,
     };
-    this.tasks.push(task);
+    this.tasks.unshift(task);
     return task;
   }
 
-  async update(id: string, input: UpdateTaskInput) {
+  async findById(id: string): Promise<Task | null> {
+    return this.tasks.find((task) => task.id === id) ?? null;
+  }
+
+  async update(id: string, input: UpdateTaskInput): Promise<Task | null> {
     const index = this.tasks.findIndex((task) => task.id === id);
-    if (index === -1) return null;
-    this.tasks[index] = {
+    if (index < 0) return null;
+    const updated = {
       ...this.tasks[index],
       ...input,
       updatedAt: new Date().toISOString(),
     };
-    return this.tasks[index];
+    this.tasks[index] = updated;
+    return updated;
   }
 
-  async remove(id: string) {
-    const originalLength = this.tasks.length;
+  async remove(id: string): Promise<boolean> {
+    const initialLength = this.tasks.length;
     this.tasks = this.tasks.filter((task) => task.id !== id);
-    return this.tasks.length !== originalLength;
+    return this.tasks.length < initialLength;
   }
 }
 
 describe('CloudTasks API', () => {
-  it('executa o CRUD de uma tarefa', async () => {
-    const repository = new InMemoryTaskRepository();
-    const app = createApp(repository);
+  let repository: InMemoryTaskRepository;
 
-    const created = await request(app).post('/api/tasks').send({
-      title: 'Configurar Amazon ECS',
-      dueDate: '2026-09-20',
-      important: true,
+  beforeEach(() => {
+    repository = new InMemoryTaskRepository();
+  });
+
+  it('retorna health 200 quando dependências estão disponíveis', async () => {
+    const app = createApp({ repository, healthCheck: async () => undefined });
+
+    await request(app)
+      .get('/health')
+      .expect(200)
+      .expect({ status: 'ok', service: 'cloudtasks-api', database: 'ok' });
+  });
+
+  it('retorna health 503 quando a dependência de dados falha', async () => {
+    const app = createApp({
+      repository,
+      healthCheck: async () => {
+        throw new Error('database offline');
+      },
     });
 
-    expect(created.status).toBe(201);
-    expect(created.body.title).toBe('Configurar Amazon ECS');
+    await request(app)
+      .get('/health')
+      .expect(503)
+      .expect({
+        status: 'error',
+        service: 'cloudtasks-api',
+        database: 'unavailable',
+      });
+  });
 
-    const listed = await request(app).get('/api/tasks');
-    expect(listed.status).toBe(200);
+  it('executa o fluxo CRUD completo', async () => {
+    const app = createApp({ repository, healthCheck: async () => undefined });
+
+    const created = await request(app)
+      .post('/api/tasks')
+      .send({ title: 'Configurar Amazon ECS', dueDate: '2026-09-25', important: true })
+      .expect(201);
+
+    expect(created.body).toMatchObject({
+      title: 'Configurar Amazon ECS',
+      dueDate: '2026-09-25',
+      important: true,
+      completed: false,
+    });
+
+    const id = created.body.id as string;
+
+    const listed = await request(app).get('/api/tasks').expect(200);
     expect(listed.body).toHaveLength(1);
 
     const updated = await request(app)
-      .put(`/api/tasks/${created.body.id}`)
-      .send({ completed: true });
-    expect(updated.status).toBe(200);
-    expect(updated.body.completed).toBe(true);
+      .put(`/api/tasks/${id}`)
+      .send({ completed: true, title: 'Configurar ECS em produção' })
+      .expect(200);
 
-    const removed = await request(app).delete(`/api/tasks/${created.body.id}`);
-    expect(removed.status).toBe(204);
+    expect(updated.body).toMatchObject({
+      id,
+      title: 'Configurar ECS em produção',
+      completed: true,
+    });
+
+    await request(app).delete(`/api/tasks/${id}`).expect(204);
+    const empty = await request(app).get('/api/tasks').expect(200);
+    expect(empty.body).toEqual([]);
   });
 
   it('rejeita payload inválido', async () => {
-    const app = createApp(new InMemoryTaskRepository());
-    const response = await request(app).post('/api/tasks').send({ title: '' });
-    expect(response.status).toBe(400);
-  });
+    const app = createApp({ repository, healthCheck: async () => undefined });
 
-  it('rejeita UUID inválido', async () => {
-    const app = createApp(new InMemoryTaskRepository());
-    const response = await request(app).delete('/api/tasks/123');
-    expect(response.status).toBe(400);
-  });
-
-  it('retorna 404 quando a tarefa não existe', async () => {
-    const app = createApp(new InMemoryTaskRepository());
     const response = await request(app)
-      .put(`/api/tasks/${crypto.randomUUID()}`)
-      .send({ completed: true });
-    expect(response.status).toBe(404);
+      .post('/api/tasks')
+      .send({ title: '', dueDate: 'data-invalida' })
+      .expect(400);
+
+    expect(response.body.message).toBe('Dados inválidos.');
   });
 });

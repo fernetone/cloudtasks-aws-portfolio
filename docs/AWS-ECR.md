@@ -1,16 +1,16 @@
 # Amazon ECR — Etapa 3
 
-Esta etapa cria o primeiro recurso AWS persistente do CloudTasks: um repositório privado no Amazon Elastic Container Registry (ECR) para armazenar as imagens Docker da aplicação.
+Este documento e os scripts em `scripts/aws` descrevem a etapa 3 para uma conta AWS real. Foram preservados do repositório existente; não foram executados nesta consolidação. Para o laboratório LocalStack, use [PIPELINE.md](PIPELINE.md) e os scripts de `scripts/localstack`.
 
 ## Decisões adotadas
 
 - Região padrão do projeto: `us-east-1`.
 - Nome do repositório: `cloudtasks`.
 - Repositório privado.
-- Tags imutáveis: cada imagem será identificada pelo SHA do commit e não poderá ser sobrescrita.
+- Tags imutáveis: cada build da pipeline recebe `pipeline-<UUID v4>`, e a tag não pode ser sobrescrita. Commit, Source e digest completam a identidade; a primeira publicação manual usa uma tag própria.
 - Scan on push habilitado para verificar vulnerabilidades ao enviar novas imagens.
 - Criptografia AES-256 gerenciada pelo ECR.
-- Sem tag `latest` na pipeline: o deploy usa a imagem exata associada ao commit.
+- Sem tag `latest` na pipeline: o deploy usa a URI exata produzida pelo build e registrada no artifact.
 - Lifecycle policy mantém as 20 imagens mais recentes e expira as anteriores.
 
 ## Criar o ECR via PowerShell
@@ -52,18 +52,18 @@ No final o script imprime a URI completa da imagem, por exemplo:
 123456789012.dkr.ecr.us-east-1.amazonaws.com/cloudtasks:manual-20260919230000
 ```
 
-## Futuro CodeBuild
+## CodeBuild e artifact ECS
 
 O `buildspec.yml` usa estas variáveis de ambiente:
 
 ```text
 IMAGE_REPO_NAME=cloudtasks
-CONTAINER_NAME=cloudtasks
+CONTAINER_NAME=cloudtasks-app
 ```
 
-O CodeBuild descobre o Account ID automaticamente, autentica no ECR, cria uma tag com os 12 primeiros caracteres do commit e publica somente essa tag imutável.
+Na AWS, o `buildspec.yml` descobre o Account ID, autentica no ECR e publica a tag imutável `pipeline-<UUID v4>`, gerada dentro do build. Não deriva a tag de `CODEBUILD_BUILD_ID`. O buildspec local explicita os endpoints do emulador.
 
-O artefato `imagedefinitions.json` usa exatamente a mesma URI e será consumido posteriormente pela etapa de deploy do Amazon ECS no CodePipeline.
+O artifact `imagedefinitions.json` usa exatamente a mesma URI e o nome do container `cloudtasks-app`. A ação ECS padrão da etapa 8 o consome na CodePipeline; a homologação local e seus limites estão em [EVIDENCE-CICD.json](EVIDENCE-CICD.json).
 
 ## Permissões do CodeBuild
 

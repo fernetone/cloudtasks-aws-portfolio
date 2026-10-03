@@ -9,7 +9,7 @@ phases:
       nodejs: 24
     commands:
       - echo "Installing dependencies"
-      - if [ -f package-lock.json ]; then npm ci --no-audit --no-fund; else npm install --no-audit --no-fund; fi
+      - npm ci --no-audit --no-fund
 
   pre_build:
     commands:
@@ -17,8 +17,7 @@ phases:
       - npm run verify
       - AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
       - ECR_URI="$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME"
-      - IMAGE_TAG=$(echo "${CODEBUILD_RESOLVED_SOURCE_VERSION:-}" | cut -c 1-12)
-      - if [ -z "$IMAGE_TAG" ]; then IMAGE_TAG="build-${CODEBUILD_BUILD_NUMBER:-manual}"; fi
+      - IMAGE_TAG="pipeline-$(node -e 'process.stdout.write(require("node:crypto").randomUUID())')"
       - echo "Using immutable image tag $IMAGE_TAG"
       - echo "Logging in to Amazon ECR"
       - aws ecr get-login-password --region "$AWS_DEFAULT_REGION" | docker login --username AWS --password-stdin "$AWS_ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com"
@@ -31,6 +30,7 @@ phases:
 
   post_build:
     commands:
+      - test "${CODEBUILD_BUILD_SUCCEEDING:-0}" -eq 1
       - echo "Pushing immutable Docker image"
       - docker push "$ECR_URI:$IMAGE_TAG"
       - printf '[{"name":"%s","imageUri":"%s"}]' "$CONTAINER_NAME" "$ECR_URI:$IMAGE_TAG" > imagedefinitions.json

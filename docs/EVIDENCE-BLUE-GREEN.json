@@ -1,0 +1,75 @@
+{
+  "projectVersion": "1.7.5",
+  "stage9": "Feasibility investigated; native Blue/Green not homologated",
+  "environment": {
+    "localStack": "pro 2026.8.3:02342ae2e",
+    "powerShell": "5.1.26100.9549",
+    "ecsExecutor": "Docker, no real EC2 instances"
+  },
+  "observed": {
+    "recordedAt": "2026-10-03T16:07:16.7863842Z",
+    "readOnly": true,
+    "cluster": "cloudtasks-cluster-r20261001100814559",
+    "service": "cloudtasks-service",
+    "currentService": {
+      "taskDefinition": "arn:aws:ecs:us-east-1:000000000000:task-definition/cloudtasks:5",
+      "pending": 0,
+      "running": 2,
+      "desired": 2
+    },
+    "listServiceDeployments": {
+      "cliUnsupported": false,
+      "exitCode": 255,
+      "notImplementedMention": false,
+      "usedFullArns": true,
+      "errorCode": "InternalFailure"
+    },
+    "describeTaskSets": {
+      "count": 5,
+      "exitCode": 0
+    },
+    "rawErrorsDisplayed": false,
+    "blueGreenTrafficShiftExecuted": false
+  },
+  "additionalProbe": {
+    "arguments": "Cluster/service names",
+    "listServiceDeploymentsExitCode": 255,
+    "errorCode": "InternalFailure",
+    "describeTaskSetsExitCode": 0,
+    "taskSetRecords": 5
+  },
+  "documented": {
+    "consultedAt": "2026-10-03",
+    "codeDeployOperationsMocked": true,
+    "codeDeployToEcsOnlyUpdatesService": true,
+    "manualApprovalNoOp": true,
+    "ecsUnimplementedOperations": [
+      "ListServiceDeployments",
+      "DescribeServiceDeployments",
+      "DescribeServiceRevisions",
+      "ContinueServiceDeployment",
+      "StopServiceDeployment"
+    ]
+  },
+  "inference": "Documented limitations and local read-only probes are insufficient to accept native Blue/Green; InternalFailure is not claimed to be an observed NotImplemented/501 response.",
+  "preserved": {
+    "existingService": true,
+    "existingAlbAndTargetGroup": true,
+    "currentTaskDefinition": "arn:aws:ecs:us-east-1:000000000000:task-definition/cloudtasks:5",
+    "localStackSession": true
+  },
+  "notExecuted": [
+    "AWS real deploy",
+    "Blue/Green service update",
+    "Native controller traffic shift",
+    "Manual ALB traffic shift",
+    "Blue/Green rollback"
+  ],
+  "officialSources": [
+    "https://docs.localstack.cloud/aws/services/codedeploy/",
+    "https://docs.localstack.cloud/aws/services/codepipeline/",
+    "https://docs.localstack.cloud/aws/services/ecs/",
+    "https://docs.aws.amazon.com/AmazonECS/latest/developerguide/deployment-type-blue-green.html",
+    "https://docs.aws.amazon.com/codepipeline/latest/userguide/action-reference-ECSbluegreen.html"
+  ]
+}

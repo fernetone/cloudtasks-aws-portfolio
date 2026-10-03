@@ -25,15 +25,28 @@ jobs:
           node-version: 24
 
       - name: Install dependencies
-        run: |
-          if [ -f package-lock.json ]; then
-            npm ci --no-audit --no-fund
-          else
-            npm install --no-audit --no-fund
-          fi
+        run: npm ci --no-audit --no-fund
 
       - name: Verify project
         run: npm run verify
 
       - name: Validate production container build
         run: docker build --tag cloudtasks:ci .
+
+  powershell:
+    name: PowerShell 5.1 script regressions
+    runs-on: windows-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Validate script syntax
+        shell: powershell
+        run: .\scripts\localstack\validate-scripts.ps1
+      - name: Run isolated script regressions
+        shell: powershell
+        run: .\scripts\tests\test-regressions.ps1

@@ -1,0 +1,89 @@
+{
+  "recordedAt": "2026-10-03T16:05:50.740Z",
+  "repository": "fernetone/cloudtasks-aws-portfolio",
+  "pullRequest": 1,
+  "pullRequestUrl": "https://github.com/fernetone/cloudtasks-aws-portfolio/pull/1",
+  "validatedCommit": "a97b045da0a5b7131137975005f45544e6793755",
+  "workflowRunId": 37134970506,
+  "workflowRunUrl": "https://github.com/fernetone/cloudtasks-aws-portfolio/actions/runs/37134970506",
+  "workflowConclusion": "success",
+  "jobs": [
+    {
+      "id": 111237546236,
+      "name": "Lint, tests, build and Docker",
+      "labels": [
+        "ubuntu-latest"
+      ],
+      "conclusion": "success",
+      "startedAt": "2026-10-03T15:55:42Z",
+      "completedAt": "2026-10-03T15:56:18Z",
+      "url": "https://github.com/fernetone/cloudtasks-aws-portfolio/actions/runs/37134970506/job/111237546236",
+      "checks": [
+        {
+          "name": "Checkout",
+          "conclusion": "success"
+        },
+        {
+          "name": "Setup Node.js",
+          "conclusion": "success"
+        },
+        {
+          "name": "Install dependencies",
+          "conclusion": "success"
+        },
+        {
+          "name": "Verify project",
+          "conclusion": "success"
+        },
+        {
+          "name": "Validate production container build",
+          "conclusion": "success"
+        }
+      ]
+    },
+    {
+      "id": 111237546292,
+      "name": "PowerShell 5.1 script regressions",
+      "labels": [
+        "windows-latest"
+      ],
+      "conclusion": "success",
+      "startedAt": "2026-10-03T15:55:42Z",
+      "completedAt": "2026-10-03T15:56:31Z",
+      "url": "https://github.com/fernetone/cloudtasks-aws-portfolio/actions/runs/37134970506/job/111237546292",
+      "checks": [
+        {
+          "name": "Checkout",
+          "conclusion": "success"
+        },
+        {
+          "name": "Setup Node.js",
+          "conclusion": "success"
+        },
+        {
+          "name": "Validate script syntax",
+          "conclusion": "success"
+        },
+        {
+          "name": "Run isolated script regressions",
+          "conclusion": "success"
+        }
+      ]
+    }
+  ],
+  "reviewedLocalProjectVersion": "1.7.4",
+  "reviewedLocalFiles": 98,
+  "preservedExistingAwsFiles": [
+    "aws/ecr/lifecycle-policy.json",
+    "aws/iam/codebuild-ecr-policy.json",
+    "docs/AWS-ECR.md",
+    "scripts/aws/create-ecr.ps1",
+    "scripts/aws/push-ecr-image.ps1"
+  ],
+  "scope": "GitHub validates quality, Docker build and isolated PowerShell regressions; native Windows/LocalStack delivery evidence remains separate in EVIDENCE-CICD.json.",
+  "limits": [
+    "This evidence describes the first published code commit; later documentation commits have their own GitHub checks.",
+    "GitHub Actions does not deploy to this user's LocalStack session or to real AWS.",
+    "Historic commits and every Docker layer were not exhaustively audited."
+  ]
+}
