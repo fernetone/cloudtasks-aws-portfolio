@@ -1,6 +1,6 @@
 {
-  "projectVersion": "1.7.5",
-  "stage9": "Feasibility investigated; native Blue/Green not homologated",
+  "projectVersion": "1.7.6",
+  "stage9": "Manual isolated traffic probe passed; native Blue/Green controller and CI/CD integration NOT homologated",
   "environment": {
     "localStack": "pro 2026.8.3:02342ae2e",
     "powerShell": "5.1.26100.9549",
@@ -29,7 +29,8 @@
       "exitCode": 0
     },
     "rawErrorsDisplayed": false,
-    "blueGreenTrafficShiftExecuted": false
+    "blueGreenTrafficShiftExecuted": false,
+    "scope": "Earlier read-only native-controller investigation; later manual traffic probe is recorded separately"
   },
   "additionalProbe": {
     "arguments": "Cluster/service names",
@@ -60,16 +61,29 @@
   },
   "notExecuted": [
     "AWS real deploy",
-    "Blue/Green service update",
+    "Blue/Green production service update",
     "Native controller traffic shift",
-    "Manual ALB traffic shift",
-    "Blue/Green rollback"
+    "Native controller rollback",
+    "CodePipeline delivery through a Blue/Green controller",
+    "Automated bake window"
   ],
   "officialSources": [
     "https://docs.localstack.cloud/aws/services/codedeploy/",
     "https://docs.localstack.cloud/aws/services/codepipeline/",
     "https://docs.localstack.cloud/aws/services/ecs/",
     "https://docs.aws.amazon.com/AmazonECS/latest/developerguide/deployment-type-blue-green.html",
-    "https://docs.aws.amazon.com/codepipeline/latest/userguide/action-reference-ECSbluegreen.html"
-  ]
+    "https://docs.aws.amazon.com/codepipeline/latest/userguide/action-reference-ECSbluegreen.html",
+    "https://docs.localstack.cloud/aws/services/elb/",
+    "https://docs.aws.amazon.com/AmazonECS/latest/APIReference/API_PortMapping.html",
+    "https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-troubleshooting.html"
+  ],
+  "manualTrafficProbe": {
+    "evidenceFile": "EVIDENCE-BLUE-GREEN-TRAFFIC.json",
+    "result": "TRAFFIC_PROBE_PASSED",
+    "nativeControllerCertified": false,
+    "productionServiceAndListenersUnchanged": true,
+    "pipelineReplacedByOperator": false,
+    "promotionAndRollbackOnlyOnDisposableAlb": true,
+    "emptyTargetHttp503ParityPassed": false
+  }
 }

@@ -1,0 +1,158 @@
+{
+  "run": "ct-bg-probe-a0d11b23f620",
+  "mode": "DisposableManualTrafficProbe",
+  "nativeBlueGreenControllerCertified": false,
+  "productionResourcesModified": false,
+  "checks": {
+    "candidateDirect": {
+      "health": "ok",
+      "database": "ok",
+      "tasksGet": "200/array",
+      "asset": "/assets/index-Cvukn_hy.js",
+      "bundleSha256": "fb70df536a763628a09428c97fad9100e48b172ec9208fbc77ad00fa5bb91933"
+    },
+    "isolatedRoutes": true,
+    "emptyTargetGroupResponse": {
+      "targetCount": 0,
+      "http": 200,
+      "applicationHealthValid": false,
+      "applicationCheckRejected": "APP_DATABASE_HEALTH",
+      "responseKeys": [],
+      "hasServicesObject": false,
+      "awsExpectedEmptyTarget503Observed": false
+    },
+    "negativeGate": {
+      "testRouteHttp": 200,
+      "promotionSkipped": true,
+      "blueContinuedServing": true,
+      "applicationCheckRejected": "APP_DATABASE_HEALTH"
+    },
+    "promotion": {
+      "requests": 3,
+      "bundleSha256": "fb70df536a763628a09428c97fad9100e48b172ec9208fbc77ad00fa5bb91933",
+      "productionStillBlue": true
+    },
+    "rollback": {
+      "requests": 3,
+      "bundleSha256": "351a4c894bd466de16ba85ab26d9fd51e5fc7905dcc3c6352d43c784a2b6b59f",
+      "greenRetained": true
+    },
+    "productionPreservedAndFixturesRemoved": true
+  },
+  "owned": {
+    "definition": "arn:aws:ecs:us-east-1:000000000000:task-definition/ct-bg-probe-a0d11b23f620:1",
+    "alb": "arn:aws:elasticloadbalancing:us-east-1:000000000000:loadbalancer/app/ct-bg-probe-a0d11b23f620/7fb291309c1d4e5e",
+    "dns": "ct-bg-probe-a0d11b23f620.elb.localhost.localstack.cloud",
+    "blueTg": "arn:aws:elasticloadbalancing:us-east-1:000000000000:targetgroup/ct-bg-probe-a0d11b23f620-b/5d0173a16ae44597",
+    "greenTg": "arn:aws:elasticloadbalancing:us-east-1:000000000000:targetgroup/ct-bg-probe-a0d11b23f620-g/3c3317ab758e4c72",
+    "task": "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261001100814559/17d9db9f-055d-4e21-92a9-a5cf1044bec7",
+    "listener": "arn:aws:elasticloadbalancing:us-east-1:000000000000:listener/app/ct-bg-probe-a0d11b23f620/7fb291309c1d4e5e/9e9443e3b7094dcd",
+    "testRule": "arn:aws:elasticloadbalancing:us-east-1:000000000000:listener-rule/app/ct-bg-probe-a0d11b23f620/7fb291309c1d4e5e/9e9443e3b7094dcd/4ef66125b6024ae7"
+  },
+  "errors": [],
+  "cleanupErrors": [],
+  "result": "TRAFFIC_PROBE_PASSED",
+  "elapsedSeconds": 71.6,
+  "productionBefore": {
+    "taskDefinition": "arn:aws:ecs:us-east-1:000000000000:task-definition/cloudtasks:5",
+    "taskArns": [
+      "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261001100814559/a95e2102-cdc7-405d-ba79-713d368dd5fa",
+      "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261001100814559/bb09f3c2-8a2e-45f9-b58a-78a46098d943"
+    ],
+    "containerIds": [
+      "1327af8d94ad63577975007cef4cd1a900e2fb9b4d8d869f7ea2119204044a7f",
+      "db8383480752d8ce14b52cc524503f4190bebfc94afef24c65a7b8c44609cbe4"
+    ],
+    "listenersUnchanged": true,
+    "targetsHealthy": 2,
+    "https": {
+      "health": "ok",
+      "database": "ok",
+      "tasksGet": "200/array",
+      "asset": "/assets/index-BjgdmimE.js",
+      "bundleSha256": "351a4c894bd466de16ba85ab26d9fd51e5fc7905dcc3c6352d43c784a2b6b59f"
+    },
+    "tlsCertificateVerification": "LocalStack gateway bypass; unchanged lab behavior"
+  },
+  "candidateDefinition": {
+    "source": "arn:aws:ecs:us-east-1:000000000000:task-definition/cloudtasks:3",
+    "sourceHostPort": 19025,
+    "probeDefinition": "arn:aws:ecs:us-east-1:000000000000:task-definition/ct-bg-probe-a0d11b23f620:1",
+    "registeredHostPort": 0,
+    "sameImage": "000000000000.dkr.ecr.us-east-1.localhost.localstack.cloud:4566/cloudtasks:pipeline-6628a386-8091-408b-a9d6-3a06164a0a27",
+    "hostPortAfterRunTask": 46538
+  },
+  "runTask": {
+    "tasks": 1,
+    "failureCount": 0,
+    "failureCodes": []
+  },
+  "candidate": {
+    "taskArn": "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261001100814559/17d9db9f-055d-4e21-92a9-a5cf1044bec7",
+    "containerId": "8141d9a497d2e26c74cc056c7056d75d4d370ce3d869c00746da57f07292ae45",
+    "health": "healthy",
+    "imageId": "sha256:229cf3109bbebecd36ab9ce3ebc452d10e2b85e849dd55b0b10edc0b7198a0b1",
+    "digest": "sha256:229cf3109bbebecd36ab9ce3ebc452d10e2b85e849dd55b0b10edc0b7198a0b1",
+    "ip": "172.19.0.5",
+    "port": 3000
+  },
+  "removed": [
+    "alb",
+    "greenTg",
+    "blueTg",
+    "task"
+  ],
+  "deregistered": [
+    "definition"
+  ],
+  "productionAfter": {
+    "taskDefinition": "arn:aws:ecs:us-east-1:000000000000:task-definition/cloudtasks:5",
+    "taskArns": [
+      "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261001100814559/a95e2102-cdc7-405d-ba79-713d368dd5fa",
+      "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261001100814559/bb09f3c2-8a2e-45f9-b58a-78a46098d943"
+    ],
+    "containerIds": [
+      "1327af8d94ad63577975007cef4cd1a900e2fb9b4d8d869f7ea2119204044a7f",
+      "db8383480752d8ce14b52cc524503f4190bebfc94afef24c65a7b8c44609cbe4"
+    ],
+    "listenersUnchanged": true,
+    "targetsHealthy": 2,
+    "https": {
+      "health": "ok",
+      "database": "ok",
+      "tasksGet": "200/array",
+      "asset": "/assets/index-BjgdmimE.js",
+      "bundleSha256": "351a4c894bd466de16ba85ab26d9fd51e5fc7905dcc3c6352d43c784a2b6b59f"
+    },
+    "tlsCertificateVerification": "LocalStack gateway bypass; unchanged lab behavior"
+  },
+  "projectVersion": "1.7.6",
+  "evidenceCapturedAtUtc": "2026-10-03T21:47:12.456598+00:00",
+  "scope": "Temporary isolated ALB, two existing blue tasks and one stand-alone green task; manual API promotion/rollback",
+  "newReleaseBuilt": false,
+  "productionTrafficShiftExecuted": false,
+  "automatedBakeWindowTested": false,
+  "crudWritesTested": false,
+  "retainedBlueGreenControllerOrOperatorAdded": false,
+  "attemptsBeforeFinalProbe": [
+    {
+      "result": "FAILED",
+      "reason": "RunTask of original revision: zero tasks, six RESOURCE:PORTS failures",
+      "productionPreserved": true,
+      "activeFixturesRemoved": true
+    },
+    {
+      "result": "FAILED",
+      "reason": "Negative probe initially required HTTP 5xx; empty green TG returned HTTP 200",
+      "productionPreserved": true,
+      "activeFixturesRemoved": true
+    },
+    {
+      "result": "FAILED",
+      "reason": "Inspection then confirmed APP_DATABASE_HEALTH rejection, rather than valid application health",
+      "productionPreserved": true,
+      "activeFixturesRemoved": true
+    }
+  ],
+  "negativeTestInterpretation": "Expected rejection is validated by the same application/database health checks used before promotion. Empty TG and invalid health were rejected even though HTTP was 200. This does NOT pass AWS empty-TG HTTP 503 parity."
+}

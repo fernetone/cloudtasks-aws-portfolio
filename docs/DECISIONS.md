@@ -83,3 +83,11 @@ A arquitetura alvo utilizará ECS com instâncias EC2, e não Fargate, para repr
 ## Identidade da imagem no agente local
 
 O agente observado em 03/10/2026 injetou `CODEBUILD_BUILD_ID` com UUID zerado, enquanto a API retornou um ID curto real. A tag não deriva desse valor reservado. CodeBuild gera um UUID v4; CodePipeline transporta `imagedefinitions.json` e o ECS nativo usa esse artifact. A aceitação verifica o build vinculado, a localização e o hash do artifact, o digest ECR e as tasks físicas. `pipeline-build.json` e o parser ID→tag foram removidos. Não há deploy por fallback.
+
+## ADR-012 — Evidência de tráfego separada da homologação do controlador
+
+**Decisão:** preservar a pipeline ECS padrão homologada na etapa 8 e registrar a prova Blue/Green manual da versão 1.7.6 como experimento temporário, sem incorporar um controlador próprio ou substituir a action de deploy.
+
+**Motivo:** duas imagens físicas, rotas isoladas e requisições comprovaram promoção/rollback no ALB local, mas CodeDeploy/CodeDeployToECS e APIs de deployment ECS não oferecem a paridade necessária para homologar o controlador nativo nesse ambiente. Um operador externo que funciona não prova CI/CD Blue/Green AWS.
+
+**Consequência:** o roadmap distingue a prova manual concluída da etapa 9 nativa pendente. A produção, scripts, arquitetura EC2/bridge/TG instance alvo e adaptações Docker/TG ip do laboratório permanecem. Fixtures ativos foram limpos; portas resolvidas observadas na API LocalStack não devem ser reutilizadas cegamente em definições paralelas. Os checks exigem health de aplicação/banco e identidade, pois HTTP 200 com TG vazio foi observado sem health válido.
