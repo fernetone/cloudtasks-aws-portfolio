@@ -1,6 +1,6 @@
 # CloudTasks — portfólio AWS/DevOps
 
-Versão 1.7.5. React 19 + TypeScript + Vite, Node 24 + Express 5 e PostgreSQL.
+Versão 1.7.6. React 19 + TypeScript + Vite, Node 24 + Express 5 e PostgreSQL.
 
 CloudTasks usa uma aplicação de tarefas para demonstrar entrega de software, containers, rede, dados e balanceamento. A arquitetura alvo é AWS; o laboratório executável usa LocalStack Pro/Student e Docker Desktop, sem provisionar recursos faturáveis em uma conta AWS.
 
@@ -23,7 +23,9 @@ A versão 1.7.4 usa UUID v4 gerado no CodeBuild e valida a imagem pelo artifact 
 
 A entrega 1.7.5 consolida esse código no [GitHub](https://github.com/fernetone/cloudtasks-aws-portfolio/pull/1) e preserva os cinco arquivos AWS que já existiam no repositório. O [CI executado](https://github.com/fernetone/cloudtasks-aws-portfolio/actions/runs/37134970506) passou no Ubuntu e no Windows PowerShell 5.1; resultados separados em [EVIDENCE-GITHUB.json](docs/EVIDENCE-GITHUB.json). A publicação não conecta automaticamente o GitHub ao LocalStack pessoal: o Source local continua sendo o snapshot S3 revisado.
 
-A etapa 9 está em análise de viabilidade, com desenho e critério de aceite em [BLUE-GREEN.md](docs/BLUE-GREEN.md). CodeDeploy é mockado no LocalStack e sua ação Blue/Green apenas atualiza o service. A consulta local de deployments nativos ECS também falhou. Nenhuma troca Blue/Green ou rollback de tráfego foi homologado, e o service saudável da etapa 8 foi preservado.
+A versão 1.7.6 registra uma prova temporária da etapa 9: duas imagens executando simultaneamente, rota de teste separada, rejeição de health inválido, promoção e rollback **manuais em um ALB isolado**, comprovados por requisições e hashes dos bundles. A produção permaneceu na revisão 5, com as mesmas duas tasks e HTTPS saudável; os recursos ativos temporários foram limpos. [Desenho, resultados e limites](docs/BLUE-GREEN.md); [evidência de tráfego](docs/EVIDENCE-BLUE-GREEN-TRAFFIC.json).
+
+**A etapa 9 permanece pendente para o controlador nativo e sua integração CI/CD.** CodeDeploy é mockado no LocalStack e sua ação Blue/Green apenas atualiza o service; APIs de service deployments ECS também têm limites documentados. A prova manual não certifica esses controladores, não promoveu produção e não implementa uma nova pipeline. Esta entrega altera documentação/evidência e a versão do pacote; preserva aplicação, scripts, pipeline e infraestrutura existentes.
 
 ## Executar a aplicação local
 
