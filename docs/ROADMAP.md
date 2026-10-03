@@ -1,45 +1,76 @@
-# Roadmap
+# Roadmap oficial — 13 etapas
 
-## Concluído
+A ordem abaixo segue o escopo do portfólio. Marcações anteriores de infraestrutura representam execução relatada na máquina do laboratório, não um deploy produtivo AWS certificado pela auditoria.
 
-- Aplicação React/Node/PostgreSQL.
-- Docker Compose local.
-- Health check.
-- Testes automatizados.
-- Lint e formatação.
-- GitHub Actions com CI aprovado.
-- Repositório público publicado no GitHub.
-- Preparação inicial do CodeBuild.
-- Automação e documentação do Amazon ECR.
+## 1. Aplicação local
 
-## Em andamento
+- [x] React 19/TypeScript/Vite, Node 24/Express 5 e PostgreSQL.
+- [x] CRUD e `/health` com verificação do banco; Docker Compose.
 
-### Etapa 3 — Amazon ECR
+## 2. Qualidade + GitHub
 
-- [x] Script idempotente para criação/configuração do repositório `cloudtasks`.
-- [x] Tags imutáveis definidas como padrão do projeto.
-- [x] Scan on push preparado.
-- [x] Lifecycle policy para manter as 20 imagens mais recentes.
-- [x] Script para publicar a primeira imagem Docker.
-- [x] `buildspec.yml` ajustado para usar tags imutáveis por commit.
-- [x] Política IAM mínima de push preparada para o futuro CodeBuild.
-- [ ] Criar o repositório dentro da conta AWS.
-- [ ] Publicar e confirmar a primeira imagem no ECR.
+- [x] TypeScript, lint, testes API/frontend e GitHub Actions.
+- [x] Lockfile e `npm ci` incluídos na versão 1.7.1.
+- [ ] Executar o novo job Windows de regressões PowerShell 5.1 no GitHub.
+- [ ] Resolver a dívida de formatação e revisar advisory das dependências de teste.
 
-Veja [`AWS-ECR.md`](AWS-ECR.md).
+## 3. ECR
 
-## Próximas etapas
+- [x] Build/push de imagem e repositório com tags imutáveis.
+- [x] Consulta exata e verificação de criação concorrente na versão 1.7.1.
 
-1. Concluir Amazon ECR com a primeira imagem publicada.
-2. Criar VPC, subnets, route tables e security groups.
-3. Criar RDS PostgreSQL.
-4. Criar cluster ECS sobre EC2.
-5. Criar task definition e service.
-6. Criar Target Group e Application Load Balancer.
-7. Validar duas tasks saudáveis.
-8. Criar CodePipeline GitHub → CodeBuild → ECS.
-9. Configurar HTTPS com ACM.
-10. Adicionar CloudFront.
-11. Adicionar observabilidade no CloudWatch.
-12. Integrar Amazon Q Developer e MCP.
-13. Consolidar screenshots, diagrama e demonstração final do portfólio.
+## 4. Infraestrutura AWS
+
+- [x] Laboratório: VPC, seis subnets, duas AZs, route tables e Internet Gateway.
+- [ ] Provisionamento produtivo AWS completo por IaC, se for incluído no escopo futuro; não é pré-requisito para refazer a etapa 8 local.
+
+## 5. RDS
+
+- [x] PostgreSQL executável, Secrets Manager e `SELECT 1`.
+- [x] Banco compartilhado pelas duas réplicas.
+- [ ] Registrar versão PostgreSQL efetiva via SQL; `EngineVersion` da API não prova o engine do emulador.
+
+## 6. ECS
+
+- [x] Cluster, task definition, service e duas tasks saudáveis.
+- [x] Alvo ECS/EC2 documentado; executor Docker local sem EC2 reais.
+- [x] CloudWatch Logs básico já exercitado.
+
+## 7. ALB
+
+- [x] TG local `ip`, HTTP, health e 2/2 targets; failover exercitado.
+- [x] HTTPS/ACM no control plane e tráfego TLS pelo gateway LocalStack.
+
+## 8. CI/CD — HOMOLOGADA NO LABORATÓRIO EM 03/10/2026
+
+- [x] Código: Source S3 versionado, CodePipeline V1, CodeBuild, ECR e ação ECS padrão.
+- [x] Captura nativa PowerShell corrigida; Source permitido/hash/VersionId; aceitação sem fallback.
+- [x] Executar Source/Build/Deploy nativos e `test-cicd.ps1` no laboratório.
+- [x] Repetir com alteração real: novo Source, build, imagem/digest e revisão, visíveis na aplicação.
+- [x] Demonstrar CodeBuild `FAILED` por quality gate e ausência de Deploy; manter revisão saudável.
+- [x] Registrar versão/digest e evidência sanitizada em docs/EVIDENCE-CICD.json.
+- [ ] Publicar a evidência no GitHub; publicação não foi executada.
+
+## 9. Blue/Green
+
+- [ ] Desenhar e validar troca de tráfego/rollback com componentes apropriados.
+
+## 10. CloudFront
+
+- [ ] Configurar distribuição/origin ALB e regras para `/api/*`.
+- [ ] Validar tráfego efetivo, cache e TLS da CDN.
+
+## 11. Observabilidade / CloudWatch
+
+- [ ] Métricas, alarmes, dashboard e falha controlada; ampliar logs já existentes.
+
+## 12. Amazon Q + MCP
+
+- [ ] Integração, permissões, prompts e demonstração segura.
+
+## 13. Polimento final do portfólio
+
+- [ ] Diagrama, evidências, vídeo curto e roteiro de entrevista.
+- [ ] Resolver limitações documentadas, revisar IAM/segurança e diferenciar AWS alvo de emulação.
+
+Não antecipar as etapas 9–13 para declarar a etapa 8 concluída.

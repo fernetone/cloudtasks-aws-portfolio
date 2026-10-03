@@ -1,19 +1,46 @@
 # Desenvolvimento local
 
-## Docker Compose
+## Via Docker
 
 ```bash
 docker compose up --build
 ```
 
-Aplicação: `http://localhost:3000`
+Serviços:
 
-Health: `http://localhost:3000/health`
+```text
+app -> http://localhost:3000
+db  -> localhost:5432
+```
 
-## Persistência
+O Compose aguarda o PostgreSQL ficar saudável antes de iniciar a aplicação.
 
-O PostgreSQL usa o volume `cloudtasks_pgdata`.
+## Via Node.js
 
-`docker compose down` preserva os dados.
+1. Instale Node.js 24.
+2. Disponibilize PostgreSQL.
+3. Copie `.env.example` para `.env`.
+4. Execute:
 
-`docker compose down -v` remove os dados e deve ser usado somente quando um reset for desejado.
+```bash
+npm ci
+npm run dev
+```
+
+Frontend de desenvolvimento: `http://localhost:5173`.
+API: `http://localhost:3000`.
+
+## Verificação antes de commit
+
+```bash
+npm run verify
+```
+
+## Reset do banco local
+
+Somente quando desejar apagar todos os dados:
+
+```bash
+docker compose down -v
+docker compose up --build
+```

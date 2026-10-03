@@ -1,0 +1,39 @@
+services:
+  localstack:
+    container_name: cloudtasks-localstack
+    image: localstack/localstack-pro:latest
+    ports:
+      - "127.0.0.1:4566:4566"
+      - "127.0.0.1:4510-4559:4510-4559"
+    environment:
+      LOCALSTACK_AUTH_TOKEN: ${LOCALSTACK_AUTH_TOKEN:-}
+      DEBUG: ${LOCALSTACK_DEBUG:-0}
+      PERSISTENCE: "0"
+      AWS_DEFAULT_REGION: us-east-1
+      AWS_REGION: us-east-1
+      ECR_ENDPOINT_STRATEGY: domain
+      RDS_PG_CUSTOM_VERSIONS: "0"
+      MAIN_DOCKER_NETWORK: cloudtasks-localstack-network
+      CODEBUILD_DOCKER_FLAGS: "--network cloudtasks-localstack-network -v /var/run/docker.sock:/var/run/docker.sock"
+      CODEBUILD_REMOVE_CONTAINERS: "0"
+      ECS_REMOVE_CONTAINERS: "0"
+      ECS_SERVICE_RECONCILE_INTERVAL: "3"
+    volumes:
+      - "${LOCALSTACK_VOLUME_DIR:-./.localstack-runtime}:/var/lib/localstack"
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - cloudtasks_localstack_network
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:4566/_localstack/health', timeout=3)\"",
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 10s
+
+networks:
+  cloudtasks_localstack_network:
+    name: cloudtasks-localstack-network

@@ -1,0 +1,97 @@
+{
+    "projectVersion":  "1.7.4",
+    "stage8":  "Native laboratory CI/CD homologated",
+    "validatedAt":  "2026-10-03T10:32:24.0661463Z",
+    "environment":  {
+                        "hostNode":  "24.21.0",
+                        "localStackImageId":  "sha256:4abc29e923e5ed8a63d6c705a9dfa74b15d560e7055845299d87b22dabf9f6e2",
+                        "persistence":  0,
+                        "powerShell":  "5.1.26100.9549",
+                        "agentNode":  "24.19.0",
+                        "ecsExecutor":  "Docker, no real EC2 instances",
+                        "localStack":  "pro 2026.8.3:02342ae2e",
+                        "codeBuildImageId":  "sha256:afb6e4d7896193366d338c5c2f659b750809758b5b00509955ef3b9f795259c1",
+                        "operatingSystem":  "Windows"
+                    },
+    "firstDelivery":  {
+                          "executionId":  "8a9496c7-f589-4f22-9c7b-a8c983ae4f04",
+                          "codeBuildId":  "cloudtasks-build:f189be5b",
+                          "pipelineStatus":  "Succeeded",
+                          "sourceVersionId":  "AaD5g8pmXEX5fHxLItUrVcT5R7FgnVbA",
+                          "sourceSha256":  "b16f78daaf44e8ed694df9531e43f59788ebf17c50277ceb092c9a923a6b002b",
+                          "buildArtifactBucket":  "cloudtasks-pipeline-artifacts",
+                          "buildArtifactKey":  "cloudtasks-pipeline/BuildOutput/8d00b5de",
+                          "buildArtifactSha256":  "d8d4b5be6630b8adf7c0744b9008a569c9a976378eb22f335d233f486b78970b",
+                          "image":  "000000000000.dkr.ecr.us-east-1.localhost.localstack.cloud:4566/cloudtasks:pipeline-6628a386-8091-408b-a9d6-3a06164a0a27",
+                          "imageDigest":  "sha256:229cf3109bbebecd36ab9ce3ebc452d10e2b85e849dd55b0b10edc0b7198a0b1",
+                          "taskDefinition":  "arn:aws:ecs:us-east-1:000000000000:task-definition/cloudtasks:3",
+                          "validatedBy":  "Own Windows/LocalStack native create-cicd + test-cicd execution",
+                          "recordedAt":  "2026-10-03T10:13:37.6558976Z"
+                      },
+    "secondDelivery":  {
+                           "executionId":  "a63eecaa-49f5-48bf-9556-b41a22106a95",
+                           "codeBuildId":  "cloudtasks-build:436bddc5",
+                           "pipelineStatus":  "Succeeded",
+                           "sourceVersionId":  "AaD5g8pnEdINCYrh7Aa9xJvEBwxlfrhf",
+                           "sourceSha256":  "aedbf8c1851dc0d354dcebd04ff0448f92c78438bafa4615b221f9993f8a08c9",
+                           "buildArtifactBucket":  "cloudtasks-pipeline-artifacts",
+                           "buildArtifactKey":  "cloudtasks-pipeline/BuildOutput/8207f167",
+                           "buildArtifactSha256":  "0661ff83e1bce383b38826e363c0835a27402eceb52e60cba8b7210dd32a5c11",
+                           "image":  "000000000000.dkr.ecr.us-east-1.localhost.localstack.cloud:4566/cloudtasks:pipeline-6c23784d-a2d3-4501-aaf9-a62bb61d531c",
+                           "imageDigest":  "sha256:ea441ac87e4e2ae1c476f469c78450fed061619d098f0ffba94aff8667834e24",
+                           "taskDefinition":  "arn:aws:ecs:us-east-1:000000000000:task-definition/cloudtasks:4",
+                           "validatedBy":  "Own Windows/LocalStack native create-cicd + test-cicd execution",
+                           "recordedAt":  "2026-10-03T10:22:11.7419730Z"
+                       },
+    "finalCleanDelivery":  {
+                               "executionId":  "7a72fc01-9484-4ca6-9a2d-f8a3c550b6f1",
+                               "codeBuildId":  "cloudtasks-build:6208b6e3",
+                               "pipelineStatus":  "Succeeded",
+                               "sourceVersionId":  "AaD5g8ppio0fAeaeK9D2WkmACfP8N8Sw",
+                               "sourceSha256":  "aedbf8c1851dc0d354dcebd04ff0448f92c78438bafa4615b221f9993f8a08c9",
+                               "buildArtifactBucket":  "cloudtasks-pipeline-artifacts",
+                               "buildArtifactKey":  "cloudtasks-pipeline/BuildOutput/c85e8b62",
+                               "buildArtifactSha256":  "3112ff6691cf20f8ecf5e61dc2e8591e3ec07b57ed36017bfa356b766302954d",
+                               "image":  "000000000000.dkr.ecr.us-east-1.localhost.localstack.cloud:4566/cloudtasks:pipeline-e4effff0-544f-4070-bc01-0c4239db7fe8",
+                               "imageDigest":  "sha256:54c00b84108349344904c734728a8ad9f8b7deacb507c89aae49aca51f3e5acb",
+                               "taskDefinition":  "arn:aws:ecs:us-east-1:000000000000:task-definition/cloudtasks:5",
+                               "validatedBy":  "Own Windows/LocalStack native create-cicd + test-cicd execution",
+                               "recordedAt":  "2026-10-03T10:32:24.0661463Z"
+                           },
+    "visibleChange":  {
+                          "httpsFrontendBundleVerified":  true,
+                          "textPrefix":  "Organize suas tarefas, prioridades e prazos"
+                      },
+    "negativeGate":  {
+                         "deployActionsStarted":  0,
+                         "pipelineStatus":  "Failed",
+                         "codeBuildId":  "cloudtasks-build:a360ec3f",
+                         "executionId":  "eb3d9c58-e46f-40b6-bbd9-b28aaf971ea9",
+                         "codeBuildStatus":  "FAILED",
+                         "phase":  "PRE_BUILD",
+                         "temporaryTestRemoved":  true,
+                         "taskDefinitionUnchanged":  true,
+                         "sourceVersionId":  "AaD5g8po5ChqxLd1kID6PJmkrW1ALZJ5",
+                         "sourceSha256":  "5730265d7c27108e1870d123048c4ae5338af3f4d64e39e8adb0b7dd510671c1",
+                         "deliberateTestMarkerVerified":  true
+                     },
+    "checks":  {
+                   "nativeDockerBuildAndEcrPush":  true,
+                   "webTests":  4,
+                   "ecsReplicasHealthy":  2,
+                   "albTargetsHealthy":  2,
+                   "httpsCrudAndRds":  true,
+                   "nativePowerShellScripts":  39,
+                   "fallbackDeployUsed":  false,
+                   "simulatedRegressionTests":  37,
+                   "apiTests":  7
+               },
+    "limits":  [
+                   "AWS real deployment was not executed.",
+                   "A new GitHub Actions run and Git history were not supplied.",
+                   "Cold reconstruction in a new LocalStack session was not repeated; the healthy session was preserved.",
+                   "Direct Docker CDN TLS connectivity was not claimed repaired; the verified official CodeBuild image is cached.",
+                   "An INSTALL ECONNRESET execution was rejected and was not counted as the deliberate quality-gate proof.",
+                   "LocalStack action history/filter behavior is limited; scripts require the exact execution ID before accepting actions."
+               ]
+}

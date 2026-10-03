@@ -20,17 +20,8 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
 export const taskApi = {
   list: () => request<Task[]>('/tasks'),
   create: (payload: { title: string; dueDate: string | null; important: boolean }) =>
-    request<Task>('/tasks', {
-      method: 'POST',
-      body: JSON.stringify(payload),
-    }),
-  update: (
-    id: string,
-    payload: Partial<Pick<Task, 'title' | 'dueDate' | 'important' | 'completed'>>,
-  ) =>
-    request<Task>(`/tasks/${id}`, {
-      method: 'PUT',
-      body: JSON.stringify(payload),
-    }),
+    request<Task>('/tasks', { method: 'POST', body: JSON.stringify(payload) }),
+  update: (id: string, payload: Partial<Pick<Task, 'title' | 'dueDate' | 'important' | 'completed'>>) =>
+    request<Task>(`/tasks/${id}`, { method: 'PUT', body: JSON.stringify(payload) }),
   remove: (id: string) => request<void>(`/tasks/${id}`, { method: 'DELETE' }),
 };

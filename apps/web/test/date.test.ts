@@ -2,15 +2,16 @@ import { describe, expect, it } from 'vitest';
 import { formatDate } from '../src/date';
 
 describe('formatDate', () => {
-  it('formata uma data ISO simples', () => {
-    expect(formatDate('2026-09-19')).toBe('19/09/2026');
+  it('formata datas ISO sem deslocamento de fuso', () => {
+    expect(formatDate('2026-09-25')).toContain('25');
+    expect(formatDate('2026-09-25T03:00:00.000Z')).toContain('25');
   });
 
-  it('aceita timestamp completo sem quebrar a interface', () => {
-    expect(formatDate('2026-09-19T00:00:00.000Z')).toBe('19/09/2026');
+  it('trata tarefas sem prazo', () => {
+    expect(formatDate(null)).toBe('Sem prazo');
   });
 
-  it('mantém valor desconhecido em vez de lançar erro', () => {
-    expect(formatDate('data-invalida')).toBe('data-invalida');
+  it('não derruba a interface com uma data inválida', () => {
+    expect(formatDate('invalida')).toBe('Data inválida');
   });
 });

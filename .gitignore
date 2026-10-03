@@ -4,8 +4,16 @@ dist/
 .env.*
 !.env.example
 coverage/
-*.log
 .DS_Store
-.vscode/
-.idea/
+*.log
+*.tsbuildinfo
 imagedefinitions.json
+.localstack/
+localstack-volume/
+
+# LocalStack personal auth token (local only)
+.env.localstack
+
+.localstack-volume/
+.localstack-runtime/
+pipeline-build.json

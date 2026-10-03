@@ -1,14 +1,16 @@
 import { FormEvent, useEffect, useState } from 'react';
 import { taskApi } from './api';
-import { formatDate } from './date';
 import type { Task } from './types';
+import './styles.css';
 
+import { formatDate } from './date';
 export default function App() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [title, setTitle] = useState('');
   const [dueDate, setDueDate] = useState('');
   const [important, setImportant] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
 
   async function loadTasks() {
@@ -26,121 +28,116 @@ export default function App() {
     void loadTasks();
   }, []);
 
-  async function handleSubmit(event: FormEvent) {
+  async function submit(event: FormEvent) {
     event.preventDefault();
     if (!title.trim()) return;
-
+    setSaving(true);
+    setError('');
     try {
-      setError('');
-      await taskApi.create({
-        title: title.trim(),
-        dueDate: dueDate || null,
-        important,
-      });
+      const created = await taskApi.create({ title: title.trim(), dueDate: dueDate || null, important });
+      setTasks((current) => [created, ...current]);
       setTitle('');
       setDueDate('');
       setImportant(false);
-      await loadTasks();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Não foi possível criar a tarefa.');
+    } finally {
+      setSaving(false);
     }
   }
 
   async function toggle(task: Task) {
     try {
       setError('');
-      await taskApi.update(task.id, { completed: !task.completed });
-      await loadTasks();
+      const updated = await taskApi.update(task.id, { completed: !task.completed });
+      setTasks((current) => current.map((item) => (item.id === task.id ? updated : item)));
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Não foi possível atualizar a tarefa.');
     }
   }
 
-  async function remove(task: Task) {
+  async function remove(id: string) {
     try {
       setError('');
-      await taskApi.remove(task.id);
-      await loadTasks();
+      await taskApi.remove(id);
+      setTasks((current) => current.filter((item) => item.id !== id));
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Não foi possível excluir a tarefa.');
     }
   }
 
-  return (
-    <main className="shell">
-      <header className="hero">
-        <div>
-          <p className="eyebrow">AWS DEVOPS PORTFOLIO</p>
-          <h1>CloudTasks</h1>
-          <p className="subtitle">
-            CRUD full stack containerizado, preparado para evoluir até GitHub → CodePipeline → CodeBuild →
-            ECR → ECS/EC2 → ALB → CloudFront.
-          </p>
-        </div>
-        <span className="badge">Etapa local</span>
-      </header>
+  async function rename(task: Task) {
+    const nextTitle = window.prompt('Novo nome da tarefa:', task.title)?.trim();
+    if (!nextTitle || nextTitle === task.title) return;
+    try {
+      setError('');
+      const updated = await taskApi.update(task.id, { title: nextTitle });
+      setTasks((current) => current.map((item) => (item.id === task.id ? updated : item)));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Não foi possível editar a tarefa.');
+    }
+  }
 
-      <section className="panel">
-        <form className="form-grid" onSubmit={handleSubmit}>
-          <input
-            aria-label="Título da tarefa"
-            value={title}
-            onChange={(event) => setTitle(event.target.value)}
-            placeholder="Ex.: Configurar Amazon ECS"
-            maxLength={160}
-          />
-          <input
-            aria-label="Data da tarefa"
-            type="date"
-            value={dueDate}
-            onChange={(event) => setDueDate(event.target.value)}
-          />
-          <label className="checkbox">
-            <input
-              type="checkbox"
-              checked={important}
-              onChange={(event) => setImportant(event.target.checked)}
-            />
+  return (
+    <main className="page-shell">
+      <section className="hero">
+        <div>
+          <span className="eyebrow">AWS PORTFOLIO PROJECT</span>
+          <h1>CloudTasks</h1>
+          <p>Organize suas tarefas, prioridades e prazos em um único lugar.</p>
+        </div>
+        <div className="status-pill"><span /> API + PostgreSQL</div>
+      </section>
+
+      <section className="card composer">
+        <form onSubmit={submit}>
+          <label>
+            Tarefa
+            <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="O que você precisa fazer?" maxLength={160} />
+          </label>
+          <label>
+            Data / prazo
+            <input type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)} />
+          </label>
+          <label className="check-row">
+            <input type="checkbox" checked={important} onChange={(e) => setImportant(e.target.checked)} />
             Importante
           </label>
-          <button className="primary" type="submit">
-            Adicionar tarefa
-          </button>
+          <button type="submit" disabled={saving || !title.trim()}>{saving ? 'Adicionando...' : 'Adicionar nova tarefa'}</button>
         </form>
       </section>
 
-      {error && <p className="error">{error}</p>}
+      {error && <div className="error-banner">{error}</div>}
 
-      <section className="list" aria-live="polite">
+      <section className="tasks-section">
+        <div className="section-heading">
+          <div><span className="eyebrow">MINHAS TAREFAS</span><h2>Fila de execução</h2></div>
+          <strong>{tasks.filter((task) => !task.completed).length} pendente(s)</strong>
+        </div>
+
         {loading ? (
-          <div className="empty">Carregando...</div>
+          <div className="empty card">Carregando tarefas...</div>
         ) : tasks.length === 0 ? (
-          <div className="empty">Nenhuma tarefa ainda.</div>
+          <div className="empty card">Nenhuma tarefa ainda. Crie a primeira acima.</div>
         ) : (
-          tasks.map((task) => (
-            <article className={`task ${task.completed ? 'completed' : ''}`} key={task.id}>
-              <div className="task-main">
-                <input
-                  aria-label={`Concluir ${task.title}`}
-                  type="checkbox"
-                  checked={task.completed}
-                  onChange={() => void toggle(task)}
-                />
-                <div>
-                  <h2>
-                    {task.important && <span className="star">★ </span>}
-                    {task.title}
-                  </h2>
-                  <p>{task.dueDate ? `Prazo: ${formatDate(task.dueDate)}` : 'Sem prazo definido'}</p>
+          <div className="task-list">
+            {tasks.map((task) => (
+              <article key={task.id} className={`task card ${task.completed ? 'done' : ''}`}>
+                <button className="complete-button" aria-label="Alternar conclusão" onClick={() => void toggle(task)}>{task.completed ? '✓' : ''}</button>
+                <div className="task-content">
+                  <div className="task-title-row">
+                    <h3>{task.title}</h3>
+                    {task.important && <span className="important">Importante</span>}
+                  </div>
+                  <p>{formatDate(task.dueDate)}</p>
                 </div>
-              </div>
-              <div className="actions">
-                <button className="danger" type="button" onClick={() => void remove(task)}>
-                  Excluir
-                </button>
-              </div>
-            </article>
-          ))
+                <div className="actions">
+                  <button onClick={() => void rename(task)}>Editar</button>
+                  <button className="danger" onClick={() => void remove(task.id)}>Excluir</button>
+                </div>
+              </article>
+            ))}
+          </div>
         )}
       </section>
     </main>

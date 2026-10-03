@@ -1,220 +1,89 @@
-# CloudTasks — AWS DevOps Portfolio Project
+# CloudTasks — portfólio AWS/DevOps
 
-> **Versão consolidada da Etapa 2:** 1.1.3
+Versão 1.7.4. React 19 + TypeScript + Vite, Node 24 + Express 5 e PostgreSQL.
 
+CloudTasks usa uma aplicação de tarefas para demonstrar entrega de software, containers, rede, dados e balanceamento. A arquitetura alvo é AWS; o laboratório executável usa LocalStack Pro/Student e Docker Desktop, sem provisionar recursos faturáveis em uma conta AWS.
 
-Aplicação full stack criada para demonstrar, de ponta a ponta, uma arquitetura de produção baseada em containers e serviços AWS.
+## Arquitetura e estado
 
-O objetivo do projeto não é apenas entregar um CRUD: é mostrar o caminho completo entre **código, qualidade, imagem Docker, CI/CD, execução no Amazon ECS, alta disponibilidade, banco gerenciado, CDN, observabilidade e operação assistida por IA**.
+Alvo: GitHub/CodeConnections → CodePipeline → CodeBuild → Docker/ECR → ECS sobre EC2 → Target Group/ALB → CloudFront → usuário. RDS, Secrets Manager, IAM, CloudWatch e ACM complementam o desenho.
 
-## Arquitetura alvo
+| Fronteira    | AWS alvo                             | Laboratório                                                              |
+| ------------ | ------------------------------------ | ------------------------------------------------------------------------ |
+| Source       | GitHub por CodeConnections           | Snapshot autorizado do working tree, em S3 versionado                    |
+| Pipeline     | Source, CodeBuild, deploy ECS padrão | CodePipeline V1 com os mesmos provedores executáveis                     |
+| Compute      | ECS/EC2, `bridge`, hostPort dinâmico | Executor Docker; não existem hosts EC2 reais                             |
+| Target Group | `instance`                           | `ip`, sincronizado com as tasks locais                                   |
+| HTTPS        | ALB termina TLS com ACM              | Listener/ACM no control plane; TLS efetivo no gateway LocalStack `:4566` |
+| Estado       | Recursos e dados persistentes AWS    | `PERSISTENCE=0`, bind mount novo por sessão                              |
 
-```text
-Developer
-   |
-   v
-GitHub
-   |
-   v
-AWS CodePipeline
-   |
-   +--> Source: GitHub via AWS CodeConnections
-   |
-   +--> Build: AWS CodeBuild
-             |
-             +--> npm install
-             +--> lint + tests + build
-             +--> docker build
-             +--> push image
-                     |
-                     v
-                  Amazon ECR
-                     |
-                     v
-               Amazon ECS / EC2
-                 /         \
-              Task 1      Task 2
-                 \         /
-                  Target Group
-                     |
-                     v
-          Application Load Balancer
-                     |
-                     v
-               Amazon CloudFront
-                     |
-                     v
-                   User
+Aplicação, GitHub Actions, Docker, ECR, rede, RDS/Secrets, duas réplicas compartilhando o banco, CloudWatch Logs, ALB/TG, failover, HTTP e HTTPS/ACM têm execução anterior relatada pelo responsável pelo laboratório. **A etapa 8, CI/CD, foi homologada neste laboratório em 03/10/2026.** Blue/Green, CloudFront e Amazon Q/MCP são etapas posteriores.
 
-Amazon ECS ---> Amazon RDS PostgreSQL
+A versão 1.7.4 usa UUID v4 gerado no CodeBuild e valida a imagem pelo artifact nativo imagedefinitions.json. Na máquina Windows, 39 scripts passaram no parser e 37 regressões passaram com serviços externos simulados. A homologação real comprovou duas entregas, mudança visível por HTTPS, CodeBuild FAILED por quality gate sem iniciar Deploy e uma entrega limpa final. Evidências: [docs/EVIDENCE-CICD.json](docs/EVIDENCE-CICD.json).
 
-Amazon Q Developer CLI ---> MCP servers ---> AWS / GitHub / tooling
-```
+## Executar a aplicação local
 
-## Stack
-
-- React 19 + TypeScript + Vite
-- Node.js 24 + Express 5 + TypeScript
-- PostgreSQL 16
-- Docker + Docker Compose
-- Vitest + Supertest
-- ESLint + Prettier
-- GitHub Actions para quality gate
-- AWS CodeBuild/CodePipeline preparado via `buildspec.yml`
-
-## Estado atual
-
-### Etapa 1 — aplicação local
-
-- [x] CRUD completo de tarefas
-- [x] API REST
-- [x] PostgreSQL
-- [x] Dockerfile multi-stage
-- [x] Docker Compose
-- [x] `/health` com verificação do banco
-- [x] persistência local
-
-### Etapa 2 — GitHub e qualidade
-
-- [x] lint com ESLint
-- [x] padronização com Prettier
-- [x] testes automatizados da API
-- [x] testes automatizados do frontend
-- [ ] `package-lock.json` (será gerado no primeiro `npm install` local e então versionado)
-- [x] workflow de CI para GitHub Actions
-- [x] `buildspec.yml` preparado para ECR + ECS
-- [x] encerramento gracioso para deploys no ECS
-- [x] security headers com Helmet
-- [ ] repositório GitHub publicado
-- [ ] proteção da branch `main`
-
-O restante está em [`docs/ROADMAP.md`](docs/ROADMAP.md).
-
-## Rodar com Docker Compose
-
-Pré-requisito: Docker Desktop.
-
-```bash
+```powershell
 docker compose up --build
 ```
 
-Acesse:
+Interface: `http://localhost:3000`. Health: `http://localhost:3000/health`; verifica também o banco.
 
-- Aplicação: `http://localhost:3000`
-- Health check: `http://localhost:3000/health`
-- API: `http://localhost:3000/api/tasks`
+Desenvolvimento e qualidade com Node 24:
 
-Para desligar sem apagar os dados:
-
-```bash
-docker compose down
-```
-
-> `docker compose down -v` remove também o volume do PostgreSQL e deve ser usado apenas quando a intenção for zerar o banco local.
-
-## Qualidade
-
-Instale as dependências:
-
-```bash
-npm install
-```
-
-Execute toda a validação:
-
-```bash
+```powershell
+npm ci
 npm run verify
 ```
 
-O comando executa, em sequência:
+`verify` executa lint, testes da aplicação e build dos dois componentes. A formatação possui comando próprio; consulte [DEPENDENCY-POLICY.md](docs/DEPENDENCY-POLICY.md).
 
-```text
-ESLint
-   -> testes da API
-   -> testes do frontend
-   -> build de produção
-```
+## Laboratório LocalStack
 
-Também é possível executar individualmente:
+Pré-requisitos: Windows PowerShell 5.1 ou PowerShell 7, Docker Desktop em containers Linux, acesso à internet para imagens/dependências e licença LocalStack Pro/Student ativa. O arquivo pessoal `.env.localstack` não acompanha o projeto. O script de inicialização solicita o token sem exibi-lo quando necessário.
 
-```bash
-npm run lint
-npm test
-npm run build
-npm run format
-```
-
-## API
-
-| Método | Endpoint | Finalidade |
-| --- | --- | --- |
-| GET | `/health` | readiness/health check, incluindo PostgreSQL |
-| GET | `/api/tasks` | listar tarefas |
-| POST | `/api/tasks` | criar tarefa |
-| PUT | `/api/tasks/:id` | atualizar tarefa |
-| DELETE | `/api/tasks/:id` | excluir tarefa |
-
-## CI local e GitHub
-
-O workflow `.github/workflows/ci.yml` valida cada push/PR para `main` com:
-
-1. `npm install`
-2. `npm run verify`
-3. `docker build`
-
-Isso evita que código que não compila ou quebre testes avance para a etapa AWS.
-
-## Preparação para AWS CodeBuild
-
-O arquivo `buildspec.yml` já está preparado para a futura pipeline. O projeto CodeBuild deverá receber estas variáveis de ambiente não sensíveis:
-
-```text
-IMAGE_REPO_NAME=cloudtasks
-CONTAINER_NAME=cloudtasks
-```
-
-`AWS_DEFAULT_REGION` é fornecida pelo ambiente AWS. O `buildspec.yml` descobre o Account ID em tempo de execução, autentica no ECR, gera uma tag baseada no commit, publica a imagem e produz `imagedefinitions.json` para a ação de deploy padrão do Amazon ECS.
-
-O projeto CodeBuild precisará de **privileged mode** para executar builds Docker.
-
-Detalhes: [`docs/CI-CD.md`](docs/CI-CD.md).
-
-## Segurança já aplicada
-
-- nenhuma credencial real versionada;
-- `.env` ignorado pelo Git;
-- payload JSON limitado a 100 KB;
-- validação de entrada com Zod;
-- IDs de tarefa validados como UUID;
-- cabeçalhos de segurança com Helmet;
-- imagem final executada com usuário não-root;
-- banco não empacotado junto da aplicação;
-- graceful shutdown para `SIGTERM`/`SIGINT`.
-
-## Documentação
-
-- [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — arquitetura alvo
-- [`docs/ROADMAP.md`](docs/ROADMAP.md) — etapas do projeto
-- [`docs/CI-CD.md`](docs/CI-CD.md) — fluxo GitHub/CodeBuild/ECR/ECS
-- [`docs/LOCAL-DEVELOPMENT.md`](docs/LOCAL-DEVELOPMENT.md) — ambiente local
-- [`docs/DECISIONS.md`](docs/DECISIONS.md) — decisões arquiteturais
-- [`docs/DEPENDENCY-POLICY.md`](docs/DEPENDENCY-POLICY.md) — política de versões do toolchain frontend
-- [`SECURITY.md`](SECURITY.md) — princípios de segurança
-
-## Próximo marco
-
-Publicar o código no GitHub e, em seguida, criar o **Amazon ECR**. Esse será o primeiro recurso AWS persistente do projeto.
-
-
-## Preparacao do repositorio no Windows
+Para uma primeira sessão, ou para retomar uma sessão indisponível:
 
 ```powershell
-Set-ExecutionPolicy -Scope Process Bypass
-.\scripts\prepare-repository.ps1
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+.\scripts\localstack\resume-environment.ps1
 ```
 
-O script usa Node.js 24 dentro do Docker; nao e necessario instalar Node.js no Windows.
+`resume-environment.ps1` prepara a infraestrutura, ECS 2/2 e ALB/HTTPS. Uma nova sessão é descartável: **reconstruir recursos não restaura as tarefas de negócio do banco**. Não execute `start-localstack.ps1` ou uma atualização do emulador durante a homologação de uma sessão saudável.
 
+## CI/CD da sessão já saudável
 
-### Qualidade de código
+Na raiz do projeto:
 
+```powershell
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+& {
+    $ErrorActionPreference = 'Stop'
+    .\scripts\localstack\create-cicd.ps1
+    .\scripts\localstack\test-cicd.ps1
+}
+```
+
+O primeiro script confere o cache da imagem Amazon Linux do CodeBuild e a baixa se necessário, antes de publicar o snapshot e iniciar CodePipeline. Na primeira vez, o download pode demorar e exige espaço em disco. Uma falha nesse download encerra o preflight sem nova execução. Depois, o script espera o build e o deploy dos serviços emulados. O segundo confere versão/hash do Source, CodeBuild vinculado, imagem/digest ECR, as duas tasks na revisão implantada, containers saudáveis e HTTPS/CRUD com banco.
+
+A homologação desta entrega cumpriu o critério da etapa 8: duas entregas distintas, mudança visível e quality gate falho bloqueando Deploy. Os comandos acima servem para entregas futuras ou nova conferência. O procedimento completo e os resultados esperados estão em [PIPELINE.md](docs/PIPELINE.md).
+
+Se houver falha, preserve a sessão e consulte:
+
+```powershell
+.\scripts\localstack\status-cicd.ps1
+.\scripts\localstack\diagnose-cicd.ps1
+```
+
+O diagnóstico diferencia o build vinculado à ação de um candidato recente sem vínculo. Mostra horários/status do runner e nomes públicos das imagens quando disponíveis, sem despejar o ambiente ou logs. Código de saída 0 do wrapper não comprova sucesso do build. Se o monitor voltar a falhar mesmo com as imagens disponíveis, a etapa continua bloqueada pelo executor; preserve a sessão para investigar a versão do LocalStack. [Diagnóstico detalhado](docs/AUDIT.md#13-diagnóstico-do-executor-codebuild-e-entrega-172).
+
+## Scripts e documentação
+
+- Preparação explícita: `resume-environment.ps1` e `create-*` em `scripts/localstack`.
+- Leitura: `status-*` e `diagnose-*`; verificação executável: `test-*`.
+- Manutenção excepcional: `repair-*`, `update-localstack.ps1` e `change-token.ps1`.
+- Regressões isoladas: `.\scripts\localstack\validate-scripts.ps1` e `.\scripts\tests\test-regressions.ps1`. Não requerem AWS/LocalStack em execução; Node 24 é necessário para as fixtures.
+- [Arquitetura](docs/ARCHITECTURE.md), [decisões](docs/DECISIONS.md), [roadmap oficial de 13 etapas](docs/ROADMAP.md), [CI/CD](docs/CI-CD.md), [LocalStack](docs/LOCALSTACK.md), [runtime](docs/RUNTIME-RECOVERY.md).
+- [Rede](docs/NETWORK.md), [banco](docs/DATABASE.md), [ECS](docs/ECS.md), [ALB](docs/LOAD-BALANCING.md), [HTTPS](docs/HTTPS.md), [segurança](SECURITY.md).
+
+O desenho AWS é o alvo arquitetural, não uma declaração de que EC2, CloudFront ou toda a infraestrutura produtiva já foram implantados na AWS real.

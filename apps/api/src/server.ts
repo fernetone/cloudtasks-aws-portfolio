@@ -14,24 +14,22 @@ let shuttingDown = false;
 async function shutdown(signal: string) {
   if (shuttingDown) return;
   shuttingDown = true;
-
   console.log(`${signal} recebido. Encerrando CloudTasks...`);
 
   const forceExit = setTimeout(() => {
-    console.error('Encerramento gracioso excedeu o limite de tempo.');
+    console.error('Encerramento excedeu 10s. Finalizando processo.');
     process.exit(1);
   }, 10_000);
   forceExit.unref();
 
-  server.close(async (error) => {
+  server.close(async () => {
     try {
       await pool.end();
-    } finally {
-      if (error) {
-        console.error(error);
-        process.exit(1);
-      }
+      clearTimeout(forceExit);
       process.exit(0);
+    } catch (error) {
+      console.error('Erro ao encerrar pool do PostgreSQL.', error);
+      process.exit(1);
     }
   });
 }

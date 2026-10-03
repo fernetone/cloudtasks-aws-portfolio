@@ -1,0 +1,54 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 24
+    commands:
+      - echo "[CodeBuild] Runtime"
+      - node --version
+      - npm --version
+      - aws --version
+      - echo "[CodeBuild] Instalando dependencias"
+      - npm ci --no-audit --no-fund
+
+  pre_build:
+    commands:
+      - echo "[CodeBuild] Configurando endpoint LocalStack"
+      - export AWS_DEFAULT_REGION="${AWS_DEFAULT_REGION:-us-east-1}"
+      - export AWS_REGION="$AWS_DEFAULT_REGION"
+      - export AWS_ACCESS_KEY_ID="${AWS_ACCESS_KEY_ID:-test}"
+      - export AWS_SECRET_ACCESS_KEY="${AWS_SECRET_ACCESS_KEY:-test}"
+      - export AWS_ENDPOINT_URL="${AWS_ENDPOINT_URL:-http://cloudtasks-localstack:4566}"
+      - echo "[CodeBuild] AWS endpoint=$AWS_ENDPOINT_URL"
+      - aws sts get-caller-identity
+      - echo "[CodeBuild] Quality gate"
+      - npm run verify
+      - ECR_URI=$(aws ecr describe-repositories --repository-names "$IMAGE_REPO_NAME" --query 'repositories[0].repositoryUri' --output text)
+      - test -n "$ECR_URI" && test "$ECR_URI" != "None"
+      - IMAGE_TAG="pipeline-$(node -e 'process.stdout.write(require("node:crypto").randomUUID())')"
+      - echo "[CodeBuild] Imagem imutavel $ECR_URI:$IMAGE_TAG"
+      - echo "[CodeBuild] Validando acesso ao Docker daemon"
+      - test -S /var/run/docker.sock
+      - ls -l /var/run/docker.sock
+      - export DOCKER_HOST="${DOCKER_HOST:-unix:///var/run/docker.sock}"
+      - docker version
+      - docker info --format '{{.ServerVersion}}'
+
+  build:
+    commands:
+      - echo "[CodeBuild] docker build"
+      - docker build -t "$IMAGE_REPO_NAME:$IMAGE_TAG" .
+      - docker tag "$IMAGE_REPO_NAME:$IMAGE_TAG" "$ECR_URI:$IMAGE_TAG"
+
+  post_build:
+    commands:
+      - test "${CODEBUILD_BUILD_SUCCEEDING:-0}" -eq 1
+      - echo "[CodeBuild] docker push -> ECR local"
+      - docker push "$ECR_URI:$IMAGE_TAG"
+      - printf '[{"name":"%s","imageUri":"%s"}]' "$CONTAINER_NAME" "$ECR_URI:$IMAGE_TAG" > imagedefinitions.json
+      - cat imagedefinitions.json
+
+artifacts:
+  files:
+    - imagedefinitions.json

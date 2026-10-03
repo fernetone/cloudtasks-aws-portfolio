@@ -1,38 +1,62 @@
-# Arquitetura alvo
+# Arquitetura AWS alvo e laboratório executável
 
-```text
-GitHub
-  |
-  v
-CodePipeline
-  |
-  v
-CodeBuild ---> ECR
-                |
-                v
-          ECS on EC2
-          /        \
-       Task A     Task B
-          \        /
-           Target Group
-                |
-               ALB
-                |
-           CloudFront
-                |
-              User
+CloudTasks representa uma arquitetura AWS/DevOps com LocalStack como ambiente de emulação. O laboratório não declara que há capacidade EC2 real ou toda a infraestrutura de produção implementada.
 
-ECS ---> RDS PostgreSQL
+## Entrega
+
+GitHub é a origem do portfólio. GitHub Actions valida o repositório. Na AWS alvo, CodeConnections alimenta a CodePipeline; localmente, o publisher fornece um snapshot S3 versionado. CodeBuild roda qualidade e Docker build/push, e a ação ECS padrão entrega o artifact.
+
+```mermaid
+flowchart TD
+  source["GitHub/CodeConnections — AWS alvo"] --> cp["CodePipeline V1"]
+  s3["Source S3 versionado — laboratório"] --> cp
+  cp --> cb["CodeBuild: qualidade e Docker"]
+  cb --> ecr["ECR: tag imutável e digest"]
+  cb --> artifact["imagedefinitions.json"]
+  artifact --> deploy["Ação ECS Deploy da pipeline"]
+  ecr --> deploy
+  deploy --> ecs["Service ECS: duas tasks"]
 ```
 
-## Objetivos
+Os dois Source nodes são alternativas de ambiente, não duas ações simultâneas. `create-cicd.ps1` configura e acompanha os serviços; não substitui sua execução com um deploy externo.
 
-- Duas zonas de disponibilidade.
-- ECS usando capacidade EC2.
-- Múltiplas tasks da aplicação.
-- Dynamic port mapping.
-- Target Group com health check em `/health`.
-- ALB como entrada da aplicação.
-- RDS PostgreSQL separado do ciclo de vida das tasks.
-- CloudFront como camada de distribuição.
-- CloudWatch para logs, métricas e alarmes.
+## Tráfego e dados
+
+```mermaid
+flowchart TD
+  user["Usuário"] --> cf["CloudFront — etapa 10"]
+  cf --> alb["ALB + HTTPS/ACM"]
+  alb --> tg["Target Group /health"]
+  tg --> t1["Task 1: React + Express"]
+  tg --> t2["Task 2: React + Express"]
+  t1 --> db["PostgreSQL / RDS"]
+  t2 --> db
+  sm["Secrets Manager"] --> t1
+  sm --> t2
+  t1 --> logs["CloudWatch Logs"]
+  t2 --> logs
+```
+
+CloudFront ainda não está implementado; o acesso atual entra pelo ALB/gateway LocalStack. O React compilado é servido pelo Express no mesmo container. `GET /health` verifica o PostgreSQL; `/api/tasks` implementa CRUD com validação e SQL parametrizado.
+
+## Rede e compute
+
+Alvo: duas AZs e subnets públicas, aplicação privada e dados privados; ECS sobre capacidade EC2 real, task definition `bridge`, containerPort 3000, hostPort dinâmico. O ECS registra instância/hostPort no TG `instance`.
+
+Laboratório: VPC/subnets/rotas no control plane emulado, tasks pelo executor Docker e conectividade na `cloudtasks-localstack-network`. Não existem container instances EC2 reais. `launchType=EC2` na API e `registeredContainerInstancesCount=0` não contradizem esse executor. O TG local é `ip`, com IP Docker/porta 3000 e sincronização após deploy.
+
+Docker network não equivale ao isolamento físico de VPC/subnets/security groups. A capacidade EC2/ASG/bootstrap e o provisionamento produtivo AWS completo ainda precisariam ser concretizados se o portfólio migrar para AWS real. Isso não exige refazer a base local já comprovada para concluir CI/CD.
+
+## TLS e segredos
+
+No control plane, listener ALB HTTPS `:443` recebe ACM. No socket local compartilhado `:4566`, TLS é terminado pelo gateway LocalStack. Na AWS real, o ALB termina TLS com o certificado ACM associado.
+
+A task definition referencia `cloudtasks/database` no Secrets Manager. `DATABASE_SECRET_JSON` é injetado em runtime; configuração e senha não entram no Source, imagem ou metadados de deploy. Consulte [SECURITY.md](../SECURITY.md) para limites da verificação e proteção dos logs.
+
+## Estado, observabilidade e etapas
+
+`PERSISTENCE=0` e bind por sessão permitem reconstruir recursos, sem restaurar snapshots antigos. Isso descarta dados locais e não representa durabilidade RDS da AWS real. O bind permanece necessário ao executor CodeBuild.
+
+CloudWatch Logs básico já foi exercitado; métricas, alarmes e dashboard pertencem à etapa 11. Etapa atual: 8, CI/CD. Blue/Green (9), CloudFront (10), Amazon Q/MCP (12) e polimento (13) aguardam a aprovação nativa do fluxo.
+
+[PIPELINE.md](PIPELINE.md), [DECISIONS.md](DECISIONS.md), [ROADMAP.md](ROADMAP.md) e [AUDIT.md](AUDIT.md) registram decisões e evidências.

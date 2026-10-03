@@ -1,35 +1,62 @@
-import eslint from '@eslint/js';
-import prettier from 'eslint-config-prettier';
-import globals from 'globals';
-import reactHooks from 'eslint-plugin-react-hooks';
-import reactRefresh from 'eslint-plugin-react-refresh';
-import tseslint from 'typescript-eslint';
+import js from "@eslint/js";
+import prettier from "eslint-config-prettier";
+import reactHooks from "eslint-plugin-react-hooks";
+import reactRefresh from "eslint-plugin-react-refresh";
+import globals from "globals";
+import tseslint from "typescript-eslint";
 
 export default tseslint.config(
-  { ignores: ['**/dist/**', '**/node_modules/**', '**/coverage/**'] },
-  eslint.configs.recommended,
+  {
+    ignores: [
+      "**/dist/**",
+      "**/coverage/**",
+      "**/node_modules/**",
+      "**/*.tsbuildinfo",
+      "imagedefinitions.json",
+    ],
+  },
+  js.configs.recommended,
   ...tseslint.configs.recommended,
   {
-    files: ['**/*.{ts,tsx}'],
+    files: ["apps/**/*.{ts,tsx}"],
+    rules: {
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        {
+          argsIgnorePattern: "^_",
+          varsIgnorePattern: "^_",
+          caughtErrorsIgnorePattern: "^_",
+        },
+      ],
+    },
+  },
+  {
+    files: ["apps/api/**/*.ts"],
     languageOptions: {
-      ecmaVersion: 2022,
-      globals: { ...globals.browser, ...globals.node },
+      globals: globals.node,
+    },
+  },
+  {
+    files: ["scripts/tests/**/*.mjs"],
+    languageOptions: {
+      globals: globals.node,
+    },
+  },
+  {
+    files: ["apps/web/**/*.{ts,tsx}"],
+    languageOptions: {
+      globals: globals.browser,
     },
     plugins: {
-      'react-hooks': reactHooks,
-      'react-refresh': reactRefresh,
+      "react-hooks": reactHooks,
+      "react-refresh": reactRefresh,
     },
     rules: {
       ...reactHooks.configs.recommended.rules,
-      '@typescript-eslint/no-unused-vars': [
-        'error',
-        {
-          argsIgnorePattern: '^_',
-          varsIgnorePattern: '^_',
-          caughtErrorsIgnorePattern: '^_',
-        },
+      "react-refresh/only-export-components": [
+        "warn",
+        { allowConstantExport: true },
       ],
-      'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
     },
   },
   prettier,
