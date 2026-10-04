@@ -93,5 +93,74 @@
                    "Direct Docker CDN TLS connectivity was not claimed repaired; the verified official CodeBuild image is cached.",
                    "An INSTALL ECONNRESET execution was rejected and was not counted as the deliberate quality-gate proof.",
                    "LocalStack action history/filter behavior is limited; scripts require the exact execution ID before accepting actions."
-               ]
+               ],
+  "freshRuntimeFollowUp20261004": {
+    "documentationVersion": "1.7.8",
+    "testedSourceVersion": "1.7.7",
+    "environment": {
+      "localStack": "2026.9.0",
+      "localStackImageId": "sha256:801a3dff7f6a23857e7310b7602e67d52a29dfdcb03e09f7c608d5c57d24b792",
+      "powerShell": "5.1.26100.9549",
+      "os": "Windows",
+      "executor": "Docker",
+      "realEc2Hosts": false,
+      "persistence": 0,
+      "ecsServiceReconcileIntervalSeconds": 3
+    },
+    "coldReconstructionRepeated": true,
+    "dockerDesktopEmptiedBeforeBootstrap": true,
+    "firstExecutionRejected": {
+      "executionId": "07633a97-f461-482d-9af3-8ddc33ee656f",
+      "nativeActions": "Source, Build, Deploy Succeeded",
+      "acceptance": "FAILED_ECS_STABILITY_3_FOR_DESIRED_2",
+      "manualExcessTaskCleanupPerformed": true,
+      "countedAsHomologated": false,
+      "sourceChanged": false
+    },
+    "subsequentNativeDelivery": {
+      "pipelineName": "cloudtasks-pipeline",
+      "executionId": "3de5ed11-ecfa-4256-a136-696df993804c",
+      "executionMode": "NativeCodePipeline",
+      "pipelineStatus": "Succeeded",
+      "buildArtifactSha256": "bb007315b73b8fc0d98b6d0660560bc297c691bd418caaeb106f573c0672cbd7",
+      "buildArtifactBucket": "cloudtasks-pipeline-artifacts",
+      "buildArtifactKey": "cloudtasks-pipeline/BuildOutput/96f82c26",
+      "codeBuildId": "cloudtasks-build:c42536a1",
+      "codeBuildImageId": "sha256:3d9f03274c986ae91fa40046c09612304eafcc1c879927d15aabc41cbe5b1c1e",
+      "localStackContainerId": "1fc6feac010d4e263fe3a4be6bd584a5c9dbf75bde8e55b42e1957af15a2ad37",
+      "localStackImageId": "sha256:801a3dff7f6a23857e7310b7602e67d52a29dfdcb03e09f7c608d5c57d24b792",
+      "sourceVersionId": "AaEFngBkpLJDiHjdOK1XZCg045X1dy0f",
+      "sourceSha256": "deb6326ccc576286766966ade749dd6571cd625645693635d807a092d8d5c73f",
+      "executedAt": "2026-10-04T07:12:04.6830350Z",
+      "clusterName": "cloudtasks-cluster-r20261004030336711",
+      "serviceName": "cloudtasks-service",
+      "previousTaskDefinition": "arn:aws:ecs:us-east-1:000000000000:task-definition/cloudtasks:2",
+      "previousImage": "000000000000.dkr.ecr.us-east-1.localhost.localstack.cloud:4566/cloudtasks:pipeline-20a93a79-b6ba-4f36-8877-c51581ff98b7",
+      "deployedTaskDefinition": "arn:aws:ecs:us-east-1:000000000000:task-definition/cloudtasks:3",
+      "deployedImage": "000000000000.dkr.ecr.us-east-1.localhost.localstack.cloud:4566/cloudtasks:pipeline-30d4e112-9c6a-4fba-9873-0f9c8f1228e4",
+      "deployedImageDigest": "sha256:119625e7ff96ee3b23388ca1f453e18902410c4db9478f46dce23402b31ecf4c",
+      "sourceBucket": "cloudtasks-pipeline-source",
+      "sourceObjectKey": "cloudtasks-source.zip"
+    },
+    "checks": {
+      "createCicdExitCode": 0,
+      "testCicdExitCode": 0,
+      "sourceExactVersionAndSha256": true,
+      "linkedCodeBuildSucceeded": true,
+      "immutableEcrImageArtifactDigestAndPhysicalTasksMatch": true,
+      "ecsDesired": 2,
+      "ecsRunning": 2,
+      "ecsPending": 0,
+      "albHealthyTargets": 2,
+      "httpsHealthDatabaseAndCrud": true,
+      "fallbackBuildOrDeployUsed": false,
+      "mainPhysicalIdentitiesUnchangedAfterBlueGreenProbes": true
+    },
+    "notRepeatedInThisNewRuntime": [
+      "Deliberate quality-gate failure preventing Deploy",
+      "Two distinct visible application versions"
+    ],
+    "scope": "Additional positive native-delivery proof on 2026.9.0; does not reclassify the failed first run or replace the separately scoped original full stage-8 homologation.",
+    "dockerFinalPolicy": "Only LocalStack and current two healthy tasks run; keep official CodeBuild SDK and agent dependencies, remove obsolete containers/images/volumes/networks/cache. No host VHD compaction was performed."
+  }
 }

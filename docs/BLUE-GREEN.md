@@ -1,6 +1,6 @@
 # Etapa 9 — Blue/Green: desenho e viabilidade
 
-**Estado em 03/10/2026, versão 1.7.7:** etapa 8 homologada. A prova manual da versão 1.7.6 demonstrou tráfego em um ALB isolado. O ensaio nativo desta versão aceitou a configuração BLUE_GREEN, mas executou a candidata no TG blue, sem popular o TG green, trocar os pesos ou manter ambas as revisões durante o bake. O aceite nativo foi reprovado e a integração CI/CD Blue/Green permanece pendente. O service existente, revisão 5, duas réplicas, banco, ALB e HTTPS foram preservados.
+**Estado em 04/10/2026, versão 1.7.8:** etapa 8 homologada e entrega positiva novamente validada após reconstrução em LocalStack 2026.9.0. Blue/Green nativo permanece reprovado. A prova anterior de tráfego manual e o ensaio nativo de 2026.8.3 são históricos abaixo; dois controles negativos em 2026.9.0 também perderam blue saudável diante da candidata inválida, em bridge/IP e awsvpc/IP. O service principal permanece em bridge, revisão 3 desta nova sessão, duas réplicas, banco, ALB e HTTPS.
 
 ## O que precisa ser demonstrado
 
@@ -124,13 +124,50 @@ Evidência sanitizada com configuração, identidades, onze amostras resumidas e
 
 Este ensaio não iniciou outra CodePipeline/CodeBuild, não testou hooks/alarme/rollback automático, não promoveu produção e não fez escrita CRUD entre versões. O operador foi descartável e ficou fora do repositório, Source S3 e ZIP. Sua finalidade foi testar o fornecedor, não substituir o controlador.
 
+## Confirmação em LocalStack 2026.9.0 — candidata inválida
+
+Após a limpeza autorizada de todo o Docker Desktop, o laboratório foi reconstruído com `PERSISTENCE=0`, bind mount novo e imagens oficiais do CodeBuild verificadas. A CodePipeline nativa da etapa 8 entregou uma imagem imutável e `test-cicd.ps1` passou. A sessão saudável foi mantida para investigar Blue/Green.
+
+O primeiro controle negativo criou um service **temporário** bridge/TG ip. A candidata reutilizou a mesma imagem de blue e mudou somente `DATABASE_HOST_OVERRIDE` para um domínio `.invalid`, provocando falha de conexão ao banco e saída do processo. Isso testa retenção de blue perante uma candidata inválida; não certifica duas versões, promoção, bake ou rollback.
+
+A hipótese seguinte foi específica: a falha dependeria da adaptação bridge/TG ip do executor? O controle comparativo usou um service temporário `awsvpc`, TGs `ip`, porta 3000, subnets privadas da aplicação, security group da VPC e `assignPublicIp=DISABLED`. AWS documenta essa combinação de rede/target e a configuração `networkConfiguration`. Não houve alteração da rede do service principal. O executor continuou Docker, sem EC2 ou ENIs físicas AWS.
+
+O runtime dos dois controles manteve `ECS_SERVICE_RECONCILE_INTERVAL=3`, conforme a sessão do projeto; não foi comparado outro intervalo do reconciliador.
+
+Em ambos, a configuração nativa usou controlador ECS, `strategy=BLUE_GREEN`, bake de um minuto, TG alternativo, ARNs de **regras** distintas de produção/teste e a role de infraestrutura com as oito ações requeridas. A regra de produção tinha apenas blue com peso não zero; a regra de teste por cabeçalho encaminhava a green. Esses requisitos foram comparados com os exemplos e troubleshooting oficiais AWS. Após CreateService, não houve registro manual de targets nem alteração manual de regras/listeners.
+
+| Observação em execução | Bridge/IP | Awsvpc/IP |
+| --- | --- | --- |
+| Blue inicial com Docker healthy, aplicação/banco e bundle corretos | Passou | Passou; TG automático 172.18.0.5:3000 healthy |
+| Candidata inválida observada | Sim | Sim |
+| Blue mantida durante a falha da candidata | **Não: STOPPED, Docker exit 0** | **Não: STOPPED, Docker exit 0** |
+| TG green populado nas amostras | Não | Não |
+| Produção do ensaio com health de aplicação/banco válido após update | Não | Não; também houve HTTP 500 |
+| Regras de produção | Blue=1, green=0, sem promoção observada | Blue=1, green=0, sem promoção observada |
+| Amostras, desde o início do ensaio | 4; 66,2–122,4 segundos | 6; 53,0–141,1 segundos |
+| Resultado do aceite | NATIVE_CANDIDATE_ISOLATION_FAILED | NATIVE_CANDIDATE_ISOLATION_FAILED |
+| Exit code do operador nativo | 2 | 2 |
+| Produção principal antes/depois | Mesmas tasks, containers, revisão, imagem, targets, listeners e HTTPS | Mesmas identidades e checks |
+
+Os tempos são amostras após consultas sequenciais, não polling contínuo. A ausência de green saudável é intencional. O defeito observado é encerrar a blue saudável antes de uma candidata válida, perdendo o atendimento no ALB **temporário**. O banco e ALB principais não foram quebrados. O processo Windows que envolveu o ensaio bridge terminou com exit 1; o awsvpc terminou com exit 2. Ambos são falhas, não bypasses aprovados.
+
+**Comportamento documentado:** a action CodeDeployToECS do LocalStack só atualiza o service e aguarda estabilidade; não reproduz Blue/Green corretamente. A cobertura ECS publicada continua sem as APIs de service deployments/revisions/continue/stop. A documentação AWS exige isolamento, registro no TG alternativo e retenção de ambas as revisões no bake.
+
+**Comportamento observado:** a configuração BLUE_GREEN foi aceita, blue inicialmente funcionou por registro automático, mas UpdateService a encerrou e não produziu o isolamento requerido diante da candidata inválida nas duas configurações testadas.
+
+**Inferência:** o problema desse caminho do emulador não é resolvido mudando bridge para awsvpc. A evidência é compatível com ausência/defeito do mecanismo nativo de retenção e roteamento, não com um erro da aplicação principal ou de seus filtros PowerShell. Não foi identificada a rotina interna proprietária responsável; não se afirma que toda versão, executor ou combinação AWS tenha esse comportamento.
+
+Os services temporários ficaram INACTIVE/0 tasks; ALBs/TGs/roles foram removidos e definições desregistradas. Também foram removidos os containers, logs e ENIs emuladas disponíveis deixados pelo controle awsvpc. Registros históricos INACTIVE podem continuar aparecendo em ListServices; isso não representa containers ou serviços ativos. O operador descartável ficou fora do repositório, Source S3, contexto Docker e ZIP.
+
+[Evidência comparativa sanitizada](EVIDENCE-BLUE-GREEN-NATIVE.json), com hashes dos relatórios, configuração, identidades preservadas e amostras. Essa confirmação não executou outra pipeline Blue/Green, duas versões distintas, hooks, promoção válida ou rollback automático. Não houve deploy AWS real.
+
 ## Decisão para este laboratório
 
 Preservar a pipeline ECS padrão da etapa 8. Não trocar para CodeDeployToECS só para obter um status Succeeded, não adicionar um controlador PowerShell próprio e não antecipar CloudFront.
 
 A alternativa manual foi verificada como prova temporária, usando uma task independente para reduzir escopo e risco. A decisão desta entrega é preservar esse resultado como evidência de tráfego e manter a pipeline padrão da etapa 8. Não incorporar um controlador próprio para simular uma certificação que o fornecedor não oferece. Uma implementação permanente exige resolver o suporte nativo e seus critérios abaixo; a prova temporária não o substitui.
 
-A validação nativa permanece pendente até haver suporte verificável do emulador ou um ambiente AWS autorizado. Não repetir a mesma configuração reprovada na sessão saudável nem trocar a action para obter um status Succeeded. Quando houver uma versão com suporte comprovado, validar primeiro em recursos isolados e depois a cadeia completa da pipeline. Nenhuma conta paga foi criada nem houve deploy AWS real.
+A validação nativa permanece pendente até haver suporte verificável do emulador ou um ambiente AWS autorizado. Os controles em 2026.9.0 acrescentaram uma versão nova e uma hipótese de rede distinta. Com ambas reprovadas, não repetir a mesma configuração na sessão saudável nem trocar a action para obter um status Succeeded. Quando houver uma versão com suporte comprovado, validar primeiro em recursos isolados e depois a cadeia completa da pipeline. Nenhuma conta paga foi criada nem houve deploy AWS real.
 
 ## Critério objetivo de conclusão da etapa 9 nativa
 
@@ -158,3 +195,8 @@ Registrar separadamente falha de candidata, promoção, janela de observação e
 - [LocalStack ELB — porta compartilhada e cobertura](https://docs.localstack.cloud/aws/services/elb/).
 - [AWS PortMapping — bridge, hostPort dinâmico e bindings](https://docs.aws.amazon.com/AmazonECS/latest/APIReference/API_PortMapping.html).
 - [AWS ALB — ausência de targets e HTTP 503](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-troubleshooting.html#http-503-issues).
+
+- [AWS — recursos ALB, regras por cabeçalho e configuração Blue/Green](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/alb-resources-for-blue-green.html).
+- [AWS — diagnóstico de Blue/Green e requisitos de regras/roles](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/troubleshooting-blue-green.html).
+- [AWS — awsvpc e networkConfiguration](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-networking-awsvpc.html).
+- [LocalStack — release 2026.09.0](https://blog.localstack.cloud/localstack-for-aws-release-2026-09-0/).
