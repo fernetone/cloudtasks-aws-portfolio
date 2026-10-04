@@ -58,7 +58,7 @@ A ordem abaixo segue o escopo do portfólio. Marcações anteriores de infraestr
 - [x] Preservar testes bridge/IP, awsvpc/IP e EXTERNAL no histórico; não modificar a rede do serviço principal por esse bloqueio.
 - [x] Implementar controlador/adaptador dentro de um segundo CodeBuild da CodePipeline V1; Source S3/artifacts/imagem/recibo correlacionados, sem fallback externo.
 - [x] Testar estado/guards, health semântica, identidade, troca parcial, rollback, cleanup, retenção do lock e fronteira de convergência.
-- [x] Fechar duas entregas positivas consecutivas com convergência 0→2, rejeição e rollback real após promoção; registrar [evidência atual](EVIDENCE-BLUE-GREEN-ADAPTER.json).
+- [x] No Source final bb052, aprovar duas entregas consecutivas, rejeição e rollback após promoção; uma normal final distinta passou após erro npm INSTALL registrado. Convergência0→2, bake2+2, HTTPS/CRUD, digest, limpeza e lock foram comprovados na [evidência atual](EVIDENCE-BLUE-GREEN-ADAPTER.json).
 - [ ] Certificar o controlador AWS nativo em uma implantação AWS autorizada. O emulador testado não demonstrou os requisitos; isso é separado do aceite do adaptador local.
 
 O adaptador é `LocalStackBlueGreenAdapter`, selecionado com `-DeploymentMode BlueGreen`. Coexistem duas tasks blue e duas green; HTTP/HTTPS, CRUD entre revisões e bake ≥60 s precedem a convergência canônica 0→2 enquanto green atende. O serviço/TG principal, UI e banco são preservados. Candidata inválida não promove; falha após promoção restaura blue e mantém a pipeline falha. [Desenho e limites](BLUE-GREEN.md).

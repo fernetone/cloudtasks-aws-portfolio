@@ -125,3 +125,11 @@ Na AWS alvo, usar um controlador ECS Blue/Green ou CodeDeploy oficialmente supor
 **Recuperação:** tentar ambos os listeners mesmo se um comando falhar e conferir o resultado antes de alegar restauração. Respostas HTTP interrompidas falham e cada probe tem deadline total de oito segundos. Cleanup reconcilia regras da execução pelo listener, prioridade, cabeçalho e TG antes de apagar; não depende só de ARNs recebidos. O aceite exige a evidência da fronteira vazia com a candidata atendendo.
 
 **Consequência:** erro não verificado conserva lock/recursos que atendem; recibos antigos sem `canonicalRetirement` não passam no aceite atual. Os testes da revisão foram observados falhando antes e passando depois. São regressões isoladas, separadas das execuções nativas de homologação.
+
+## ADR-017 — Identidade da imagem inicial compatível com o Dockerfile
+
+**Decisão:** aceitar `releaseId=local` no artifact público gerado pelo Dockerfile sem argumento de build, junto com as verificações de banco/bundle e digest físico já existentes. Preservar o UUID exato da pipeline como requisito de `readImageDefinition` e `validateCandidate`.
+
+**Motivo comprovado:** a aplicação local era saudável, mas a condição nova em `application` aceitava apenas pipeline UUID e rejeitava o bootstrap antes de criar candidata. Três regressões distinguem local válido, candidato local inválido e metadata arbitrária inválida; duas tasks isoladas executaram a imagem default e as provas de aplicação sem mutar produção.
+
+**Consequência:** a reconstrução do laboratório mantém seu bootstrap existente. Essa prova não é uma pipeline inicial ao vivo a partir de local, nem uma reconstrução fria completa da nova versão.

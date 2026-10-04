@@ -16,7 +16,7 @@ Esse workflow é CI do repositório. A entrega da aplicação continua sendo res
 Alvo AWS: GitHub/CodeConnections → CodePipeline → CodeBuild → ECR → ECS.
 Laboratório: Source S3 versionado → CodePipeline V1 → CodeBuild → ECR → ECS.
 
-A ação ECS padrão consome `imagedefinitions.json` no modo Rolling. BlueGreen seleciona um CodeBuild de implantação que consome o mesmo BuildOutput, executa o adaptador local e retorna o recibo no DeployOutput. Os 31 testes Node de estado/guards integram `npm run verify`, além dos 7 testes API e 4 frontend. Quality gate bloqueia publicação/deploy em caso de erro. `npm ci` e `package-lock.json` são obrigatórios em CI, buildspecs e Dockerfile.
+A ação ECS padrão consome `imagedefinitions.json` no modo Rolling. BlueGreen seleciona um CodeBuild de implantação que consome o mesmo BuildOutput, executa o adaptador local e retorna o recibo no DeployOutput. Os 34 testes Node de estado/guards integram `npm run verify`, além dos 7 testes API e 4 frontend. Quality gate bloqueia publicação/deploy em caso de erro. `npm ci` e `package-lock.json` são obrigatórios em CI, buildspecs e Dockerfile.
 
 A tag `pipeline-<UUID v4>` é gerada dentro do CodeBuild, independentemente de `CODEBUILD_BUILD_ID`, e publicada no ECR imutável. O helper `cicd-artifact-context.ps1` exige o CodeBuild vinculado, a mesma localização S3 do BuildOutput na ação e na API CodeBuild, o container/repositório corretos e o hash do artifact. A aceitação verifica também o Source VersionId/hash, digest ECR, task definition e tasks físicas. Não existe aprovação por fallback externo.
 
