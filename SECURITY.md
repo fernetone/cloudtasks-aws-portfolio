@@ -42,3 +42,11 @@ Na AWS real, usar certificado ACM validado e ALB terminando TLS; não transporta
 ## Estado
 
 `PERSISTENCE=0` e bind por sessão não são backup. Metadados auxiliares guardam nomes, IDs, URIs, hashes/digests e revisões; não guardam token ou senha. Nunca incluir `%USERPROFILE%\.cloudtasks`, `.localstack` ou diretórios de sessão na entrega/Git/Source.
+
+## Blue/Green local
+
+`/release.json`, labels OCI e recibos contêm somente IDs públicos, imagens/digests, revisão, health e fases. Não transportam SecretString/env completo. O adaptador copia a referência Secrets Manager da task definition; lê somente metadados Docker selecionados, sem `.Config.Env`. O token LocalStack não entra no CodeBuild.
+
+TLS do gateway é verificado pelo SHA256 da sessão nos probes Node. As duas rotas por `X-CloudTasks-Candidate` são teste no laboratório, não autenticação; não expor esse ambiente pessoal como serviço público. Prioridades ocupadas são recusadas. Lock S3 condicional tem proprietário explícito, sem expiração presumida. Cleanup confere task group/cluster/definition e prefixos Docker exatos; não depende de labels customizadas que o executor observado omitiu. Retirada canônica exige green saudável e runtime principal vazio antes de reiniciar a revisão.
+
+Os papéis locais de deploy têm permissões ECS/ELB/S3/Logs necessárias ao adaptador. O acesso ao socket Docker continua amplo; as políticas do laboratório não certificam least privilege ou isolamento produtivo AWS. Operadores administrativos e logs brutos usados na investigação não integram Source, imagem, Git ou ZIP.

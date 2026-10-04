@@ -6,7 +6,7 @@ A combinação existente Vite `7.3.6` e `@vitejs/plugin-react` `5.1.3` foi prese
 
 Node: linha 24. O Dockerfile continua `node:24-alpine`; registrar seu digest e o digest do LocalStack para congelar versões após a homologação. O lockfile não fixa esses runtimes nem garante bytes da imagem idênticos entre plataformas.
 
-`npm run verify` inclui lint sem avisos, testes da aplicação e compilação. `npm run format:check` é uma checagem separada; o original apresentava dívida de formatação que não foi corrigida por alteração em massa do código durante esta auditoria. Os resultados atuais de formatação/advisories estão em [AUDIT.md](AUDIT.md).
+`npm run verify` inclui lint sem avisos, testes da aplicação e do controlador/adaptador Blue/Green, e compilação. `npm run format:check` é uma checagem separada; o original apresentava dívida de formatação que não foi corrigida por alteração em massa do código durante esta auditoria. Os resultados atuais de formatação/advisories estão em [AUDIT.md](AUDIT.md).
 
 Vitest possui advisory de severidade moderada no grafo recebido, relacionado ao servidor de testes quando exposto. É dependência de desenvolvimento/teste, não instalada no estágio de produção com `--omit=dev`. Revisar a versão corrigida e compatibilidade em atualização própria; não expor o servidor de testes na rede. Consulte [advisory oficial](https://github.com/vitest-dev/vitest/security/advisories/GHSA-82fw-gwwq-j7x9).
 

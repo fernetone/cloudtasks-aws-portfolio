@@ -52,20 +52,18 @@ A ordem abaixo segue o escopo do portfólio. Marcações anteriores de infraestr
 - [x] Publicar código e evidência no GitHub pela [PR #1](https://github.com/fernetone/cloudtasks-aws-portfolio/pull/1), com CI real aprovado.
 - [x] Em 04/10/2026, reconstruir em LocalStack 2026.9.0 e aprovar uma execução nativa distinta, com `test-cicd.ps1` e produção 2/2; registrar separadamente a primeira execução rejeitada por excesso de task. A mudança visível e o quality gate negativo da homologação anterior não foram repetidos nesta sessão.
 
-## 9. Blue/Green
+## 9. Blue/Green — laboratório por adaptador explícito
 
-- [x] Consultar documentação oficial e testar APIs de leitura na versão instalada, preservando ECS/ALB.
-- [x] Registrar desenho AWS, alternativas e limites do laboratório em [BLUE-GREEN.md](BLUE-GREEN.md).
-- [x] Prova temporária manual: duas imagens simultâneas, rota de teste, promoção e rollback reais em um ALB isolado, com produção preservada; [evidência de tráfego](EVIDENCE-BLUE-GREEN-TRAFFIC.json).
-- [x] Rejeitar a candidata sem targets/health válido mesmo quando a resposta do emulador é HTTP 200; registrar a divergência de paridade.
-- [x] Executar ensaio isolado do ECS nativo BLUE_GREEN com role de infraestrutura completa, duas imagens e bake time; registrar o **aceite reprovado** e a limpeza em [EVIDENCE-BLUE-GREEN-NATIVE.json](EVIDENCE-BLUE-GREEN-NATIVE.json).
-- [x] Em 2026.9.0, executar controles negativos bridge/IP e awsvpc/IP, preservar produção e limpar os fixtures; ambos reprovaram retenção de blue, descartando a hipótese de correção somente pela rede.
-- [ ] Implementar o fluxo repetível de Blue/Green pelo controlador, com janela de observação, teste de candidata inválida e integração de entrega.
-- [ ] Provar o controlador AWS nativo e sua integração CI/CD. Bloqueado no runtime testado: UpdateService refletiu BLUE_GREEN, mas entregou a candidata pelo TG blue, sem TG green/rota de teste, troca de pesos ou coexistência observada no bake. Em 2026.9.0, a candidata inválida também encerrou blue saudável nos dois modos de rede testados. CodeDeploy mockado e APIs de service deployments sem cobertura continuam como limites documentados.
+- [x] Investigar documentação/APIs e reprovar honestamente os ensaios nativos sem isolamento/retenção.
+- [x] Preservar testes bridge/IP, awsvpc/IP e EXTERNAL no histórico; não modificar a rede do serviço principal por esse bloqueio.
+- [x] Implementar controlador/adaptador dentro de um segundo CodeBuild da CodePipeline V1; Source S3/artifacts/imagem/recibo correlacionados, sem fallback externo.
+- [x] Testar estado/guards, health semântica, identidade, troca parcial, rollback, cleanup, retenção do lock e fronteira de convergência.
+- [x] No Source final bb052, aprovar duas entregas consecutivas, rejeição e rollback após promoção; uma normal final distinta passou após erro npm INSTALL registrado. Convergência0→2, bake2+2, HTTPS/CRUD, digest, limpeza e lock foram comprovados na [evidência atual](EVIDENCE-BLUE-GREEN-ADAPTER.json).
+- [ ] Certificar o controlador AWS nativo em uma implantação AWS autorizada. O emulador testado não demonstrou os requisitos; isso é separado do aceite do adaptador local.
 
-A prova manual foi executada em 03/10/2026 e não conclui a etapa 9 nativa. Usou uma task candidata temporária e dois targets blue existentes, sem novo build, migração, janela automática de observação ou controlador de implantação. Nenhum script de promoção próprio foi incorporado. CloudFront continua na etapa 10.
+O adaptador é `LocalStackBlueGreenAdapter`, selecionado com `-DeploymentMode BlueGreen`. Coexistem duas tasks blue e duas green; HTTP/HTTPS, CRUD entre revisões e bake ≥60 s precedem a convergência canônica 0→2 enquanto green atende. O serviço/TG principal, UI e banco são preservados. Candidata inválida não promove; falha após promoção restaura blue e mantém a pipeline falha. [Desenho e limites](BLUE-GREEN.md).
 
-O ensaio nativo da versão 1.7.7 usou um service/ALB separado e uma réplica por revisão, sem iniciar nova pipeline ou alterar produção. A linha marcada como executada comprova a investigação e sua reprovação, não conclusão do recurso. Na AWS, a action ECS padrão pode entregar mudanças de imagem ao service Blue/Green nativo; a execução no laboratório precisa satisfazer o comportamento antes de alterar a pipeline homologada.
+As provas manuais e nativas anteriores são históricas. Não aprovam esta implementação ou CodeDeploy mockado. A certificação AWS nativa não foi executada e não bloqueia o uso honesto do laboratório por adaptador.
 
 ## 10. CloudFront
 
@@ -85,4 +83,4 @@ O ensaio nativo da versão 1.7.7 usou um service/ALB separado e uma réplica por
 - [ ] Diagrama, evidências, vídeo curto e roteiro de entrevista.
 - [ ] Resolver limitações documentadas, revisar IAM/segurança e diferenciar AWS alvo de emulação.
 
-Não antecipar as etapas 9–13 para declarar a etapa 8 concluída.
+A etapa 8 foi concluída antes de iniciar a etapa 9. Não antecipar CloudFront, observabilidade ampliada ou Q/MCP para aprovar Blue/Green.

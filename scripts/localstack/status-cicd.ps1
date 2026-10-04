@@ -34,6 +34,17 @@ function Invoke-AwsLocalJson {
     try { try { return ($text | ConvertFrom-Json -ErrorAction Stop) } catch { throw "JSON de awslocal $($Arguments[0]) $($Arguments[1]) invalido." } } catch { return $null }
 }
 
+function Get-CodeBuildStartTime {
+    param([object]$Value)
+    # PowerShell's [string] conversion can round a JSON double before parsing.
+    if ($Value -is [double] -or $Value -is [single] -or $Value -is [decimal]) { return [double]$Value }
+    $numeric = 0.0
+    if ([double]::TryParse([string]$Value,[Globalization.NumberStyles]::Float,
+        [Globalization.CultureInfo]::InvariantCulture,[ref]$numeric)) { return $numeric }
+    try { return ([DateTimeOffset]::Parse([string]$Value,[Globalization.CultureInfo]::InvariantCulture)).ToUnixTimeMilliseconds() / 1000.0 }
+    catch { return 0.0 }
+}
+
 Write-Host "CloudTasks CI/CD status" -ForegroundColor Cyan
 
 $projects = Invoke-AwsLocalJson @("codebuild", "list-projects")
@@ -77,7 +88,7 @@ if ($projectExists) {
     if ($buildIds.Count -gt 0) {
         $batchArgs = @("codebuild", "batch-get-builds", "--ids") + $buildIds
         $buildsResponse = Invoke-AwsLocalJson $batchArgs
-        $build = @($buildsResponse.builds | Sort-Object { [datetime]$_.startTime } -Descending) | Select-Object -First 1
+        $build = @($buildsResponse.builds | Sort-Object { Get-CodeBuildStartTime $_.startTime } -Descending) | Select-Object -First 1
         if ($null -ne $build) {
             Write-Host "CodeBuild API:    $($build.id) / $($build.buildStatus)"
         }

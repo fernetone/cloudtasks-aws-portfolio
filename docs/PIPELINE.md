@@ -20,19 +20,21 @@ Não existe aprovação por runner Docker, tag ECR mais recente, build iniciado 
 | `buildspec.localstack.yml`              | `npm ci`, quality gate, Docker build, push ECR e artifacts                                    |
 | `test-cicd.ps1`                         | Aceitação da execução registrada: Source/Build/Deploy, tasks, digest e HTTPS                  |
 | `status-cicd.ps1` / `diagnose-cicd.ps1` | Estado e metadados para investigação                                                          |
+| `buildspec.bluegreen.localstack.yml` | Executar implantação por adaptador local no CodeBuild nativo e publicar DeployOutput |
+| `blue-green-controller.mjs` / `blue-green-localstack.mjs` | Máquina de estados e IO ECS/ELB/Docker, lock, identidade, bake, convergência e cleanup |
 | `rollback-cicd.ps1`                     | Rollback operacional explícito; não representa Blue/Green nem rollback nativo da pipeline     |
 
 O preflight não inicia LocalStack, não gira namespace ECS e não reconcilia o ambiente automaticamente. Ao falhar, informa a condição recusada.
 
 ## Identidade do Source e da imagem
 
-O publisher exige manifests, lockfile, Dockerfile, `.dockerignore`, configuração de lint/Vite/TypeScript, buildspecs e código/testes da aplicação. Não empacota o repositório inteiro: documentação, scripts operacionais, certificados, `.env`, runtime, logs e ZIPs ficam fora.
+O publisher exige manifests, lockfile, Dockerfile, `.dockerignore`, configuração de lint/Vite/TypeScript, buildspecs e código/testes da aplicação. Não empacota o repositório inteiro: documentação, scripts PowerShell operacionais, certificados, `.env`, runtime, logs e ZIPs ficam fora. A allowlist incorpora somente os dois módulos Node do adaptador, seus testes e o buildspec de deploy; eles são inputs da execução CodeBuild, não uma cópia geral da pasta de scripts.
 
 Arquivos têm ordem ordinal e timestamp ZIP normalizado. O hash não varia apenas porque o mtime mudou; não se promete igualdade entre runtimes diferentes de compressão. O VersionId vem da resposta do próprio `PutObject`, junto ao SHA256 dos bytes publicados. Nenhum `HEAD` do objeto mais recente decide a identidade deste upload.
 
 Execuções posteriores usam `StartPipelineExecution` com `S3_OBJECT_VERSION_ID`. Na primeira criação, o emulador inicia a execução automaticamente; a identidade da ação Source precisa confirmar a versão recém-publicada. A comparação usa `outputVariables.VersionId` quando presente; sem esse campo, exige `SourceOutput.revisionId` exatamente igual à versão. Um VersionId explícito divergente nunca é aprovado por outro metadado. O fluxo pressupõe um único publicador controlado: não publique manualmente outro Source durante a execução.
 
-A tag é `pipeline-<UUID v4>`, gerada dentro do próprio CodeBuild e independente de `CODEBUILD_BUILD_ID`. O agente local observado injetou um ID reservado com UUID zerado, distinto do ID real da API; derivar a tag desse valor produzia uma identidade incorreta e repetível. O repositório continua `IMMUTABLE`. O artifact padrão `imagedefinitions.json` aponta `cloudtasks-app` para a URI exata, e a ação ECS cria uma revisão da task definition do service.
+A tag é `pipeline-<UUID v4>`, gerada dentro do próprio CodeBuild e independente de `CODEBUILD_BUILD_ID`. O agente local observado injetou um ID reservado com UUID zerado, distinto do ID real da API; derivar a tag desse valor produzia uma identidade incorreta e repetível. O repositório continua `IMMUTABLE`. O artifact padrão `imagedefinitions.json` aponta `cloudtasks-app` para a URI exata, e no modo Rolling a ação ECS cria uma revisão da task definition do service. BlueGreen usa o mesmo BuildOutput para transportar a imagem e o controlador à ação CodeBuild de deploy; `DeployOutput` transporta o recibo.
 
 `Get-CloudTasksNativeBuildImage`, compartilhado por criação e aceitação em `cicd-artifact-context.ps1`, exige o CodeBuild `SUCCEEDED` vinculado à ação nativa, a mesma localização S3 de BuildOutput na ação e na API CodeBuild, o container esperado, o repositório exato e uma tag UUID v4. O SHA256 do artifact é registrado e revalidado em `test-cicd.ps1`, junto ao digest ECR e às tasks físicas. Não escolhe imagem mais recente ou `latest`.
 
@@ -126,3 +128,11 @@ O `test-cicd.ps1` pode validar a última execução saudável registrada. O stat
 - [AWS Deploy ECS padrão](https://docs.aws.amazon.com/codepipeline/latest/userguide/action-reference-ECS.html) e [variáveis CodeBuild](https://docs.aws.amazon.com/codebuild/latest/userguide/build-env-ref-env-vars.html).
 
 O monitor do build foi observado encerrando com `Container not yet started` antes do início do runner; houve ainda falha TLS de download e saída 0 indevida do wrapper. São comportamentos observados nessa versão, não limitações documentadas como inevitáveis nem características da AWS. A documentação informa ausência de granularidade das fases no LocalStack: `phases` vazio não comprova travamento. A explicação detalhada está na seção 13 de [AUDIT.md](AUDIT.md).
+
+## Modo BlueGreen explícito — etapa 9
+
+`create-cicd.ps1 -DeploymentMode BlueGreen` preserva Source/Build nativos e escolhe `DeployBlueGreen`, executado pelo CodeBuild `cloudtasks-bluegreen-deploy`. O `test-cicd.ps1` identifica o modo registrado e exige a ação/build/artifact de deploy vinculados, recibo SUCCEEDED e todas as verificações comuns de Source, digest, tasks e HTTPS/CRUD. Falha nativa nunca é substituída por um deploy externo. [Procedimento, critérios e controles negativos](BLUE-GREEN.md).
+
+Declaração idêntica não gera UpdatePipeline desnecessário: comparação canônica ignora somente `version`, normaliza ordem de propriedades e o JSON das variáveis de ambiente. Isso preserva o histórico da revisão atual no emulador. Mudar de modo é uma mudança real; salvar evidências antes.
+
+O estado atual da etapa 9 está em [EVIDENCE-BLUE-GREEN-ADAPTER.json](EVIDENCE-BLUE-GREEN-ADAPTER.json). A evidência da etapa 8 de 03/10 é histórica e não certifica uma tentativa Blue/Green falha.

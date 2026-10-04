@@ -1,10 +1,10 @@
-# CloudTasks — auditoria técnica, homologação 1.7.4 e consolidação 1.7.5
+# CloudTasks — auditoria técnica e evolução validada do laboratório
 
-Atualização: 03/10/2026. Base auditada: projeto 1.7.0. Parecer: **preservar a arquitetura, corrigir o verificador e exigir CI/CD nativo; etapa 8 homologada no laboratório em 03/10/2026, com evidências na seção 16.**
+Atualização: 04/10/2026; entrega 1.8.0. Base auditada: projeto 1.7.0. Parecer: **preservar a arquitetura, corrigir o verificador e exigir CI/CD nativo; etapa 8 homologada no laboratório em 03/10/2026, com evidências na seção 16.**
 
 Os bloqueios iniciais de consulta Docker e empacotamento ZIP foram corrigidos no projeto. A execução subsequente concluiu Source e expôs falhas no monitor/wrapper do executor CodeBuild. O diagnóstico dessa execução, a compatibilidade com IDs curtos e os limites da mitigação estão na seção 13.
 
-**Como ler o histórico:** as seções 1–14 registram o diagnóstico e as validações disponíveis em cada entrega anterior. Referências a etapa pendente, contagens antigas ou derivação da tag pelo ID descrevem aquele momento. A implementação final está na seção 15 e a homologação concluída, na seção 16. Para operação atual, consulte [PIPELINE.md](PIPELINE.md).
+**Como ler o histórico:** as seções 1–14 registram o diagnóstico e as validações disponíveis em cada entrega anterior. Referências a etapa pendente, contagens antigas ou derivação da tag pelo ID descrevem aquele momento. A implementação final está na seção 15 e a homologação da etapa 8, na seção 16. A seção 18 registra a implementação e a validação atual de Blue/Green por adaptador; não é certificação do controlador AWS nativo. Para operação atual, consulte [PIPELINE.md](PIPELINE.md).
 
 A leitura do projeto e o diagnóstico precederam as modificações. O original permanece intacto. A entrega modifica uma cópia e exclui a credencial pessoal que estava no ZIP recebido.
 
@@ -478,3 +478,120 @@ Na etapa 9, foram consultadas as documentações oficiais e executadas apenas AP
 A documentação informa separadamente que CodeDeploy é mockado e que a ação CodePipeline Blue/Green só atualiza o service e aguarda estabilidade. A cobertura ECS registra as APIs de service deployments como não implementadas. Inferência: o ambiente atual não fornece evidência suficiente para homologar um controlador Blue/Green nativo. O erro observado não foi atribuído a um defeito no ECS da aplicação; o service continuou Desired 2 / Running 2 / Pending 0, na revisão 5.
 
 [BLUE-GREEN.md](BLUE-GREEN.md) separa AWS alvo, comportamento documentado, observação local e critério objetivo de aceite. Nenhum service, Target Group, listener ou controlador de deploy foi alterado por essa investigação. A etapa 9 permanece pendente; não foram antecipadas as etapas seguintes.
+
+## 18. Blue/Green executável por adaptador — entrega 1.8.0
+
+### Diagnóstico e decisão
+
+Os ensaios nativos bridge/IP e awsvpc/IP reprovaram retenção de blue diante de candidata inválida. EXTERNAL retornou STEADY_STATE no control plane, mas zero tasks executáveis durante 65 segundos. CodeDeployToECS é documentado como atualização/espera sem emulação correta Blue/Green. Não se atribuiu o bloqueio à aplicação ou à AWS real, nem se migrou a rede principal por esse resultado.
+
+Decisão: dois serviços ECS independentes durante validação, promoção e bake, com controlador dentro de um CodeBuild de deploy da CodePipeline V1. Source, quality gate/build/push ECR e artifacts permanecem nativos. Rolling segue padrão; BlueGreen é explícito. Dois módulos Node sem dependência nova e um buildspec de implantação concentram a implementação; não há fallback PowerShell externo ou nova coleção de scripts de recuperação.
+
+### Causas encontradas na implementação e no executor
+
+- `LocalStackDeployment.createCandidate`, `converge` e `rollback`: a primeira versão retirava a última associação do TG principal ao promover produção. O TG ficava unused/Target.NotInUse enquanto o código esperava healthy antes de restaurar o listener. Manter regras de teste blue e green nos dois listeners resolve a ordem impossível; cada amostra verifica blue HTTP/HTTPS. Não se alterou o deregistration delay principal.
+- `LocalStackDeployment.converge`/`rollback`: sobrepor rolling UpdateService à promoção deixou três tasks físicas da mesma revisão para desiredCount=2. Foi observado nas APIs e Docker, não confundido com parser/contador. A causa interna do scheduler proprietário não foi afirmada. A convergência final agora esvazia/verifica o principal e inicia duas tasks da revisão aceita enquanto green atende.
+- `CODEBUILD_BUILD_ID` reservado do agente é placeholder; o vínculo real é ação/API/build/artifact nativos. Labels Docker customizadas foram omitidas pelo executor; ownership usa group/cluster/definition/task e prefixo exato. Operações AWS bem-sucedidas sem stdout retornam objeto vazio; JSON não vazio inválido continua recusado.
+- A retirada recaptura tasks após desiredCount=0 e antes de apagar registros, para não omitir uma startup que termine durante cleanup. A comparação canônica evita UpdatePipeline sem mudança e perda desnecessária de consultas históricas.
+- `Get-CodeBuildStartTime`: converter o double JSON para string no PowerShell 7 arredondava a fração do epoch. O caminho numérico preserva o valor; ISO, texto numérico e entradas inválidas também foram testados. É diagnóstico, sem alteração de Source/deploy.
+
+As regressões relevantes foram vistas falhar antes das correções e passar depois. As tentativas falhas permanecem sem aprovação em suas APIs/recibos; recuperações administrativas não foram contadas como entregas.
+
+### Resultado histórico anterior à revisão final
+
+Duas entregas nativas consecutivas com a convergência 0→2 passaram: `3da7a16d-8987-4cbf-949e-99719808b810` (bake 72,529 s) e `7a77b36e-d308-437f-9bdf-72844efd4bc1` (76,115 s), ambas com Source/Build/Deploy e dois CodeBuilds aprovados, test-cicd HTTPS/CRUD/digest, final 2/2 e cleanup/lock ausente. Processo Windows exit 0, 1147,17 s para o bloco das duas entregas, sem recuperação entre elas. Rejeição `658bbdc4...` e rollback `de4b471a...` passaram como controles negativos antes desse refinamento; os caminhos exercitados foram comparados idênticos, e essa ordem está explicitada. Não se afirma que executaram novamente o Source refinado. Resultados completos em [EVIDENCE-BLUE-GREEN-ADAPTER.json](EVIDENCE-BLUE-GREEN-ADAPTER.json). As evidências históricas nativas/manuais continuam separadas.
+
+### Escopo preservado, simplificação e limites
+
+UI/CRUD, RDS/Secrets, rede, ECS/EC2 conceptual/bridge, TG ip local, ALB/ACM e gateway TLS existentes foram preservados. A imagem recebe uma identidade pública de build, sem mudança visual. Source contém somente inputs autorizados; controles do adaptador entram por artifact, sem expor configuração pessoal. A arquitetura mantém o conceito do vídeo, acrescentando identidade verificável, testes negativos e limites explícitos da emulação. Desvio deliberado: Source S3 e adaptador local; CodeConnections/controlador AWS continuam o alvo.
+
+PERSISTENCE=0 + bind novo por sessão continua adequado ao laboratório descartável e ao executor CodeBuild. Não é backup ou durabilidade RDS. O teste não elimina problemas de conectividade, tags móveis, scheduler ou metadata stale do fornecedor. AWS real, EC2/ASG, TG instance, CodeConnections, migrações incompatíveis de banco, CloudFront e Q/MCP não foram executados nesta entrega. Dívida global de formatação e advisory de dependências de teste não foram escondidos nem corrigidos em massa.
+
+As operações administrativas foram direcionadas, não resetaram a base nem forçaram status de sucesso. Docker é limpo depois das provas, preservando somente o runtime atual e as imagens oficiais necessárias à pipeline.
+
+### VALIDADO POR MIM nesta entrega
+
+- Windows PowerShell 5.1: 41 scripts pelo parser, 56 regressões isoladas; npm verify com lint, API7/frontend4/Node34 e TypeScript/Vite, exit0.
+- Linux: npm ci e verify completos exit0; PowerShell7 56 regressões; 39 blocos PowerShell da documentação analisados, sem executar seus comandos. A primeira tentativa Linux sem dependências falhou por ESLint ausente; foi resolvida por npm ci, não por ignorar lint.
+- Dois ciclos positivos nativos consecutivos: build/push/artifacts reais, isolamento/CRUD, promoção HTTP/HTTPS, bake 2+2, convergência0→2, digest/revisão/container físicos e cleanup. Controles negativos e recuperações administrativas separados conforme acima.
+- JSON/YAML, três buildspecs e seus gates, referências/caminhos e seleção do contexto Docker; Source da revisão refinada comparado em memória com token e senha ativos: zero matches, sem exibir valores.
+
+### NÃO VALIDADO nesta entrega
+
+Controlador AWS nativo, deploy numa conta AWS real, hosts EC2/ASG, TG instance, CodeConnections, migrações incompatíveis de banco, CloudFront e Q/MCP. Format:check global não foi aprovado; advisory de dependências de teste permanece como dívida documentada. A varredura do ZIP e das camadas da imagem corrente é registrada separadamente da homologação funcional.
+
+## 19. Revisão final e caminhos de erro
+
+A revisão independente do diff completo encontrou cinco problemas de impacto relevante em `LocalStackDeployment`, reproduzidos com IO isolado sem mutar o laboratório. Não considerou o branch pronto para merge. A implementação tratou os cinco na única rodada de correção, com testes RED→GREEN; não houve segunda revisão.
+
+| Causa comprovada | Correção |
+| --- | --- |
+| Rollback podia zerar o principal que já respondia à release green, com defaults ainda no TG principal | Restabelecer e conferir HTTP/HTTPS no TG da candidata antes de qualquer retirement. |
+| `canonicalChanged` era definido antes de mutar o principal | Definir imediatamente antes do primeiro UpdateService mutante; falha anterior recupera blue intacta. |
+| Body HTTP truncado após headers podia deixar a Promise pendente | Tratar aborted/error/close incompleto e usar deadline total de oito segundos, removido ao terminar. |
+| Erro no primeiro listener impedia tentar o segundo | Tentar as duas restaurações e ler as ações antes de aprovar recuperação. |
+| CreateRule aplicado com resposta perdida deixava regra fora do ledger e falso cleanup | Reconciliar listener/prioridade/cabeçalho/TG exatos e verificar regras não presentes no ledger de ARNs. |
+
+A lacuna de `canonicalRetirement` no aceite foi elevada de minor para importante: uma evidência sem a fronteira vazia não deve aprovar o ciclo anunciado. Seis regressões de recibo foram observadas falhando antes e passando depois. Oito regressões Node iniciais reproduziram as falhas e um caso adicional cobriu inventário indisponível antes de cleanup. O conjunto dessa revisão tinha 31 testes Node e 56 regressões PowerShell; Linux e Windows `npm run verify` terminaram exit0. Windows: parser41 e processo20232 exit0,136,28s. A compatibilidade posterior da imagem inicial adicionou três testes, totalizando 34, com uma nova verificação Windows17916 exit0,89,17s. Os testes isolados de falhas de fronteira não são descritos como execuções nativas injetadas.
+
+**Minor adiado:** acrescentar contexto seguro de operação/fase, recovery code, execução e journal ao console. O journal atual continua disponível; erros brutos do provider e credenciais não são exibidos.
+
+A varredura preliminar comparou o token e a senha ativos apenas em memória no LocalStack contra Source37 arquivos, ZIP114 e dez camadas da imagem (188.427.746 bytes descomprimidos): zero matches. O scanner externo inicialmente falhou ao fechar um stream OCI pequeno antes da comparação; a falha foi reproduzida, corrigida e a varredura completa repetida com exit0. Essa prova tem o Source/ZIP histórico exato registrado; não substitui a varredura final depois da publicação.
+
+## 20. Compatibilidade com a imagem inicial do laboratório
+
+`Dockerfile` define `APP_RELEASE=local`; `push-ecr-image.ps1` constrói sem alterar esse argumento. O novo `LocalStackDeployment.application()` aceitava JSON apenas com UUID de pipeline e rejeitava a primeira imagem com `APP_RELEASE_INVALID`. A condição foi corrigida para aceitar exatamente `local` ou uma release de pipeline estruturalmente válida. `readImageDefinition()` continua exigindo tag UUID v4, e `validateCandidate()` compara a release servida ao artifact exato: `local` não aprova uma candidata.
+
+A regressão observou RED (34 testes, 32 aprovados e 2 falhos) antes da correção; depois `npm run verify` passou com 34 testes do controlador, 7 API e 4 frontend. Windows17916 exit0,89,17s: parser41, regressões56 e verify completo. Linux verify exit0 e PowerShell7 parser41/regressões56.
+
+Uma imagem realmente construída sem APP_RELEASE foi publicada no ECR e executada em duas tasks ECS Docker isoladas. O adaptador leu health/banco, tarefas, frontend, bundle e release `local` reais nas duas réplicas; o digest e label OCI foram conferidos. Tasks, imagens e definição do serviço principal ficaram idênticos antes/depois. Serviço, definição, containers e logs temporários foram removidos. Windows19316 exit0,70,49s também executou test-cicd no principal e deixou três containers saudáveis. Isso não afirma que uma reconstrução fria inteira ou uma primeira pipeline partindo dessa imagem foi executada.
+
+O primeiro operador de investigação foi interrompido ao redirecionar stderr Docker no PowerShell com ErrorActionPreference=Stop. Era o operador descartável, não uma entrega nativa; a captura seguinte tratou stdout/stderr e exit code fora desse modo e executou a prova completa. Nenhum erro desse operador foi convertido em sucesso.
+
+## 21. Decisões de escopo, motivos e custos
+
+| Decisão | Motivo | Custo ou limite se a premissa falhar |
+| --- | --- | --- |
+| Dois serviços ECS independentes na janela Blue/Green | Os task sets/controladores nativos testados não executaram o isolamento exigido | É adaptação de laboratório; não homologa o controlador AWS. |
+| Rolling padrão e BlueGreen explícito, com deploy dentro do CodeBuild | Preservar etapa 8 e orquestração nativa sem uma coleção de recuperação | Aceite precisa conferir modo, ação e recibo vinculados. |
+| release.json público e bundle, sem alterar UI | Identificar a versão que atende por HTTP/HTTPS | Imagem legacy só usa bootstrap estritamente conferido; nenhum candidato sem release exata. |
+| Um BuildOutput com imagem, deployspec e controlador | Evitar ambiguidade de sources secundários na emulação | Inputs novos exigem revisão da allowlist e do artifact. |
+| ID reservado do agente apenas informativo | A API/build/artifact nativos fornecem o vínculo verdadeiro | Nunca escolher latest build ou placeholder para aprovar. |
+| Ownership por group/cluster/definition/task e prefixo Docker exato | Labels customizadas não foram preservadas pelo executor | Ambiguidade de identidade é recusada; não há exclusão de container desconhecido. |
+| Resposta AWS vazia exit0 vira objeto vazio | Algumas operações legítimas não têm payload | JSON não vazio inválido permanece erro. |
+| Recapturar tasks e exigir quiescência antes de cleanup | Uma startup pode terminar durante retirada | Custo de duas amostras; falha preserva recursos e lock. |
+| Quatro rotas temporárias, blue e green em HTTP/HTTPS | Evitar TG principal Target.NotInUse durante promoção | Prioridades ocupadas bloqueiam o deploy; cabeçalhos não são autenticação. |
+| Convergência canônica verificada de 0→2 enquanto green atende | Evitar rolling sobreposto que deixou três tasks no executor | Blue original é aposentado só depois do bake; ciclo específico do laboratório. |
+| Evidência canonicalRetirement obrigatória, lacuna elevada a importante | Provar a fronteira física anunciada | Recibos antigos sem essa prova não passam no aceite atual. |
+| Corrigir as cinco falhas da revisão e não fazer segunda rodada de revisão | Regressões reproduziram rotas, flags, deadline, listeners e resposta de regra perdida | As injeções isoladas não homologam essas falhas ao vivo no emulador. |
+| AWS real/IAM produtivo/controlador nativo fora desta homologação | Laboratório privado sem execução AWS autorizada | Evidência local não aprova produção AWS. |
+| Manter Source footprints históricos exatos | Mudanças não reescrevem execuções anteriores | Caminhos alterados exigem nova prova; resultados antigos não viram runs atuais. |
+| Segurança e CI finais independentes da opinião do reviewer | Evitar aprovação por inferência | Publicação exige comparação real de bytes e checks do commit correto. |
+| Repetir qualidade em Windows/Linux após as correções | O reviewer executou somente a suite Node | Regressões de plataforma continuam limite de testes que não executamos. |
+| Adiar formatação global, advisory de testes, tags móveis e etapas futuras | Não expandir a correção Blue/Green para outro roadmap | Dívida permanece explícita; nenhuma aprovação de format:check global. |
+| Source privado/confiável e APIs nativas como modelo de confiança | O laboratório compartilha socket Docker | Um ator hostil com o socket pode invalidar as garantias; não é multi tenant. |
+| Publicar e integrar na main pela autorização anterior | O usuário já solicitou autonomia de publicação | Exigir head exato e CI verde; autorização não é presumida para outro repositório. |
+| Aceitar `local` somente como identidade inicial compatível | Bootstrap padrão do Dockerfile é válido | Uma candidata `local` continua rejeitada pela release/artifact exatos. |
+| Repetir pipeline inteira em uma execução distinta após INSTALL ECONNRESET | Fase/código exatos mostram falha antes dos testes/deploy; Source idêntico já passou | A falha original permanece reprovada e conectividade permanente não é certificada. |
+
+**Minor adiado:** contexto seguro de operação/fase/recovery-code/execução/journal no console. O journal atual fornece diagnóstico; não exibir erro bruto do provider. O custo é investigar alguns erros pelo journal em vez de apenas pelo console.
+
+## 22. Provas do Source final e falha externa registrada
+
+Source SHA256 `bb052c1f7bb8c6e5678f60ccede6a555eab45d918738ecf9639b61af3249e330`: duas entregas consecutivas `e1df4102...` e `6a6da575...` passaram Source/build/deploy, artifacts/recibo/digest, bake64,005/75,995s e test-cicd HTTPS/CRUD, sem reset/recuperação entre elas. Rejeição `d98e462b...` e rollback `04028128...` foram executados nesse mesmo Source final e comprovaram as mesmas identidades blue e metadata saudável, HTTPS/CRUD e cleanup/lock; continuam Failed/FAILED nas APIs.
+
+O bloco Windows18396 terminou exit1,2202,47s porque a tentativa normal final `fa681b24...`, build5b259ccc, recebeu `npm ECONNRESET` em INSTALL. DOWNLOAD_SOURCE tinha passado; nenhum teste/deploy/recibo foi iniciado. Todos os OOMKilled eram false; exit137 de filhos durante encerramento não foi chamado de OOM. Uma classificação inicial ampla de texto foi substituída pela fase/código exatos, sem publicar logs brutos. A tentativa falha foi preservada; repetir em uma execução nova não a aprova e não afirma que a conectividade foi corrigida permanentemente.
+
+A execução normal distinta `1ce971ba-8851-4ba8-aced-e0df1470c462` passou Source/build/deploy, os dois CodeBuilds, bake61,348s, convergência para cloudtasks:16, digest ECR/containers, HTTPS/CRUD e test-cicd. Processo17224 exit0,646,47s; cleanup deixou LocalStack e duas tasks atuais saudáveis, sem recursos green ou lock. Source/código permaneceram iguais; `fa681b24` continua falha.
+
+O CI do código final `0bcb8ad56a945a7620e28c3c36813522c7c8ca73`, run37227517503, aprovou todos os passos de qualidade/Docker no Ubuntu e parser/regressões PowerShell5.1 no Windows. O CI da documentação final/merge permanece associado aos seus commits próprios no GitHub; não embutir um SHA autorreferente no pacote.
+
+## 23. Varredura do pacote e imagem corrente
+
+O Source final37 arquivos, projeto completo114 arquivos e imagem aceita na execução1ce971ba foram comparados ao token LocalStack e senha RDS ativos apenas em memória no LocalStack: zero matches; valores não foram exibidos. A imagem corrente `fad7dde...` teve todas as dez camadas salvas comparadas,188.427.746 bytes descomprimidos. ZIP: CRC, allowlist, exclusão de paths pessoais e uma única raiz cloudtasks-aws. Windows13892 exit0,27,78s.
+
+O hash exato do arquivo final fica fora do próprio arquivo para evitar autorreferência; os bytes finais são varridos novamente após esta evidência. Não se afirma varredura exaustiva de todo o histórico Git, ausência de toda vulnerabilidade ou rotação de credenciais. Configuração pessoal e banco da sessão são preservados fora do pacote.
+
+As seis versões Source finais — três positivas, dois controles negativos e a tentativa npm reprovada — foram comparadas ao SHA bb052 e às credenciais ativas em memória:37 arquivos autorizados por versão, CRC e zero matches; Windows2220 exit0,9,43s.
+
+Limpeza final Windows16328 exit0,26,81s: só três containers saudáveis, LocalStack e as duas tasks atuais. Runners/recursos descartáveis foram removidos após cada ciclo; caches/build history, volumes e redes sem uso foram podados no encerramento. Imagens oficiais necessárias à pipeline e imagem atual foram preservadas. O registro CodeBuild antigo3150e0db ainda IN_PROGRESS na API é correlacionado à pipeline Stopped/ação Failed, sem runner físico, e permanece CANCELLED_NOT_APPROVED; seu status não foi alterado. Nenhuma sessão/banco saudável foi resetada para esconder esse registro.

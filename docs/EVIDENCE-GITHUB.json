@@ -85,5 +85,239 @@
     "This evidence describes the first published code commit; later documentation commits have their own GitHub checks.",
     "GitHub Actions does not deploy to this user's LocalStack session or to real AWS.",
     "Historic commits and every Docker layer were not exhaustively audited."
-  ]
+  ],
+  "blueGreenAdapterRelease": {
+    "projectVersion": "1.8.0",
+    "pullRequest": 5,
+    "pullRequestUrl": "https://github.com/fernetone/cloudtasks-aws-portfolio/pull/5",
+    "testedFeatureCommit": "0bcb8ad56a945a7620e28c3c36813522c7c8ca73",
+    "status": "FEATURE_CODE_AND_CURRENT_SOURCE_NATIVE_ADAPTER_VALIDATED",
+    "scope": "Feature CI validates exact code commit 0bcb8ad with Ubuntu quality/Docker and Windows5.1 parser/regressions; final Source bb052 native positives and negative controls are separately documented. Final documentation/merge commits have their own GitHub checks, available from PR5 and main; no circular self-commit SHA is embedded in this file.",
+    "historicalFeatureWorkflow": {
+      "runId": 37224403253,
+      "commitSha": "a1862a99de813e80e553b843a6c564f43ec04daf",
+      "status": "completed",
+      "conclusion": "success",
+      "event": "pull_request",
+      "url": "https://github.com/fernetone/cloudtasks-aws-portfolio/actions/runs/37224403253",
+      "createdAt": "2026-10-04T18:25:44Z",
+      "updatedAt": "2026-10-04T18:26:36Z",
+      "jobs": [
+        {
+          "id": 111500954689,
+          "name": "Lint, tests, build and Docker",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success",
+              "status": "completed"
+            },
+            {
+              "name": "Checkout",
+              "conclusion": "success",
+              "status": "completed"
+            },
+            {
+              "name": "Setup Node.js",
+              "conclusion": "success",
+              "status": "completed"
+            },
+            {
+              "name": "Install dependencies",
+              "conclusion": "success",
+              "status": "completed"
+            },
+            {
+              "name": "Verify project",
+              "conclusion": "success",
+              "status": "completed"
+            },
+            {
+              "name": "Validate production container build",
+              "conclusion": "success",
+              "status": "completed"
+            },
+            {
+              "name": "Post Setup Node.js",
+              "conclusion": "success",
+              "status": "completed"
+            },
+            {
+              "name": "Post Checkout",
+              "conclusion": "success",
+              "status": "completed"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success",
+              "status": "completed"
+            }
+          ]
+        },
+        {
+          "id": 111500954816,
+          "name": "PowerShell 5.1 script regressions",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "conclusion": "success",
+              "status": "completed"
+            },
+            {
+              "name": "Checkout",
+              "conclusion": "success",
+              "status": "completed"
+            },
+            {
+              "name": "Setup Node.js",
+              "conclusion": "success",
+              "status": "completed"
+            },
+            {
+              "name": "Validate script syntax",
+              "conclusion": "success",
+              "status": "completed"
+            },
+            {
+              "name": "Run isolated script regressions",
+              "conclusion": "success",
+              "status": "completed"
+            },
+            {
+              "name": "Post Setup Node.js",
+              "conclusion": "success",
+              "status": "completed"
+            },
+            {
+              "name": "Post Checkout",
+              "conclusion": "success",
+              "status": "completed"
+            },
+            {
+              "name": "Complete job",
+              "conclusion": "success",
+              "status": "completed"
+            }
+          ]
+        }
+      ]
+    },
+    "featureWorkflow": {
+      "runId": 37227517503,
+      "commitSha": "0bcb8ad56a945a7620e28c3c36813522c7c8ca73",
+      "status": "completed",
+      "conclusion": "success",
+      "event": "pull_request",
+      "url": "https://github.com/fernetone/cloudtasks-aws-portfolio/actions/runs/37227517503",
+      "jobs": [
+        {
+          "id": 111510140619,
+          "name": "PowerShell 5.1 script regressions",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Checkout",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Setup Node.js",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Validate script syntax",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Run isolated script regressions",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Setup Node.js",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Checkout",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success"
+            }
+          ]
+        },
+        {
+          "id": 111510140643,
+          "name": "Lint, tests, build and Docker",
+          "conclusion": "success",
+          "steps": [
+            {
+              "name": "Set up job",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Checkout",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Setup Node.js",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Install dependencies",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Verify project",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Validate production container build",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Setup Node.js",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Post Checkout",
+              "status": "completed",
+              "conclusion": "success"
+            },
+            {
+              "name": "Complete job",
+              "status": "completed",
+              "conclusion": "success"
+            }
+          ]
+        }
+      ]
+    },
+    "integration": {
+      "ownerAuthorizationPreviouslyProvided": true,
+      "baseBranch": "main",
+      "baseBeforeRelease": "50827b8fb95192f7296b9846ab30ae0120ec59a7",
+      "publicFiles": 114
+    }
+  }
 }

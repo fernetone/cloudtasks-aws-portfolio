@@ -247,7 +247,10 @@ public static class DockerFixtureLauncher {
     Copy-Item (Join-Path $dir 'publish-cicd-source.ps1') (Join-Path $sourceScriptDir 'publish-cicd-source.ps1')
     $sourceScript = Join-Path $sourceScriptDir 'publish-cicd-source.ps1'
     foreach ($relative in @('package.json', 'package-lock.json', 'Dockerfile', '.dockerignore', 'eslint.config.mjs', '.nvmrc',
-        'buildspec.localstack.yml', 'buildspec.yml', 'apps/api/package.json', 'apps/api/tsconfig.json',
+        'buildspec.localstack.yml', 'buildspec.yml', 'buildspec.bluegreen.localstack.yml',
+        'scripts/localstack/blue-green-controller.mjs','scripts/localstack/blue-green-localstack.mjs',
+        'scripts/tests/blue-green.test.mjs','scripts/tests/blue-green-guards.test.mjs',
+        'apps/api/package.json', 'apps/api/tsconfig.json',
         'apps/api/src/server.ts', 'apps/web/package.json', 'apps/web/tsconfig.json',
         'apps/web/vite.config.ts', 'apps/web/index.html', 'apps/web/src/main.tsx',
         'secrets/credentials.txt', 'localstack-volume/state.json', 'certificate.pem')) {
@@ -402,6 +405,78 @@ try {
         $state.codeBuildId = 'cloudtasks-build:4a3385dc'
         [IO.File]::WriteAllText((Join-Path $stateDir 'last-deploy.json'), ($state | ConvertTo-Json -Depth 5), $utf8)
         $null = & (Join-Path $acceptanceDir 'test-cicd.ps1') 6>&1
+    }
+
+    Import-TestFunctions -Path (Join-Path $dir 'create-cicd.ps1') -Names @('Convert-CicdCanonicalValue','Get-CicdPipelineSignature')
+    Check 'unchanged pipeline retains its revision despite property order and agent variable JSON order' {
+        $first=@{name='pipeline';version=1;stages=@(@{name='Deploy';actions=@(@{name='BG';configuration=@{EnvironmentVariables='[{"name":"BG_EXECUTION_ID","value":"execution","type":"PLAINTEXT"}]'};inputArtifacts=@(@{name='BuildOutput'});outputArtifacts=@()})})}
+        $second='{"version":4,"stages":[{"actions":[{"outputArtifacts":[],"inputArtifacts":[{"name":"BuildOutput"}],"configuration":{"EnvironmentVariables":"[{\"type\":\"PLAINTEXT\",\"value\":\"execution\",\"name\":\"BG_EXECUTION_ID\"}]"},"name":"BG"}],"name":"Deploy"}],"name":"pipeline"}'|ConvertFrom-Json
+        Assert-True ((Get-CicdPipelineSignature $first) -ceq (Get-CicdPipelineSignature $second))
+        $second.stages[0].actions[0].name='DifferentAction'
+        Assert-True ((Get-CicdPipelineSignature $first) -cne (Get-CicdPipelineSignature $second))
+    }
+
+    Import-TestFunctions -Path (Join-Path $dir 'status-cicd.ps1') -Names @('Get-CodeBuildStartTime')
+    Check 'CodeBuild status supports numeric API epoch and ISO timestamp' {
+        Assert-True ((Get-CodeBuildStartTime 1791095620.366305) -eq 1791095620.366305)
+        Assert-True ((Get-CodeBuildStartTime '1791095620.366305') -eq 1791095620.366305)
+        Assert-True ((Get-CodeBuildStartTime '2026-10-04T06:33:40Z') -eq 1791095620)
+        Assert-True ((Get-CodeBuildStartTime 'invalid') -eq 0)
+        Assert-True ((Get-CodeBuildStartTime $null) -eq 0)
+    }
+
+    $bgImage = '000000000000.dkr.ecr.us-east-1.localhost.localstack.cloud:4566/cloudtasks:pipeline-11111111-1111-4111-8111-111111111111'
+    $bgDigest = 'sha256:' + ('b' * 64)
+    $bgDefinition = 'arn:aws:ecs:us-east-1:000000000000:task-definition/cloudtasks:9'
+    function New-BgReceiptFixture {
+        $receipt = [ordered]@{
+            mode='LocalStackBlueGreenAdapter'; nativeBlueGreenControllerCertified=$false; status='SUCCEEDED'
+            executionId='22222222-2222-4222-8222-222222222222'; agentBuildId='local:00000000-0000-0000-0000-000000000000'
+            provenance=@{imageBuildId='cloudtasks-build:actual'}
+            phases=@('BLUE_VERIFIED','CANDIDATE_VERIFIED','TRAFFIC_PROMOTED','BAKE_PASSED','CANONICAL_VERIFIED')
+            blue=@{image='previous';digest=('sha256:' + ('a' * 64));tasks=@(@{containerId=('1' * 64);health='healthy'},@{containerId=('2' * 64);health='healthy'})}
+            green=@{image=$bgImage;digest=$bgDigest;releaseId='pipeline-11111111-1111-4111-8111-111111111111';tasks=@(@{containerId=('3' * 64);health='healthy'},@{containerId=('4' * 64);health='healthy'})}
+            final=@{image=$bgImage;digest=$bgDigest;releaseId='pipeline-11111111-1111-4111-8111-111111111111';taskDefinition=$bgDefinition;tasks=@(@{containerId=('5' * 64);health='healthy'},@{containerId=('6' * 64);health='healthy'});canonicalRetirement=@{taskArns=@('old-task-1','old-task-2');emptySamples=2;physicalRunning=0;productionHttp='green';productionHttps='green'}}
+            bake=@{requiredSeconds=60;elapsedSeconds=65;samples=@(@{seconds=1;blueHealthy=2;greenHealthy=2;blueHttp='blue';blueHttps='blue';productionRelease='pipeline-11111111-1111-4111-8111-111111111111';httpsPinned=$true},@{seconds=65;blueHealthy=2;greenHealthy=2;blueHttp='blue';blueHttps='blue';productionRelease='pipeline-11111111-1111-4111-8111-111111111111';httpsPinned=$true})}
+            isolation=@{productionHttp='blue';productionHttps='blue';testHttp='green';testHttps='green'}
+            sharedData=@{createBlueReadGreen=$true;updateGreenReadBlue=$true;ownedTaskDeleted=$true}
+            cleanup=@{temporaryServiceRemoved=$true;temporaryRulesRemoved=$true;temporaryGroupRemoved=$true;temporaryDefinitionDeregistered=$true;temporaryContainersRemoved=$true;temporaryLogsRemoved=$true}
+        }
+        return ($receipt | ConvertTo-Json -Depth 15 | ConvertFrom-Json)
+    }
+    function Assert-BgReceiptFixture($receipt) {
+        Assert-CloudTasksBlueGreenReceipt -Receipt $receipt -ExecutionId '22222222-2222-4222-8222-222222222222' -ImageBuildId 'cloudtasks-build:actual' -ImageUri $bgImage -ImageDigest $bgDigest -TaskDefinitionArn $bgDefinition
+    }
+    Check 'BG receipt uses native artifact linkage independently of placeholder agent ID' { Assert-BgReceiptFixture (New-BgReceiptFixture) }
+    foreach ($case in @('execution','image-build','negative-status','short-bake','coexistence','blue-route','tls','cleanup','duplicate-container','retirement-missing','retirement-samples','retirement-running','retirement-route','retirement-missing-running','retirement-missing-tasks')) {
+        Check "BG receipt rejects $case" {
+            $receipt=New-BgReceiptFixture
+            switch ($case) {
+                'execution' { $receipt.executionId='another-execution' }
+                'image-build' { $receipt.provenance.imageBuildId='cloudtasks-build:unrelated' }
+                'negative-status' { $receipt.status='ROLLED_BACK' }
+                'short-bake' { $receipt.bake.samples[1].seconds=59 }
+                'coexistence' { $receipt.bake.samples[0].blueHealthy=1 }
+                'blue-route' { $receipt.bake.samples[0].blueHttp='green' }
+                'tls' { $receipt.bake.samples[0].httpsPinned=$false }
+                'cleanup' { $receipt.cleanup.temporaryGroupRemoved=$false }
+                'duplicate-container' { $receipt.green.tasks[1].containerId=$receipt.green.tasks[0].containerId }
+                'retirement-missing' { $receipt.final.PSObject.Properties.Remove('canonicalRetirement') }
+                'retirement-samples' { $receipt.final.canonicalRetirement.emptySamples=1 }
+                'retirement-running' { $receipt.final.canonicalRetirement.physicalRunning=1 }
+                'retirement-route' { $receipt.final.canonicalRetirement.productionHttps='blue' }
+                'retirement-missing-running' { $receipt.final.canonicalRetirement.PSObject.Properties.Remove('physicalRunning') }
+                'retirement-missing-tasks' { $receipt.final.canonicalRetirement.PSObject.Properties.Remove('taskArns') }
+            }
+            $rejected=$false
+            try { Assert-BgReceiptFixture $receipt } catch { $rejected=$true }
+            Assert-True $rejected
+        }
+    }
+    Check 'BG deploy artifact cannot certify an unrelated build' {
+        $rejected=$false
+        try { Get-CloudTasksBlueGreenReceipt -DeployAction ([pscustomobject]@{output=@{executionResult=@{externalExecutionId='actual'}}}) -Build ([pscustomobject]@{id='other';buildStatus='SUCCEEDED'}) } catch { $rejected=$true }
+        Assert-True $rejected
     }
 
     if ($failures.Count) { throw "$($failures.Count) regression(s) failed: $($failures -join ', ')" }
