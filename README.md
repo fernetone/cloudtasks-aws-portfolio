@@ -1,6 +1,6 @@
 # CloudTasks — portfólio AWS/DevOps
 
-Versão 1.7.6. React 19 + TypeScript + Vite, Node 24 + Express 5 e PostgreSQL.
+Versão 1.7.7. React 19 + TypeScript + Vite, Node 24 + Express 5 e PostgreSQL.
 
 CloudTasks usa uma aplicação de tarefas para demonstrar entrega de software, containers, rede, dados e balanceamento. A arquitetura alvo é AWS; o laboratório executável usa LocalStack Pro/Student e Docker Desktop, sem provisionar recursos faturáveis em uma conta AWS.
 
@@ -25,7 +25,9 @@ A entrega 1.7.5 consolida esse código no [GitHub](https://github.com/fernetone/
 
 A versão 1.7.6 registra uma prova temporária da etapa 9: duas imagens executando simultaneamente, rota de teste separada, rejeição de health inválido, promoção e rollback **manuais em um ALB isolado**, comprovados por requisições e hashes dos bundles. A produção permaneceu na revisão 5, com as mesmas duas tasks e HTTPS saudável; os recursos ativos temporários foram limpos. [Desenho, resultados e limites](docs/BLUE-GREEN.md); [evidência de tráfego](docs/EVIDENCE-BLUE-GREEN-TRAFFIC.json).
 
-**A etapa 9 permanece pendente para o controlador nativo e sua integração CI/CD.** CodeDeploy é mockado no LocalStack e sua ação Blue/Green apenas atualiza o service; APIs de service deployments ECS também têm limites documentados. A prova manual não certifica esses controladores, não promoveu produção e não implementa uma nova pipeline. Esta entrega altera documentação/evidência e a versão do pacote; preserva aplicação, scripts, pipeline e infraestrutura existentes.
+Na versão 1.7.7, um service temporário testou o ECS nativo com `strategy=BLUE_GREEN`, dois TGs, regras de produção/teste, role de infraestrutura e bake time de um minuto. Create/Describe preservaram a configuração e blue ficou saudável. Porém, após UpdateService, onze amostras comprovaram a imagem green no TG blue, TG green vazio, pesos sem alteração e apenas a candidata executando. O aceite nativo foi **reprovado**; os recursos ativos do ensaio foram limpos e a produção foi preservada. [Evidência nativa](docs/EVIDENCE-BLUE-GREEN-NATIVE.json).
+
+**A etapa 9 permanece pendente para o controlador nativo e sua integração CI/CD.** O bloqueio agora tem observação de execução, além da cobertura documentada. A AWS documenta que a action ECS padrão pode entregar mudanças de imagem a um service com Blue/Green nativo; esse desenho preserva a pipeline atual, mas não passou no runtime LocalStack testado. As provas não promovem a produção nem certificam uma nova pipeline. Esta entrega atualiza documentação/evidência e versão; preserva aplicação, scripts, pipeline e infraestrutura existentes.
 
 ## Executar a aplicação local
 
