@@ -50,6 +50,7 @@ A ordem abaixo segue o escopo do portfólio. Marcações anteriores de infraestr
 - [x] Demonstrar CodeBuild `FAILED` por quality gate e ausência de Deploy; manter revisão saudável.
 - [x] Registrar versão/digest e evidência sanitizada em docs/EVIDENCE-CICD.json.
 - [x] Publicar código e evidência no GitHub pela [PR #1](https://github.com/fernetone/cloudtasks-aws-portfolio/pull/1), com CI real aprovado.
+- [x] Em 04/10/2026, reconstruir em LocalStack 2026.9.0 e aprovar uma execução nativa distinta, com `test-cicd.ps1` e produção 2/2; registrar separadamente a primeira execução rejeitada por excesso de task. A mudança visível e o quality gate negativo da homologação anterior não foram repetidos nesta sessão.
 
 ## 9. Blue/Green
 
@@ -58,8 +59,9 @@ A ordem abaixo segue o escopo do portfólio. Marcações anteriores de infraestr
 - [x] Prova temporária manual: duas imagens simultâneas, rota de teste, promoção e rollback reais em um ALB isolado, com produção preservada; [evidência de tráfego](EVIDENCE-BLUE-GREEN-TRAFFIC.json).
 - [x] Rejeitar a candidata sem targets/health válido mesmo quando a resposta do emulador é HTTP 200; registrar a divergência de paridade.
 - [x] Executar ensaio isolado do ECS nativo BLUE_GREEN com role de infraestrutura completa, duas imagens e bake time; registrar o **aceite reprovado** e a limpeza em [EVIDENCE-BLUE-GREEN-NATIVE.json](EVIDENCE-BLUE-GREEN-NATIVE.json).
+- [x] Em 2026.9.0, executar controles negativos bridge/IP e awsvpc/IP, preservar produção e limpar os fixtures; ambos reprovaram retenção de blue, descartando a hipótese de correção somente pela rede.
 - [ ] Implementar o fluxo repetível de Blue/Green pelo controlador, com janela de observação, teste de candidata inválida e integração de entrega.
-- [ ] Provar o controlador AWS nativo e sua integração CI/CD. Bloqueado no runtime testado: UpdateService refletiu BLUE_GREEN, mas entregou a candidata pelo TG blue, sem TG green/rota de teste, troca de pesos ou coexistência observada no bake. CodeDeploy mockado e APIs de service deployments sem cobertura continuam como limites documentados.
+- [ ] Provar o controlador AWS nativo e sua integração CI/CD. Bloqueado no runtime testado: UpdateService refletiu BLUE_GREEN, mas entregou a candidata pelo TG blue, sem TG green/rota de teste, troca de pesos ou coexistência observada no bake. Em 2026.9.0, a candidata inválida também encerrou blue saudável nos dois modos de rede testados. CodeDeploy mockado e APIs de service deployments sem cobertura continuam como limites documentados.
 
 A prova manual foi executada em 03/10/2026 e não conclui a etapa 9 nativa. Usou uma task candidata temporária e dois targets blue existentes, sem novo build, migração, janela automática de observação ou controlador de implantação. Nenhum script de promoção próprio foi incorporado. CloudFront continua na etapa 10.
 

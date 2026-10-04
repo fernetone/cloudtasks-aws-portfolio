@@ -826,5 +826,621 @@
       "https://docs.localstack.cloud/aws/services/ecs/",
       "https://docs.localstack.cloud/aws/services/codepipeline/"
     ]
+  },
+  "followUp20261004": {
+    "documentationVersion": "1.7.8",
+    "testedSourceVersion": "1.7.7",
+    "environment": {
+      "localStack": "2026.9.0",
+      "localStackImageId": "sha256:801a3dff7f6a23857e7310b7602e67d52a29dfdcb03e09f7c608d5c57d24b792",
+      "powerShell": "5.1.26100.9549",
+      "os": "Windows",
+      "executor": "Docker",
+      "realEc2Hosts": false,
+      "persistence": 0
+    },
+    "method": "Native UpdateService on unique temporary services; same image, candidate invalid database host; no manual targets or traffic changes after create",
+    "hypothesis": "Bridge/IP emulation mapping is the specific cause of losing healthy blue",
+    "hypothesisResult": "REJECTED: awsvpc/IP also lost healthy blue",
+    "nativeBlueGreenControllerCertified": false,
+    "stage9Complete": false,
+    "productionBeforeAndAfter": {
+      "taskDefinition": "arn:aws:ecs:us-east-1:000000000000:task-definition/cloudtasks:3",
+      "taskArns": [
+        "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/0846ac0a-810e-41f3-a586-9e5ddf05162c",
+        "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/534b2025-e974-4a13-8191-d84f7406afd4"
+      ],
+      "containerIds": [
+        "123b050ec5a930f931faaf60acf9626de035844bd066c6bf86e0faf18cde985f",
+        "b2b6c24645dbe261fc8b1531f69030908f40c25d7c8b246ef8738d5fd51df682"
+      ],
+      "listenersUnchanged": true,
+      "targetsHealthy": 2,
+      "https": {
+        "health": "ok",
+        "database": "ok",
+        "tasksGet": "200/array",
+        "asset": "/assets/index-BjgdmimE.js",
+        "bundleSha256": "351a4c894bd466de16ba85ab26d9fd51e5fc7905dcc3c6352d43c784a2b6b59f"
+      },
+      "tlsCertificateVerification": "LocalStack gateway bypass; unchanged lab behavior"
+    },
+    "probes": [
+      {
+        "run": "ct-native-bad-42a8f43ab2",
+        "recordedAt": "2026-10-04T07:16:02Z",
+        "mode": "NativeUnhealthyCandidateIsolationProbe",
+        "networkMode": "bridge",
+        "targetType": "ip",
+        "result": "NATIVE_CANDIDATE_ISOLATION_FAILED",
+        "nativeProbeExitCode": 2,
+        "remotePowerShellProcessExitCode": 1,
+        "reportSha256": "46e7667424d28c42aa9b3a9d0513ca814f8525260278f0959a422952f66e3d4c",
+        "elapsedSeconds": 163.5,
+        "checks": {
+          "initialBlueHealthy": true,
+          "candidateObserved": true,
+          "blueRetained": false,
+          "productionPreserved": true,
+          "ownedDockerRemoved": true,
+          "fixturesRemoved": true
+        },
+        "sameImageBothRevisions": true,
+        "codepipelineIntegrationTested": false,
+        "productionResourcesModified": false,
+        "ownedTaskCount": 13,
+        "initialBlue": null,
+        "nativeConfiguration": null,
+        "updateStartedSeconds": null,
+        "updateReturnedSeconds": null,
+        "samples": [
+          {
+            "seconds": 66.2,
+            "blueHealthy": false,
+            "blueEcsStates": [
+              "STOPPED"
+            ],
+            "blueDocker": [
+              {
+                "id": "ae07b3537b403db34f4e660c6f922ceefb6e7fae1e3556704aab7ba8bd239d38",
+                "running": false,
+                "health": "unhealthy",
+                "exit": 0
+              }
+            ],
+            "greenDockerRunning": 0,
+            "greenDockerExit1": 1,
+            "blueTargets": 0,
+            "greenTargets": 0,
+            "production": {
+              "error": "APP_DATABASE_HEALTH"
+            },
+            "test": {
+              "error": "APP_DATABASE_HEALTH"
+            },
+            "weights": [
+              {
+                "rule": "production",
+                "group": "blue",
+                "weight": 1
+              },
+              {
+                "rule": "production",
+                "group": "green",
+                "weight": 0
+              },
+              {
+                "rule": "test",
+                "group": "green",
+                "weight": 1
+              }
+            ]
+          },
+          {
+            "seconds": 85.7,
+            "blueHealthy": false,
+            "blueEcsStates": [
+              "STOPPED"
+            ],
+            "blueDocker": [
+              {
+                "id": "ae07b3537b403db34f4e660c6f922ceefb6e7fae1e3556704aab7ba8bd239d38",
+                "running": false,
+                "health": "unhealthy",
+                "exit": 0
+              }
+            ],
+            "greenDockerRunning": 0,
+            "greenDockerExit1": 4,
+            "blueTargets": 0,
+            "greenTargets": 0,
+            "production": {
+              "error": "APP_DATABASE_HEALTH"
+            },
+            "test": {
+              "error": "APP_DATABASE_HEALTH"
+            },
+            "weights": [
+              {
+                "rule": "production",
+                "group": "blue",
+                "weight": 1
+              },
+              {
+                "rule": "production",
+                "group": "green",
+                "weight": 0
+              },
+              {
+                "rule": "test",
+                "group": "green",
+                "weight": 1
+              }
+            ]
+          },
+          {
+            "seconds": 104.6,
+            "blueHealthy": false,
+            "blueEcsStates": [
+              "STOPPED"
+            ],
+            "blueDocker": [
+              {
+                "id": "ae07b3537b403db34f4e660c6f922ceefb6e7fae1e3556704aab7ba8bd239d38",
+                "running": false,
+                "health": "unhealthy",
+                "exit": 0
+              }
+            ],
+            "greenDockerRunning": 0,
+            "greenDockerExit1": 7,
+            "blueTargets": 0,
+            "greenTargets": 0,
+            "production": {
+              "error": "APP_DATABASE_HEALTH"
+            },
+            "test": {
+              "error": "APP_DATABASE_HEALTH"
+            },
+            "weights": [
+              {
+                "rule": "production",
+                "group": "blue",
+                "weight": 1
+              },
+              {
+                "rule": "production",
+                "group": "green",
+                "weight": 0
+              },
+              {
+                "rule": "test",
+                "group": "green",
+                "weight": 1
+              }
+            ]
+          },
+          {
+            "seconds": 122.4,
+            "blueHealthy": false,
+            "blueEcsStates": [
+              "STOPPED"
+            ],
+            "blueDocker": [
+              {
+                "id": "ae07b3537b403db34f4e660c6f922ceefb6e7fae1e3556704aab7ba8bd239d38",
+                "running": false,
+                "health": "unhealthy",
+                "exit": 0
+              }
+            ],
+            "greenDockerRunning": 0,
+            "greenDockerExit1": 9,
+            "blueTargets": 0,
+            "greenTargets": 0,
+            "production": {
+              "error": "APP_HEALTH_HTTP_500"
+            },
+            "test": {
+              "error": "APP_DATABASE_HEALTH"
+            },
+            "weights": [
+              {
+                "rule": "production",
+                "group": "blue",
+                "weight": 1
+              },
+              {
+                "rule": "production",
+                "group": "green",
+                "weight": 0
+              },
+              {
+                "rule": "test",
+                "group": "green",
+                "weight": 1
+              }
+            ]
+          }
+        ],
+        "errors": [],
+        "cleanupErrors": []
+      },
+      {
+        "run": "ct-native-vpc-b3540902a1",
+        "recordedAt": "2026-10-04T09:24:14Z",
+        "mode": "NativeAwsvpcUnhealthyCandidateIsolationProbe",
+        "networkMode": "awsvpc",
+        "targetType": "ip",
+        "result": "NATIVE_CANDIDATE_ISOLATION_FAILED",
+        "nativeProbeExitCode": 2,
+        "remotePowerShellProcessExitCode": 2,
+        "reportSha256": "8f402dcc6d4cade7e745c8648119589e165074aafb688d38e6afcddb8c02f201",
+        "elapsedSeconds": 177.5,
+        "checks": {
+          "initialBlueHealthy": true,
+          "candidateObserved": true,
+          "blueRetained": false,
+          "productionPreserved": true,
+          "ownedDockerRemoved": true,
+          "fixturesRemoved": true
+        },
+        "sameImageBothRevisions": true,
+        "codepipelineIntegrationTested": false,
+        "productionResourcesModified": false,
+        "ownedTaskCount": 17,
+        "initialBlue": {
+          "tasks": [
+            {
+              "taskArn": "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/a3793383-8522-43f6-a4e4-a225272a8348",
+              "definition": "arn:aws:ecs:us-east-1:000000000000:task-definition/ct-native-vpc-b3540902a1:1",
+              "ecsStatus": "RUNNING",
+              "docker": [
+                {
+                  "id": "8b294ca551f58a4e5f555e039a657bd20339819c0e4d416d784704a3491f474a",
+                  "running": true,
+                  "health": "healthy",
+                  "exit": 0
+                }
+              ]
+            }
+          ],
+          "route": {
+            "health": "ok",
+            "database": "ok",
+            "tasksGet": "200/array",
+            "asset": "/assets/index-BjgdmimE.js",
+            "bundleSha256": "351a4c894bd466de16ba85ab26d9fd51e5fc7905dcc3c6352d43c784a2b6b59f"
+          },
+          "blueTargets": [
+            {
+              "Target": {
+                "Id": "172.18.0.5",
+                "Port": 3000
+              },
+              "HealthCheckPort": "3000",
+              "TargetHealth": {
+                "State": "healthy"
+              }
+            }
+          ],
+          "greenTargets": []
+        },
+        "nativeConfiguration": {
+          "launchType": "EC2",
+          "deploymentController": {
+            "type": "ECS"
+          },
+          "deploymentConfiguration": {
+            "deploymentCircuitBreaker": {
+              "enable": false,
+              "rollback": false
+            },
+            "maximumPercent": 200,
+            "minimumHealthyPercent": 100,
+            "strategy": "BLUE_GREEN",
+            "bakeTimeInMinutes": 1
+          },
+          "loadBalancers": [
+            {
+              "targetGroupArn": "arn:aws:elasticloadbalancing:us-east-1:000000000000:targetgroup/ct-native-vpc-b3540902a1-b/8736379f16c44dcc",
+              "containerName": "cloudtasks-app",
+              "containerPort": 3000,
+              "advancedConfiguration": {
+                "alternateTargetGroupArn": "arn:aws:elasticloadbalancing:us-east-1:000000000000:targetgroup/ct-native-vpc-b3540902a1-g/9fa9b8d11499420b",
+                "productionListenerRule": "arn:aws:elasticloadbalancing:us-east-1:000000000000:listener-rule/app/ct-native-vpc-b3540902a1/9bc780d66e7c423b/485e6c75c30c452d/16f1677841a54cae",
+                "testListenerRule": "arn:aws:elasticloadbalancing:us-east-1:000000000000:listener-rule/app/ct-native-vpc-b3540902a1/9bc780d66e7c423b/485e6c75c30c452d/d460b15125f24518",
+                "roleArn": "arn:aws:iam::000000000000:role/ct-native-vpc-b3540902a1"
+              }
+            }
+          ],
+          "networkConfiguration": {
+            "awsvpcConfiguration": {
+              "subnets": [
+                "subnet-b1cc8487a392ef6ca",
+                "subnet-b485d0a27bc702d3c"
+              ],
+              "securityGroups": [
+                "sg-7a8b627b3669e08be"
+              ],
+              "assignPublicIp": "DISABLED"
+            }
+          }
+        },
+        "updateStartedSeconds": 40.3,
+        "updateReturnedSeconds": 46.4,
+        "samples": [
+          {
+            "seconds": 53,
+            "blueHealthy": false,
+            "blueEcsStates": [
+              "STOPPED"
+            ],
+            "blueDocker": [
+              {
+                "id": "8b294ca551f58a4e5f555e039a657bd20339819c0e4d416d784704a3491f474a",
+                "running": false,
+                "health": "unhealthy",
+                "exit": 0
+              }
+            ],
+            "greenDockerRunning": 0,
+            "greenDockerExit1": 1,
+            "blueTargets": 0,
+            "greenTargets": 0,
+            "production": {
+              "error": "APP_DATABASE_HEALTH"
+            },
+            "test": {
+              "error": "APP_DATABASE_HEALTH"
+            },
+            "weights": [
+              {
+                "rule": "production",
+                "group": "blue",
+                "weight": 1
+              },
+              {
+                "rule": "production",
+                "group": "green",
+                "weight": 0
+              },
+              {
+                "rule": "test",
+                "group": "green",
+                "weight": 1
+              }
+            ]
+          },
+          {
+            "seconds": 67.9,
+            "blueHealthy": false,
+            "blueEcsStates": [
+              "STOPPED"
+            ],
+            "blueDocker": [
+              {
+                "id": "8b294ca551f58a4e5f555e039a657bd20339819c0e4d416d784704a3491f474a",
+                "running": false,
+                "health": "unhealthy",
+                "exit": 0
+              }
+            ],
+            "greenDockerRunning": 0,
+            "greenDockerExit1": 4,
+            "blueTargets": 0,
+            "greenTargets": 0,
+            "production": {
+              "error": "APP_DATABASE_HEALTH"
+            },
+            "test": {
+              "error": "APP_DATABASE_HEALTH"
+            },
+            "weights": [
+              {
+                "rule": "production",
+                "group": "blue",
+                "weight": 1
+              },
+              {
+                "rule": "production",
+                "group": "green",
+                "weight": 0
+              },
+              {
+                "rule": "test",
+                "group": "green",
+                "weight": 1
+              }
+            ]
+          },
+          {
+            "seconds": 85.4,
+            "blueHealthy": false,
+            "blueEcsStates": [
+              "STOPPED"
+            ],
+            "blueDocker": [
+              {
+                "id": "8b294ca551f58a4e5f555e039a657bd20339819c0e4d416d784704a3491f474a",
+                "running": false,
+                "health": "unhealthy",
+                "exit": 0
+              }
+            ],
+            "greenDockerRunning": 1,
+            "greenDockerExit1": 6,
+            "blueTargets": 0,
+            "greenTargets": 0,
+            "production": {
+              "error": "APP_HEALTH_HTTP_500"
+            },
+            "test": {
+              "error": "APP_DATABASE_HEALTH"
+            },
+            "weights": [
+              {
+                "rule": "production",
+                "group": "blue",
+                "weight": 1
+              },
+              {
+                "rule": "production",
+                "group": "green",
+                "weight": 0
+              },
+              {
+                "rule": "test",
+                "group": "green",
+                "weight": 1
+              }
+            ]
+          },
+          {
+            "seconds": 101.8,
+            "blueHealthy": false,
+            "blueEcsStates": [
+              "STOPPED"
+            ],
+            "blueDocker": [
+              {
+                "id": "8b294ca551f58a4e5f555e039a657bd20339819c0e4d416d784704a3491f474a",
+                "running": false,
+                "health": "unhealthy",
+                "exit": 0
+              }
+            ],
+            "greenDockerRunning": 0,
+            "greenDockerExit1": 9,
+            "blueTargets": 0,
+            "greenTargets": 0,
+            "production": {
+              "error": "APP_DATABASE_HEALTH"
+            },
+            "test": {
+              "error": "APP_DATABASE_HEALTH"
+            },
+            "weights": [
+              {
+                "rule": "production",
+                "group": "blue",
+                "weight": 1
+              },
+              {
+                "rule": "production",
+                "group": "green",
+                "weight": 0
+              },
+              {
+                "rule": "test",
+                "group": "green",
+                "weight": 1
+              }
+            ]
+          },
+          {
+            "seconds": 123.8,
+            "blueHealthy": false,
+            "blueEcsStates": [
+              "STOPPED"
+            ],
+            "blueDocker": [
+              {
+                "id": "8b294ca551f58a4e5f555e039a657bd20339819c0e4d416d784704a3491f474a",
+                "running": false,
+                "health": "unhealthy",
+                "exit": 0
+              }
+            ],
+            "greenDockerRunning": 0,
+            "greenDockerExit1": 11,
+            "blueTargets": 2,
+            "greenTargets": 0,
+            "production": {
+              "error": "APP_HEALTH_HTTP_500"
+            },
+            "test": {
+              "error": "APP_DATABASE_HEALTH"
+            },
+            "weights": [
+              {
+                "rule": "production",
+                "group": "blue",
+                "weight": 1
+              },
+              {
+                "rule": "production",
+                "group": "green",
+                "weight": 0
+              },
+              {
+                "rule": "test",
+                "group": "green",
+                "weight": 1
+              }
+            ]
+          },
+          {
+            "seconds": 141.1,
+            "blueHealthy": false,
+            "blueEcsStates": [
+              "STOPPED"
+            ],
+            "blueDocker": [
+              {
+                "id": "8b294ca551f58a4e5f555e039a657bd20339819c0e4d416d784704a3491f474a",
+                "running": false,
+                "health": "unhealthy",
+                "exit": 0
+              }
+            ],
+            "greenDockerRunning": 0,
+            "greenDockerExit1": 14,
+            "blueTargets": 1,
+            "greenTargets": 0,
+            "production": {
+              "error": "APP_HEALTH_HTTP_500"
+            },
+            "test": {
+              "error": "APP_DATABASE_HEALTH"
+            },
+            "weights": [
+              {
+                "rule": "production",
+                "group": "blue",
+                "weight": 1
+              },
+              {
+                "rule": "production",
+                "group": "green",
+                "weight": 0
+              },
+              {
+                "rule": "test",
+                "group": "green",
+                "weight": 1
+              }
+            ]
+          }
+        ],
+        "errors": [],
+        "cleanupErrors": []
+      }
+    ],
+    "cleanup": {
+      "ownedResourcesOnlyDuringProbe": true,
+      "activeTemporaryServicesAfter": 0,
+      "cloudWatchStreamsRemovedAfterAwsvpc": 18,
+      "remainingDisposableDockerContainerRemovedAfterProbe": 1,
+      "unusedAvailableEcsEmulatorInterfacesRemoved": 18,
+      "mainServiceNetworkMode": "bridge",
+      "mainTaskDefinitionUnchanged": true
+    },
+    "limits": [
+      "Two app versions, successful promotion, bake, hooks, automatic rollback and Blue/Green CodePipeline integration were not tested in these negative controls.",
+      "This result covers LocalStack 2026.9.0 Docker executor in the two tested network configurations; not AWS or all LocalStack modes.",
+      "The exact proprietary internal method responsible was not inspected; functional failure is observed.",
+      "Historical INACTIVE services and deregistered task definitions may remain in the emulator API; active resources were removed."
+    ]
   }
 }

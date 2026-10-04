@@ -1,6 +1,6 @@
 # CloudTasks — portfólio AWS/DevOps
 
-Versão 1.7.7. React 19 + TypeScript + Vite, Node 24 + Express 5 e PostgreSQL.
+Versão 1.7.8. React 19 + TypeScript + Vite, Node 24 + Express 5 e PostgreSQL.
 
 CloudTasks usa uma aplicação de tarefas para demonstrar entrega de software, containers, rede, dados e balanceamento. A arquitetura alvo é AWS; o laboratório executável usa LocalStack Pro/Student e Docker Desktop, sem provisionar recursos faturáveis em uma conta AWS.
 
@@ -19,15 +19,13 @@ Alvo: GitHub/CodeConnections → CodePipeline → CodeBuild → Docker/ECR → E
 
 Aplicação, GitHub Actions, Docker, ECR, rede, RDS/Secrets, duas réplicas compartilhando o banco, CloudWatch Logs, ALB/TG, failover, HTTP e HTTPS/ACM têm execução anterior relatada pelo responsável pelo laboratório. **A etapa 8, CI/CD, foi homologada neste laboratório em 03/10/2026.** Blue/Green, CloudFront e Amazon Q/MCP são etapas posteriores.
 
-A versão 1.7.4 usa UUID v4 gerado no CodeBuild e valida a imagem pelo artifact nativo imagedefinitions.json. Na máquina Windows, 39 scripts passaram no parser e 37 regressões passaram com serviços externos simulados. A homologação real comprovou duas entregas, mudança visível por HTTPS, CodeBuild FAILED por quality gate sem iniciar Deploy e uma entrega limpa final. Evidências: [docs/EVIDENCE-CICD.json](docs/EVIDENCE-CICD.json).
+A homologação da etapa 8 comprovou duas entregas, mudança visível por HTTPS e CodeBuild FAILED por quality gate sem iniciar Deploy. A imagem recebe UUID v4 gerado no build; o artifact nativo `imagedefinitions.json`, Source VersionId/SHA256, CodeBuild vinculado, digest e tasks físicas formam a cadeia de identidade. [Evidência CI/CD](docs/EVIDENCE-CICD.json); [CI no GitHub](docs/EVIDENCE-GITHUB.json).
 
-A entrega 1.7.5 consolida esse código no [GitHub](https://github.com/fernetone/cloudtasks-aws-portfolio/pull/1) e preserva os cinco arquivos AWS que já existiam no repositório. O [CI executado](https://github.com/fernetone/cloudtasks-aws-portfolio/actions/runs/37134970506) passou no Ubuntu e no Windows PowerShell 5.1; resultados separados em [EVIDENCE-GITHUB.json](docs/EVIDENCE-GITHUB.json). A publicação não conecta automaticamente o GitHub ao LocalStack pessoal: o Source local continua sendo o snapshot S3 revisado.
+Em 04/10/2026, após a higienização autorizada do Docker Desktop e reconstrução em LocalStack 2026.9.0, uma execução nativa distinta passou novamente em Source, Build, Deploy e `test-cicd.ps1`, com 2/2 réplicas, HTTPS e CRUD/RDS. A primeira execução foi corretamente rejeitada por Running 3 para Desired 2; a limpeza manual dessa sobra não foi contada como homologação. A aprovação pertence à execução seguinte, sem fallback. A mudança visível e o quality gate negativo da homologação de 03/10 não foram repetidos nesse novo runtime.
 
-A versão 1.7.6 registra uma prova temporária da etapa 9: duas imagens executando simultaneamente, rota de teste separada, rejeição de health inválido, promoção e rollback **manuais em um ALB isolado**, comprovados por requisições e hashes dos bundles. A produção permaneceu na revisão 5, com as mesmas duas tasks e HTTPS saudável; os recursos ativos temporários foram limpos. [Desenho, resultados e limites](docs/BLUE-GREEN.md); [evidência de tráfego](docs/EVIDENCE-BLUE-GREEN-TRAFFIC.json).
+**A etapa 9 permanece bloqueada para o controlador nativo e sua integração CI/CD.** A prova manual temporária demonstrou tráfego, promoção e rollback em um ALB isolado. O ensaio nativo anterior, em LocalStack 2026.8.3, falhou em isolamento e bake. Em 2026.9.0, uma candidata deliberadamente inválida fez o controlador encerrar blue saudável, tanto em `bridge`/TG `ip` quanto em um service temporário `awsvpc`/TG `ip`. Trocar a rede do projeto não resolve esse bloqueio observado. A aplicação principal permaneceu em bridge, na mesma revisão, imagem e duas tasks. [Desenho e limites](docs/BLUE-GREEN.md); [evidência nativa](docs/EVIDENCE-BLUE-GREEN-NATIVE.json).
 
-Na versão 1.7.7, um service temporário testou o ECS nativo com `strategy=BLUE_GREEN`, dois TGs, regras de produção/teste, role de infraestrutura e bake time de um minuto. Create/Describe preservaram a configuração e blue ficou saudável. Porém, após UpdateService, onze amostras comprovaram a imagem green no TG blue, TG green vazio, pesos sem alteração e apenas a candidata executando. O aceite nativo foi **reprovado**; os recursos ativos do ensaio foram limpos e a produção foi preservada. [Evidência nativa](docs/EVIDENCE-BLUE-GREEN-NATIVE.json).
-
-**A etapa 9 permanece pendente para o controlador nativo e sua integração CI/CD.** O bloqueio agora tem observação de execução, além da cobertura documentada. A AWS documenta que a action ECS padrão pode entregar mudanças de imagem a um service com Blue/Green nativo; esse desenho preserva a pipeline atual, mas não passou no runtime LocalStack testado. As provas não promovem a produção nem certificam uma nova pipeline. Esta entrega atualiza documentação/evidência e versão; preserva aplicação, scripts, pipeline e infraestrutura existentes.
+A versão 1.7.8 atualiza documentação, evidências e identificação do pacote. Aplicação, scripts, pipeline, infraestrutura e arquivos AWS existentes foram preservados. Os recursos temporários foram removidos; apenas LocalStack e as duas tasks atuais ficam ativos, com as imagens oficiais do CodeBuild mantidas como dependências da pipeline.
 
 ## Executar a aplicação local
 
