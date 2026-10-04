@@ -1,6 +1,6 @@
 # Etapa 9 — Blue/Green: desenho e viabilidade
 
-**Estado em 03/10/2026, versão 1.7.6:** etapa 8 homologada. A prova temporária da etapa 9 demonstrou coexistência, rota de teste, promoção e rollback manuais em um ALB isolado. O controlador nativo e a integração CI/CD Blue/Green continuam pendentes. O service existente, revisão 5, duas réplicas, banco, ALB e HTTPS foram preservados.
+**Estado em 03/10/2026, versão 1.7.7:** etapa 8 homologada. A prova manual da versão 1.7.6 demonstrou tráfego em um ALB isolado. O ensaio nativo desta versão aceitou a configuração BLUE_GREEN, mas executou a candidata no TG blue, sem popular o TG green, trocar os pesos ou manter ambas as revisões durante o bake. O aceite nativo foi reprovado e a integração CI/CD Blue/Green permanece pendente. O service existente, revisão 5, duas réplicas, banco, ALB e HTTPS foram preservados.
 
 ## O que precisa ser demonstrado
 
@@ -12,7 +12,7 @@ O critério vale para duas versões realmente executáveis, com identidade de im
 
 Preferir o Blue/Green nativo do ECS para uma implementação AWS nova, conforme a recomendação atual da AWS. O service usa controlador ECS e estratégia BLUE_GREEN; os dois Target Groups, regras/listeners de produção e teste, role de infraestrutura, verificações e bake time precisam estar configurados.
 
-Manter ECS sobre EC2, portas dinâmicas, RDS compartilhado, Secrets Manager, ECR imutável e CodePipeline/CodeBuild. Não trocar a rede para Fargate ou awsvpc apenas por conveniência de um exemplo. A combinação exata EC2/bridge/TG instance e a action da pipeline com a estratégia nativa ainda precisam de validação em AWS; esta entrega não a certifica.
+Manter ECS sobre EC2, portas dinâmicas, RDS compartilhado, Secrets Manager, ECR imutável e CodePipeline/CodeBuild. Não trocar a rede para Fargate ou awsvpc apenas por conveniência de um exemplo. A AWS documenta que a action ECS padrão da CodePipeline pode entregar mudanças de imagem a um service com a estratégia nativa; outras alterações da configuração do service são provisionadas separadamente. A combinação exata EC2/bridge/TG instance ainda precisa de validação em execução AWS; esta entrega não a certifica.
 
 Quando for necessário reproduzir o modelo CodeDeploy, a AWS possui uma integração CodePipeline CodeDeployToECS oficialmente documentada. Ela exige controlador CODE_DEPLOY, aplicação/deployment group CodeDeploy, dois Target Groups, listener de produção, listener de teste opcional, roles e artifacts task definition/AppSpec/imagem. É uma alternativa arquitetural distinta, não uma alteração aplicada nesta entrega.
 
@@ -98,13 +98,39 @@ Não houve novo CodeBuild/CodePipeline, promoção de produção, duas novas ré
 
 O operador descartável ficou fora do projeto, Source S3, contexto Docker e ZIP. A entrega incorpora documentação e evidências sanitizadas, não esse operador como infraestrutura de CI/CD. O teste demonstra viabilidade do tráfego, mas ainda não oferece um comando de deploy Blue/Green repetível no repositório.
 
+## Ensaio do ECS Blue/Green nativo executado
+
+A versão 1.7.7 investigou um caminho diferente de CodeDeploy: controlador `ECS`, `deploymentConfiguration.strategy=BLUE_GREEN` e `bakeTimeInMinutes=1`. A action ECS padrão pode continuar entregando imagens a esse service na AWS, conforme a [orientação oficial de integração](https://aws.amazon.com/blogs/containers/migrating-from-aws-codedeploy-to-amazon-ecs-for-blue-green-deployments/). Assim, a ausência de APIs de histórico, sozinha, não foi tratada como prova de que UpdateService jamais executaria Blue/Green.
+
+O ensaio local criou exclusivamente um service de uma réplica, duas definições bridge com hostPort=0, ALB/TGs `ip`, listener com regras distintas de produção/teste e role IAM exclusivos. As imagens eram as mesmas blue/green previamente aceitas pela pipeline. A role possuía todas as ações da policy AWS `AmazonECSInfrastructureRolePolicyForLoadBalancers` v6, com mutações limitadas aos recursos do ensaio. O modelo da AWS CLI validou a entrada antes de CreateService. Nenhum RegisterTargets, ModifyRule ou ModifyListener manual foi usado após iniciar o service.
+
+| Verificação | Resultado observado |
+| --- | --- |
+| CreateService/DescribeServices | Preservaram strategy, bake time e advancedConfiguration, incluindo os dois TGs e regras. |
+| Estado inicial blue | ECS e Docker saudáveis; registro automático no TG blue; health/banco e bundle blue corretos. |
+| UpdateService para green | Criou container da imagem/digest green; a rota de produção temporária passou a servir seu bundle pelo TG blue. |
+| TG green e rota de teste | Zero targets nas onze amostras; health sem `status=ok`/`database=ok`, rejeitado por APP_DATABASE_HEALTH. |
+| Regras de tráfego | Pesos de produção blue=1/green=0 permaneceram iguais em todas as amostras. |
+| Coexistência/bake | Uma única task foi observada após o update, sempre da candidata; ambas as revisões não foram observadas juntas. |
+| Janela de observação | Onze amostras, do segundo 50,2 ao 183,3 do ensaio, cobrindo 133,1 segundos; bake solicitado de 60 segundos. |
+| Aceite | NATIVE_BLUE_GREEN_BEHAVIOR_FAILED; código interno do ensaio 2, sem aprovação ou fallback. |
+| Produção/limpeza | Mesmas tasks, containers, revisão, listeners, targets e HTTPS de produção antes/depois; recursos temporários removidos ou inativos, sem containers temporários executando. |
+
+O executor registrou targets com IP do host Docker e porta publicada dinâmica, diferentemente da sincronização IP/container:3000 usada pelo service principal. O health e o bundle confirmaram que essa rota inicial funcionava. Essa observação pertence ao executor do laboratório, não a hosts EC2 reais.
+
+Evidência sanitizada com configuração, identidades, onze amostras resumidas e fechamento de leitura: [EVIDENCE-BLUE-GREEN-NATIVE.json](EVIDENCE-BLUE-GREEN-NATIVE.json). Tentativas anteriores reprovadas estão descritas separadamente: problema no interpretador do operador, verificação de cleanup que inicialmente confundiu service INACTIVE com ativo, e inspeção de tasks cujos registros já haviam sido removidos por DeleteService. A limpeza dessas tentativas foi conferida depois por leitura e Docker. Não se converteu o aceite nativo em sucesso.
+
+**Observado:** os parâmetros foram armazenados, mas o TG alternativo, isolamento de teste, troca de pesos e retenção esperados não aconteceram. **Inferência limitada a LocalStack Pro 2026.8.3, executor Docker e bridge/TG ip:** o caminho UpdateService testado se comportou como substituição no TG primário, sem o mecanismo Blue/Green requerido. A configuração refletida pela API não é evidência de implementação desse mecanismo. Não se concluiu que toda combinação de rede ou versão futura do emulador tenha o mesmo comportamento.
+
+Este ensaio não iniciou outra CodePipeline/CodeBuild, não testou hooks/alarme/rollback automático, não promoveu produção e não fez escrita CRUD entre versões. O operador foi descartável e ficou fora do repositório, Source S3 e ZIP. Sua finalidade foi testar o fornecedor, não substituir o controlador.
+
 ## Decisão para este laboratório
 
 Preservar a pipeline ECS padrão da etapa 8. Não trocar para CodeDeployToECS só para obter um status Succeeded, não adicionar um controlador PowerShell próprio e não antecipar CloudFront.
 
 A alternativa manual foi verificada como prova temporária, usando uma task independente para reduzir escopo e risco. A decisão desta entrega é preservar esse resultado como evidência de tráfego e manter a pipeline padrão da etapa 8. Não incorporar um controlador próprio para simular uma certificação que o fornecedor não oferece. Uma implementação permanente exige resolver o suporte nativo e seus critérios abaixo; a prova temporária não o substitui.
 
-A validação nativa permanece pendente até haver suporte verificável do emulador ou um ambiente AWS autorizado. Nenhuma conta paga foi criada nem houve deploy AWS real.
+A validação nativa permanece pendente até haver suporte verificável do emulador ou um ambiente AWS autorizado. Não repetir a mesma configuração reprovada na sessão saudável nem trocar a action para obter um status Succeeded. Quando houver uma versão com suporte comprovado, validar primeiro em recursos isolados e depois a cadeia completa da pipeline. Nenhuma conta paga foi criada nem houve deploy AWS real.
 
 ## Critério objetivo de conclusão da etapa 9 nativa
 
@@ -122,6 +148,9 @@ Registrar separadamente falha de candidata, promoção, janela de observação e
 - [AWS ECS Blue/Green nativo](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/deployment-type-blue-green.html).
 - [AWS CodeDeploy Blue/Green e recomendação de ECS nativo](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/deployment-type-bluegreen.html).
 - [AWS action CodeDeployToECS](https://docs.aws.amazon.com/codepipeline/latest/userguide/action-reference-ECSbluegreen.html).
+- [AWS — ECS nativo, regras, bake e integração com a action ECS padrão](https://aws.amazon.com/blogs/containers/migrating-from-aws-codedeploy-to-amazon-ecs-for-blue-green-deployments/).
+- [AWS — role de infraestrutura para load balancers](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/AmazonECSInfrastructureRolePolicyForLoadBalancers.html).
+- [AWS — ações da policy gerenciada, versão v6](https://docs.aws.amazon.com/aws-managed-policy/latest/reference/AmazonECSInfrastructureRolePolicyForLoadBalancers.html).
 - [LocalStack CodeDeploy — limitações](https://docs.localstack.cloud/aws/services/codedeploy/#limitations).
 - [LocalStack CodePipeline — actions e limitações](https://docs.localstack.cloud/aws/services/codepipeline/#actions).
 - [LocalStack ECS — cobertura](https://docs.localstack.cloud/aws/services/ecs/#api-coverage).
