@@ -82,6 +82,42 @@ test('candidate HTTP identity cannot use the legacy bootstrap or another release
   const legacy = { ...expected, releaseId: null };
   checkIdentity(legacy, legacy);
   assert.throws(() => checkIdentity(legacy, expected));
+  assert.throws(() => checkIdentity(expected, { ...expected, releaseId: 'local' }));
+});
+
+function applicationFixture(releaseId) {
+  const io = new LocalStackDeployment(validateLocalConfig(env), '/unused-test-directory');
+  io.request = async pathname => {
+    if (pathname === '/health') return { status: 200, text: '{"status":"ok","database":"ok"}', type: 'application/json' };
+    if (pathname === '/api/tasks') return { status: 200, text: '[]', type: 'application/json' };
+    if (pathname === '/') return { status: 200, text: '<script type="module" src="/assets/index-fixture.js"></script>', type: 'text/html' };
+    if (pathname === '/assets/index-fixture.js') return { status: 200, text: '/* application bundle */'.repeat(10), type: 'text/javascript' };
+    if (pathname === '/release.json') return { status: 200, text: JSON.stringify({ releaseId, version: '1.8.0' }), type: 'application/json' };
+    throw new Error('Unexpected fixture path');
+  };
+  return io;
+}
+
+test('the default Docker build local release is a valid bootstrap application identity', async () => {
+  const identity = await applicationFixture('local').application();
+  assert.equal(identity.releaseId, 'local');
+  assert.equal(identity.database, 'ok');
+  assert.match(identity.bundleSha256, /^[a-f0-9]{64}$/);
+});
+
+test('local bootstrap identity cannot qualify a pipeline candidate or image artifact', async () => {
+  const io = applicationFixture('local');
+  io.artifact = { image: uri + ':pipeline-' + execution, releaseId: 'pipeline-' + execution };
+  io.ready = async () => [{ ip: '172.18.0.3' }, { ip: '172.18.0.4' }];
+  io.syncTargets = async () => { assert.fail('The local image must be rejected before target registration'); };
+  await assert.rejects(io.validateCandidate(), { code: 'CANDIDATE_IDENTITY_MISMATCH' });
+  assert.throws(() => readImageDefinition(JSON.stringify([{ name: 'cloudtasks-app', imageUri: uri + ':local' }]), uri));
+});
+
+test('bootstrap compatibility does not accept arbitrary release metadata', async () => {
+  for (const releaseId of [null, '', 'latest', 'pipeline-other', 'local-other']) {
+    await assert.rejects(applicationFixture(releaseId).application(), { code: 'APP_RELEASE_INVALID' });
+  }
 });
 
 test('task definition copy resets observed bridge host ports without changing secret references', () => {

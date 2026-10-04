@@ -217,7 +217,9 @@ export class LocalStackDeployment {
     let releaseId = null;
     if (meta.type.includes('application/json')) {
       const value = json(meta.text);
-      requireCheck(meta.status === 200 && release.test(value.releaseId || ''), 'APP_RELEASE_INVALID');
+      // The default Docker build is the initial blue release. Candidate
+      // acceptance still requires the exact pipeline artifact release below.
+      requireCheck(meta.status === 200 && (value.releaseId === 'local' || release.test(value.releaseId || '')), 'APP_RELEASE_INVALID');
       releaseId = value.releaseId;
     } else {
       requireCheck(meta.status === 200 && meta.type.includes('text/html') && meta.text === index.text, 'LEGACY_RELEASE_INVALID');
