@@ -1,6 +1,6 @@
 # CloudTasks — portfólio AWS/DevOps
 
-Versão 1.7.8. React 19 + TypeScript + Vite, Node 24 + Express 5 e PostgreSQL.
+Versão 1.8.0. React 19 + TypeScript + Vite, Node 24 + Express 5 e PostgreSQL.
 
 CloudTasks usa uma aplicação de tarefas para demonstrar entrega de software, containers, rede, dados e balanceamento. A arquitetura alvo é AWS; o laboratório executável usa LocalStack Pro/Student e Docker Desktop, sem provisionar recursos faturáveis em uma conta AWS.
 
@@ -17,15 +17,15 @@ Alvo: GitHub/CodeConnections → CodePipeline → CodeBuild → Docker/ECR → E
 | HTTPS        | ALB termina TLS com ACM              | Listener/ACM no control plane; TLS efetivo no gateway LocalStack `:4566` |
 | Estado       | Recursos e dados persistentes AWS    | `PERSISTENCE=0`, bind mount novo por sessão                              |
 
-Aplicação, GitHub Actions, Docker, ECR, rede, RDS/Secrets, duas réplicas compartilhando o banco, CloudWatch Logs, ALB/TG, failover, HTTP e HTTPS/ACM têm execução anterior relatada pelo responsável pelo laboratório. **A etapa 8, CI/CD, foi homologada neste laboratório em 03/10/2026.** Blue/Green, CloudFront e Amazon Q/MCP são etapas posteriores.
+Aplicação, GitHub Actions, Docker, ECR, rede, RDS/Secrets, duas réplicas compartilhando o banco, CloudWatch Logs, ALB/TG, failover, HTTP e HTTPS/ACM têm execução anterior relatada pelo responsável pelo laboratório. **A etapa 8, CI/CD, foi homologada neste laboratório em 03/10/2026.** Blue/Green local está descrito abaixo; CloudFront e Amazon Q/MCP são etapas posteriores.
 
 A homologação da etapa 8 comprovou duas entregas, mudança visível por HTTPS e CodeBuild FAILED por quality gate sem iniciar Deploy. A imagem recebe UUID v4 gerado no build; o artifact nativo `imagedefinitions.json`, Source VersionId/SHA256, CodeBuild vinculado, digest e tasks físicas formam a cadeia de identidade. [Evidência CI/CD](docs/EVIDENCE-CICD.json); [CI no GitHub](docs/EVIDENCE-GITHUB.json).
 
 Em 04/10/2026, após a higienização autorizada do Docker Desktop e reconstrução em LocalStack 2026.9.0, uma execução nativa distinta passou novamente em Source, Build, Deploy e `test-cicd.ps1`, com 2/2 réplicas, HTTPS e CRUD/RDS. A primeira execução foi corretamente rejeitada por Running 3 para Desired 2; a limpeza manual dessa sobra não foi contada como homologação. A aprovação pertence à execução seguinte, sem fallback. A mudança visível e o quality gate negativo da homologação de 03/10 não foram repetidos nesse novo runtime.
 
-**A etapa 9 permanece bloqueada para o controlador nativo e sua integração CI/CD.** A prova manual temporária demonstrou tráfego, promoção e rollback em um ALB isolado. O ensaio nativo anterior, em LocalStack 2026.8.3, falhou em isolamento e bake. Em 2026.9.0, uma candidata deliberadamente inválida fez o controlador encerrar blue saudável, tanto em `bridge`/TG `ip` quanto em um service temporário `awsvpc`/TG `ip`. Trocar a rede do projeto não resolve esse bloqueio observado. A aplicação principal permaneceu em bridge, na mesma revisão, imagem e duas tasks. [Desenho e limites](docs/BLUE-GREEN.md); [evidência nativa](docs/EVIDENCE-BLUE-GREEN-NATIVE.json).
+**Etapa 9 local:** o modo explícito `LocalStackBlueGreenAdapter` executa Blue/Green dentro de uma ação CodeBuild da CodePipeline nativa. Mantém duas tasks blue e duas green durante testes e bake, promove HTTP/HTTPS e, após a janela aprovada, converge o serviço principal enquanto green atende. A validação final e as evidências estão em [BLUE-GREEN.md](docs/BLUE-GREEN.md). A homologação do controlador AWS nativo continua separada e não é reivindicada; as tentativas nativas reprovadas ficam no histórico.
 
-A versão 1.7.8 atualiza documentação, evidências e identificação do pacote. Aplicação, scripts, pipeline, infraestrutura e arquivos AWS existentes foram preservados. Os recursos temporários foram removidos; apenas LocalStack e as duas tasks atuais ficam ativos, com as imagens oficiais do CodeBuild mantidas como dependências da pipeline.
+A versão 1.8.0 preserva UI/CRUD, RDS/Secrets, cluster principal, bridge, ALB/TG e HTTPS/ACM. Adiciona dois módulos Node sem dependências, um buildspec de deploy, testes e verificação de recibos/artifacts. `/release.json` é uma identidade pública imutável da imagem, sem mudança visual na interface. O modo padrão de CI/CD permanece Rolling. CloudFront (10), observabilidade ampliada (11) e Amazon Q/MCP (12) continuam posteriores.
 
 ## Executar a aplicação local
 
@@ -42,7 +42,7 @@ npm ci
 npm run verify
 ```
 
-`verify` executa lint, testes da aplicação e build dos dois componentes. A formatação possui comando próprio; consulte [DEPENDENCY-POLICY.md](docs/DEPENDENCY-POLICY.md).
+`verify` executa lint, testes da aplicação, 22 testes Node do controlador/adaptador e build dos dois componentes. A formatação possui comando próprio; consulte [DEPENDENCY-POLICY.md](docs/DEPENDENCY-POLICY.md).
 
 ## Laboratório LocalStack
 
@@ -82,6 +82,20 @@ Se houver falha, preserve a sessão e consulte:
 ```
 
 O diagnóstico diferencia o build vinculado à ação de um candidato recente sem vínculo. Mostra horários/status do runner e nomes públicos das imagens quando disponíveis, sem despejar o ambiente ou logs. Código de saída 0 do wrapper não comprova sucesso do build. Se o monitor voltar a falhar mesmo com as imagens disponíveis, a etapa continua bloqueada pelo executor; preserve a sessão para investigar a versão do LocalStack. [Diagnóstico detalhado](docs/AUDIT.md#13-diagnóstico-do-executor-codebuild-e-entrega-172).
+
+## Blue/Green da sessão saudável
+
+```powershell
+& {
+    $ErrorActionPreference = 'Stop'
+    .\scripts\localstack\create-cicd.ps1 -DeploymentMode BlueGreen
+    .\scripts\localstack\test-cicd.ps1
+}
+```
+
+Exige Source/Build/Deploy nativos, dois CodeBuilds vinculados, artifacts, digest e recibo exatos. O bake exige 2 blue + 2 green por pelo menos 60 segundos, HTTP/HTTPS e banco compartilhado. Rejeição e rollback mantêm a tentativa nativa falha; recuperação incompleta retém lock/recursos que atendem. O ALB conserva a associação com ambos os TGs durante a troca. Após o bake, a convergência esvazia o serviço principal antes de iniciar a revisão aceita, com green atendendo durante a transição.
+
+O histórico e os controles negativos constam de [BLUE-GREEN.md](docs/BLUE-GREEN.md) e [EVIDENCE-BLUE-GREEN-ADAPTER.json](docs/EVIDENCE-BLUE-GREEN-ADAPTER.json). Alternar para o modo Rolling altera a declaração da pipeline; registrar evidências antes de mudar de modo. Não resetar a sessão ou apagar lock de recuperação para contornar uma falha.
 
 ## Scripts e documentação
 

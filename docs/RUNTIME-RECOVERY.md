@@ -28,3 +28,9 @@ A política atual de timeout/rotação do bootstrap e a sincronização do ALB c
 ## Repetibilidade
 
 Lockfile e Source normalizado tornam inputs rastreáveis. `localstack/localstack-pro:latest` e `node:24-alpine` continuam tags móveis: registre os digests realmente executados antes de congelar uma versão testada. Não atualize o emulador no meio da homologação. Reconstrução determinística de configuração não promete reprodução binária completa entre versões/plataformas.
+
+## Recuperação Blue/Green
+
+Com `RECOVERY_REQUIRED`, o candidato que atende, suas regras/TG e o lock S3 são preservados. Não executar resume/reset/repair geral nem apagar o lock para continuar a pipeline. Examinar o recibo da execução e o estado nativo, conferir quais destinos atendem e recuperar somente os recursos registrados. Quando o serviço principal foi alterado depois do bake, restaurar a imagem anterior pode exigir novas tasks; não afirmar que os containers blue originais foram preservados.
+
+Somente depois de conferir APIs, containers/digest, HTTP/HTTPS e CRUD/RDS e ausência dos temporários deve-se liberar o proprietário exato do lock. Registrar a recuperação como administrativa, separada. A pipeline e o recibo falhos permanecem falhos; `last-deploy.json` só é escrito por uma entrega nativa efetivamente aprovada. Os operadores descartáveis da investigação não aumentam a coleção permanente de scripts. [Estados e critérios](BLUE-GREEN.md).

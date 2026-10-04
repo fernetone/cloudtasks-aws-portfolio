@@ -17,3 +17,4 @@ localstack-volume/
 .localstack-volume/
 .localstack-runtime/
 pipeline-build.json
+deployment-receipt.json

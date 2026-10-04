@@ -4,7 +4,7 @@ CloudTasks representa uma arquitetura AWS/DevOps com LocalStack como ambiente de
 
 ## Entrega
 
-GitHub é a origem do portfólio. GitHub Actions valida o repositório. Na AWS alvo, CodeConnections alimenta a CodePipeline; localmente, o publisher fornece um snapshot S3 versionado. CodeBuild roda qualidade e Docker build/push, e a ação ECS padrão entrega o artifact.
+GitHub é a origem do portfólio. GitHub Actions valida o repositório. Na AWS alvo, CodeConnections alimenta a CodePipeline; localmente, o publisher fornece um snapshot S3 versionado. CodeBuild roda qualidade e Docker build/push, e o Deploy consome o artifact: ECS padrão no modo Rolling, ou CodeBuild com o adaptador explícito no modo BlueGreen.
 
 ```mermaid
 flowchart TD
@@ -13,9 +13,12 @@ flowchart TD
   cp --> cb["CodeBuild: qualidade e Docker"]
   cb --> ecr["ECR: tag imutável e digest"]
   cb --> artifact["imagedefinitions.json"]
-  artifact --> deploy["Ação ECS Deploy da pipeline"]
+  artifact --> deploy["Deploy da CodePipeline"]
+  deploy --> rolling["Rolling: ação ECS padrão"]
+  deploy --> bg["BlueGreen: CodeBuild com adaptador local"]
   ecr --> deploy
-  deploy --> ecs["Service ECS: duas tasks"]
+  rolling --> ecs["Service ECS principal: duas tasks"]
+  bg --> ecs
 ```
 
 Os dois Source nodes são alternativas de ambiente, não duas ações simultâneas. `create-cicd.ps1` configura e acompanha os serviços; não substitui sua execução com um deploy externo.
@@ -57,6 +60,10 @@ A task definition referencia `cloudtasks/database` no Secrets Manager. `DATABASE
 
 `PERSISTENCE=0` e bind por sessão permitem reconstruir recursos, sem restaurar snapshots antigos. Isso descarta dados locais e não representa durabilidade RDS da AWS real. O bind permanece necessário ao executor CodeBuild.
 
-CloudWatch Logs básico já foi exercitado; métricas, alarmes e dashboard pertencem à etapa 11. A etapa 8 foi homologada no Windows/LocalStack e publicada com CI real do GitHub. A etapa atual é 9, Blue/Green: o desenho está registrado, mas a execução nativa está bloqueada pelas limitações documentadas do emulador. CloudFront (10), Amazon Q/MCP (12) e polimento (13) permanecem posteriores; consulte [BLUE-GREEN.md](BLUE-GREEN.md).
+CloudWatch Logs básico já foi exercitado; métricas, alarmes e dashboard pertencem à etapa 11. A etapa 8 foi homologada no Windows/LocalStack e publicada com CI real do GitHub. A etapa atual é 9, Blue/Green: o adaptador local usa dois serviços independentes durante validação/bake e converge o principal 0→2 enquanto green atende. A homologação do controlador AWS nativo continua separada, pelas limitações observadas/documentadas do emulador. CloudFront (10), Amazon Q/MCP (12) e polimento (13) permanecem posteriores; consulte [BLUE-GREEN.md](BLUE-GREEN.md).
 
 [PIPELINE.md](PIPELINE.md), [DECISIONS.md](DECISIONS.md), [ROADMAP.md](ROADMAP.md) e [AUDIT.md](AUDIT.md) registram decisões e evidências.
+
+## Fronteira do adaptador Blue/Green
+
+Durante promoção/bake, o TG principal e o TG temporário green continuam associados ao ALB por rotas de teste nos dois listeners. A ação padrão define produção; cabeçalhos de teste não são autenticação. Após validação e bake, green mantém tráfego durante a retirada controlada/recriação das duas tasks principais. Só após validar imagem, digest e HTTP/HTTPS finais são removidos recursos temporários e lock. [Fluxo completo](BLUE-GREEN.md).

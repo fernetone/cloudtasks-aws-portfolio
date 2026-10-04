@@ -23,7 +23,10 @@ function Invoke-AwsLocalJson {
 # Explicit build inputs: no repository-wide recursive copy and no Git-index dependency.
 $relativePaths = New-Object 'System.Collections.Generic.List[string]'
 foreach ($relative in @('package.json','package-lock.json','Dockerfile','.dockerignore','eslint.config.mjs','.nvmrc',
-    'buildspec.yml','buildspec.localstack.yml','apps/api/package.json','apps/api/tsconfig.json',
+    'buildspec.yml','buildspec.localstack.yml','buildspec.bluegreen.localstack.yml',
+    'scripts/localstack/blue-green-controller.mjs','scripts/localstack/blue-green-localstack.mjs',
+    'scripts/tests/blue-green.test.mjs','scripts/tests/blue-green-guards.test.mjs',
+    'apps/api/package.json','apps/api/tsconfig.json',
     'apps/web/package.json','apps/web/tsconfig.json','apps/web/vite.config.ts','apps/web/index.html')) {
     if (-not (Test-Path -LiteralPath (Join-Path $projectRoot $relative) -PathType Leaf)) { throw "Source requerido ausente: $relative" }
     $relativePaths.Add($relative)

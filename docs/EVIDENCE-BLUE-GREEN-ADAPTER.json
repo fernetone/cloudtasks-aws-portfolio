@@ -1,0 +1,3992 @@
+{
+  "schemaVersion": 1,
+  "projectVersion": "1.8.0",
+  "deploymentMode": "LocalStackBlueGreenAdapter",
+  "nativeBlueGreenControllerCertified": false,
+  "result": "FINAL_SOURCE_POSITIVE_ACCEPTED_REMAINING_NATIVE_CONTROLS_PENDING",
+  "environment": {
+    "executedOn": "Windows PowerShell 5.1 / Docker Desktop desktop-linux",
+    "localStackVersion": "2026.9.0",
+    "localStackContainerId": "1fc6feac010d4e263fe3a4be6bd584a5c9dbf75bde8e55b42e1957af15a2ad37",
+    "localStackImageId": "sha256:801a3dff7f6a23857e7310b7602e67d52a29dfdcb03e09f7c608d5c57d24b792",
+    "persistence": 0,
+    "realEc2Instances": false,
+    "tlsTermination": "LocalStack gateway :4566, not imported ACM certificate",
+    "cluster": "cloudtasks-cluster-r20261004030336711"
+  },
+  "historicalAcceptedAdapterBeforeQuiescence": {
+    "recordedAt": "2026-10-04T13:39:12.267086+00:00",
+    "executionId": "9f04c356-b297-41d2-ab08-0bf099c2bb73",
+    "pipelineStatus": "Succeeded",
+    "pipelineVersion": 4,
+    "sourceRevisions": [],
+    "actions": [
+      {
+        "actionName": "DeployBlueGreen",
+        "stageName": "Deploy",
+        "status": "Succeeded",
+        "pipelineExecutionId": "9f04c356-b297-41d2-ab08-0bf099c2bb73",
+        "actionExecutionId": "46aa092f-269f-40a7-844e-ed0157c48731",
+        "startTime": "2026-10-04T13:32:57.904769+00:00",
+        "lastUpdateTime": "2026-10-04T13:37:51.244633+00:00",
+        "nativeExternalExecutionId": "cloudtasks-bluegreen-deploy:3dc8ddae",
+        "errorCode": null,
+        "inputArtifacts": [
+          {
+            "name": "BuildOutput",
+            "s3location": {
+              "bucket": "cloudtasks-pipeline-artifacts",
+              "key": "cloudtasks-pipeline/BuildOutput/48fe08ec"
+            }
+          }
+        ],
+        "outputArtifacts": [
+          {
+            "name": "DeployOutput",
+            "s3location": {
+              "bucket": "cloudtasks-pipeline-artifacts",
+              "key": "cloudtasks-pipeline/DeployOutput/2172891b"
+            }
+          }
+        ],
+        "codebuild": {
+          "id": "cloudtasks-bluegreen-deploy:3dc8ddae",
+          "status": "SUCCEEDED",
+          "startTime": "2026-10-04T13:32:58.058397+00:00",
+          "endTime": "2026-10-04T13:37:50.934974+00:00",
+          "sourceVersion": "arn:aws:s3:::cloudtasks-pipeline-artifacts/cloudtasks-pipeline/BuildOutput/48fe08ec",
+          "artifactLocation": "arn:aws:s3:::cloudtasks-pipeline-artifacts/cloudtasks-pipeline/DeployOutput/2172891b"
+        }
+      },
+      {
+        "actionName": "BuildAndPush",
+        "stageName": "Build",
+        "status": "Succeeded",
+        "pipelineExecutionId": "9f04c356-b297-41d2-ab08-0bf099c2bb73",
+        "actionExecutionId": "6284f233-1fcc-44c2-bd53-9caf12c0ea18",
+        "startTime": "2026-10-04T13:30:52.179014+00:00",
+        "lastUpdateTime": "2026-10-04T13:32:57.891048+00:00",
+        "nativeExternalExecutionId": "cloudtasks-build:2c402a2d",
+        "errorCode": null,
+        "inputArtifacts": [
+          {
+            "name": "SourceOutput",
+            "s3location": {
+              "bucket": "cloudtasks-pipeline-artifacts",
+              "key": "cloudtasks-pipeline/SourceOutput/3136b97d.zip"
+            }
+          }
+        ],
+        "outputArtifacts": [
+          {
+            "name": "BuildOutput",
+            "s3location": {
+              "bucket": "cloudtasks-pipeline-artifacts",
+              "key": "cloudtasks-pipeline/BuildOutput/48fe08ec"
+            }
+          }
+        ],
+        "codebuild": {
+          "id": "cloudtasks-build:2c402a2d",
+          "status": "SUCCEEDED",
+          "startTime": "2026-10-04T13:30:52.313587+00:00",
+          "endTime": "2026-10-04T13:32:56.698779+00:00",
+          "sourceVersion": "arn:aws:s3:::cloudtasks-pipeline-artifacts/cloudtasks-pipeline/SourceOutput/3136b97d.zip",
+          "artifactLocation": "arn:aws:s3:::cloudtasks-pipeline-artifacts/cloudtasks-pipeline/BuildOutput/48fe08ec"
+        }
+      },
+      {
+        "actionName": "SourceSnapshot",
+        "stageName": "Source",
+        "status": "Succeeded",
+        "pipelineExecutionId": "9f04c356-b297-41d2-ab08-0bf099c2bb73",
+        "actionExecutionId": "208230a4-a669-4333-898b-0041ab0a2850",
+        "startTime": "2026-10-04T13:30:51.595541+00:00",
+        "lastUpdateTime": "2026-10-04T13:30:52.139499+00:00",
+        "nativeExternalExecutionId": "AaEFngBpDWEq_LMhB0Vcc0MLZAv23pE7",
+        "errorCode": null,
+        "inputArtifacts": [],
+        "outputArtifacts": [
+          {
+            "name": "SourceOutput",
+            "s3location": {
+              "bucket": "cloudtasks-pipeline-artifacts",
+              "key": "cloudtasks-pipeline/SourceOutput/3136b97d.zip"
+            }
+          }
+        ],
+        "sourceVersionId": "AaEFngBpDWEq_LMhB0Vcc0MLZAv23pE7"
+      }
+    ],
+    "receiptSha256": "8190915d8e6b55fdb9cc51224551e63d7d056fd7f98b3f3d798d8e4ff7590eff",
+    "receipt": {
+      "executionId": "9f04c356-b297-41d2-ab08-0bf099c2bb73",
+      "agentBuildId": "local:00000000-0000-0000-0000-000000000000",
+      "scenario": "Normal",
+      "bakeSeconds": 60,
+      "mode": "LocalStackBlueGreenAdapter",
+      "nativeBlueGreenControllerCertified": false,
+      "status": "SUCCEEDED",
+      "phases": [
+        "BLUE_VERIFIED",
+        "CANDIDATE_VERIFIED",
+        "TRAFFIC_PROMOTED",
+        "BAKE_PASSED",
+        "CANONICAL_VERIFIED"
+      ],
+      "provenance": {
+        "imageBuildId": "cloudtasks-build:2c402a2d",
+        "inputArtifactBucket": "cloudtasks-pipeline-artifacts",
+        "inputArtifactKey": "cloudtasks-pipeline/BuildOutput/48fe08ec"
+      },
+      "blue": {
+        "definition": "arn:aws:ecs:us-east-1:000000000000:task-definition/cloudtasks:5",
+        "image": "000000000000.dkr.ecr.us-east-1.localhost.localstack.cloud:4566/cloudtasks:pipeline-30d4e112-9c6a-4fba-9873-0f9c8f1228e4",
+        "digest": "sha256:119625e7ff96ee3b23388ca1f453e18902410c4db9478f46dce23402b31ecf4c",
+        "releaseId": null,
+        "asset": "/assets/index-BjgdmimE.js",
+        "bundleSha256": "351a4c894bd466de16ba85ab26d9fd51e5fc7905dcc3c6352d43c784a2b6b59f",
+        "health": "ok",
+        "database": "ok",
+        "tasks": [
+          {
+            "taskArn": "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/418407a8-6749-4212-b49d-f4bed03cb747",
+            "containerId": "8412bed6d4ebc4e677a4f2eea200228fd17ba5831e8d9d212eb06e346abed3ff",
+            "imageId": "sha256:119625e7ff96ee3b23388ca1f453e18902410c4db9478f46dce23402b31ecf4c",
+            "digest": "sha256:119625e7ff96ee3b23388ca1f453e18902410c4db9478f46dce23402b31ecf4c",
+            "ip": "172.18.0.3",
+            "port": 3000,
+            "health": "healthy"
+          },
+          {
+            "taskArn": "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/af34b838-4532-48ca-b393-869d63255989",
+            "containerId": "b213287d6c30eadb94f75d3bee8e13d7c78b6108d9e2154b2c5d1891be3dd3cb",
+            "imageId": "sha256:119625e7ff96ee3b23388ca1f453e18902410c4db9478f46dce23402b31ecf4c",
+            "digest": "sha256:119625e7ff96ee3b23388ca1f453e18902410c4db9478f46dce23402b31ecf4c",
+            "ip": "172.18.0.4",
+            "port": 3000,
+            "health": "healthy"
+          }
+        ]
+      },
+      "green": {
+        "definition": "arn:aws:ecs:us-east-1:000000000000:task-definition/cloudtasks-candidate:3",
+        "image": "000000000000.dkr.ecr.us-east-1.localhost.localstack.cloud:4566/cloudtasks:pipeline-9d2817aa-a728-4f75-8bcf-439b9e9fc4e5",
+        "digest": "sha256:10bb4dea0e40de5c390ea4b74c78c06bcf54bcd625cd92ce0aa45044903999ce",
+        "releaseId": "pipeline-9d2817aa-a728-4f75-8bcf-439b9e9fc4e5",
+        "asset": "/assets/index-BjgdmimE.js",
+        "bundleSha256": "351a4c894bd466de16ba85ab26d9fd51e5fc7905dcc3c6352d43c784a2b6b59f",
+        "health": "ok",
+        "database": "ok",
+        "tasks": [
+          {
+            "taskArn": "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/76fe6e7d-953e-46d1-a9d0-4758f6d00f72",
+            "containerId": "34be8c0d4bf98ae3425bd55545564e421e960d21d025ee943f107782095c7720",
+            "imageId": "sha256:10bb4dea0e40de5c390ea4b74c78c06bcf54bcd625cd92ce0aa45044903999ce",
+            "digest": "sha256:10bb4dea0e40de5c390ea4b74c78c06bcf54bcd625cd92ce0aa45044903999ce",
+            "ip": "172.18.0.6",
+            "port": 3000,
+            "health": "healthy"
+          },
+          {
+            "taskArn": "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/676d216e-1d6d-4446-bc54-42d8fbb88d21",
+            "containerId": "9e6105700f08e810f36003188b9a0e31944b0f3285828fcc35b4a2e416ee3bdc",
+            "imageId": "sha256:10bb4dea0e40de5c390ea4b74c78c06bcf54bcd625cd92ce0aa45044903999ce",
+            "digest": "sha256:10bb4dea0e40de5c390ea4b74c78c06bcf54bcd625cd92ce0aa45044903999ce",
+            "ip": "172.18.0.7",
+            "port": 3000,
+            "health": "healthy"
+          }
+        ]
+      },
+      "isolation": {
+        "productionHttp": "blue",
+        "productionHttps": "blue",
+        "testHttp": "green",
+        "testHttps": "green"
+      },
+      "sharedData": {
+        "createBlueReadGreen": true,
+        "updateGreenReadBlue": true,
+        "ownedTaskDeleted": true
+      },
+      "promotion": {
+        "http": "green",
+        "https": "green",
+        "releaseId": "pipeline-9d2817aa-a728-4f75-8bcf-439b9e9fc4e5"
+      },
+      "bake": {
+        "requiredSeconds": 60,
+        "elapsedSeconds": 75.463,
+        "samples": [
+          {
+            "seconds": 13.4,
+            "blueHealthy": 2,
+            "greenHealthy": 2,
+            "blueHttp": "blue",
+            "blueHttps": "blue",
+            "productionRelease": "pipeline-9d2817aa-a728-4f75-8bcf-439b9e9fc4e5",
+            "httpsPinned": true
+          },
+          {
+            "seconds": 32.4,
+            "blueHealthy": 2,
+            "greenHealthy": 2,
+            "blueHttp": "blue",
+            "blueHttps": "blue",
+            "productionRelease": "pipeline-9d2817aa-a728-4f75-8bcf-439b9e9fc4e5",
+            "httpsPinned": true
+          },
+          {
+            "seconds": 58.2,
+            "blueHealthy": 2,
+            "greenHealthy": 2,
+            "blueHttp": "blue",
+            "blueHttps": "blue",
+            "productionRelease": "pipeline-9d2817aa-a728-4f75-8bcf-439b9e9fc4e5",
+            "httpsPinned": true
+          },
+          {
+            "seconds": 75.5,
+            "blueHealthy": 2,
+            "greenHealthy": 2,
+            "blueHttp": "blue",
+            "blueHttps": "blue",
+            "productionRelease": "pipeline-9d2817aa-a728-4f75-8bcf-439b9e9fc4e5",
+            "httpsPinned": true
+          }
+        ]
+      },
+      "final": {
+        "taskDefinition": "arn:aws:ecs:us-east-1:000000000000:task-definition/cloudtasks:6",
+        "image": "000000000000.dkr.ecr.us-east-1.localhost.localstack.cloud:4566/cloudtasks:pipeline-9d2817aa-a728-4f75-8bcf-439b9e9fc4e5",
+        "digest": "sha256:10bb4dea0e40de5c390ea4b74c78c06bcf54bcd625cd92ce0aa45044903999ce",
+        "releaseId": "pipeline-9d2817aa-a728-4f75-8bcf-439b9e9fc4e5",
+        "tasks": [
+          {
+            "taskArn": "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/d849875b-f75d-46e3-9cad-be34389c9113",
+            "containerId": "cfd98c718294932ba6ae21074a0431e1188b180575187e2ed05b50a152d12be9",
+            "imageId": "sha256:10bb4dea0e40de5c390ea4b74c78c06bcf54bcd625cd92ce0aa45044903999ce",
+            "digest": "sha256:10bb4dea0e40de5c390ea4b74c78c06bcf54bcd625cd92ce0aa45044903999ce",
+            "ip": "172.18.0.3",
+            "port": 3000,
+            "health": "healthy"
+          },
+          {
+            "taskArn": "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/691d3e7e-98b5-4b91-b660-9f40e8bc1f59",
+            "containerId": "beeafa946b6e977a8f1aa0a1ff798459bfb748a0e99c7abe8301a3234018b1ab",
+            "imageId": "sha256:10bb4dea0e40de5c390ea4b74c78c06bcf54bcd625cd92ce0aa45044903999ce",
+            "digest": "sha256:10bb4dea0e40de5c390ea4b74c78c06bcf54bcd625cd92ce0aa45044903999ce",
+            "ip": "172.18.0.4",
+            "port": 3000,
+            "health": "healthy"
+          }
+        ],
+        "targetGroup": "arn:aws:elasticloadbalancing:us-east-1:000000000000:targetgroup/cloudtasks-tg/7af3cbd8c9084c7f",
+        "http": "green",
+        "https": "green"
+      },
+      "cleanup": {
+        "temporaryServiceRemoved": true,
+        "temporaryRulesRemoved": true,
+        "temporaryGroupRemoved": true,
+        "temporaryDefinitionDeregistered": true,
+        "temporaryContainersRemoved": true,
+        "temporaryLogsRemoved": true
+      },
+      "owned": {
+        "rules": [
+          "arn:aws:elasticloadbalancing:us-east-1:000000000000:listener-rule/app/cloudtasks-alb/f37162fc36084cae/e4721886507f4ae6/9d8340cea52e4514",
+          "arn:aws:elasticloadbalancing:us-east-1:000000000000:listener-rule/app/cloudtasks-alb/f37162fc36084cae/e4721886507f4ae6/e0e7f20733aa48d9",
+          "arn:aws:elasticloadbalancing:us-east-1:000000000000:listener-rule/app/cloudtasks-alb/f37162fc36084cae/3fddd6aa7ba340e6/7b773480ad184659",
+          "arn:aws:elasticloadbalancing:us-east-1:000000000000:listener-rule/app/cloudtasks-alb/f37162fc36084cae/3fddd6aa7ba340e6/c4e591d331fd4f4b"
+        ],
+        "taskIds": [
+          "76fe6e7d-953e-46d1-a9d0-4758f6d00f72",
+          "676d216e-1d6d-4446-bc54-42d8fbb88d21",
+          "76fe6e7d-953e-46d1-a9d0-4758f6d00f72",
+          "676d216e-1d6d-4446-bc54-42d8fbb88d21",
+          "76fe6e7d-953e-46d1-a9d0-4758f6d00f72",
+          "676d216e-1d6d-4446-bc54-42d8fbb88d21",
+          "76fe6e7d-953e-46d1-a9d0-4758f6d00f72",
+          "676d216e-1d6d-4446-bc54-42d8fbb88d21"
+        ],
+        "definition": "arn:aws:ecs:us-east-1:000000000000:task-definition/cloudtasks-candidate:3",
+        "group": "arn:aws:elasticloadbalancing:us-east-1:000000000000:targetgroup/ct-bg-9f04c356-green/324531625a904628",
+        "service": "arn:aws:ecs:us-east-1:000000000000:service/cloudtasks-cluster-r20261004030336711/cloudtasks-candidate-9f04c356"
+      },
+      "recordedAt": "2026-10-04T13:37:22.690Z"
+    },
+    "deploymentLockPresent": false,
+    "canonicalService": {
+      "serviceArn": "arn:aws:ecs:us-east-1:000000000000:service/cloudtasks-cluster-r20261004030336711/cloudtasks-service",
+      "taskDefinition": "arn:aws:ecs:us-east-1:000000000000:task-definition/cloudtasks:6",
+      "desiredCount": 2,
+      "runningCount": 2,
+      "pendingCount": 0,
+      "status": "ACTIVE"
+    },
+    "canonicalTaskArns": [
+      "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/d849875b-f75d-46e3-9cad-be34389c9113",
+      "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/691d3e7e-98b5-4b91-b660-9f40e8bc1f59"
+    ],
+    "listeners": [
+      {
+        "ListenerArn": "arn:aws:elasticloadbalancing:us-east-1:000000000000:listener/app/cloudtasks-alb/f37162fc36084cae/e4721886507f4ae6",
+        "Protocol": "HTTP",
+        "Port": 4566,
+        "DefaultActions": [
+          {
+            "Type": "forward",
+            "TargetGroupArn": "arn:aws:elasticloadbalancing:us-east-1:000000000000:targetgroup/cloudtasks-tg/7af3cbd8c9084c7f",
+            "ForwardConfig": {
+              "TargetGroups": [
+                {
+                  "TargetGroupArn": "arn:aws:elasticloadbalancing:us-east-1:000000000000:targetgroup/cloudtasks-tg/7af3cbd8c9084c7f",
+                  "Weight": 1
+                }
+              ],
+              "TargetGroupStickinessConfig": {
+                "Enabled": false
+              }
+            }
+          }
+        ]
+      },
+      {
+        "ListenerArn": "arn:aws:elasticloadbalancing:us-east-1:000000000000:listener/app/cloudtasks-alb/f37162fc36084cae/3fddd6aa7ba340e6",
+        "Protocol": "HTTPS",
+        "Port": 443,
+        "DefaultActions": [
+          {
+            "Type": "forward",
+            "TargetGroupArn": "arn:aws:elasticloadbalancing:us-east-1:000000000000:targetgroup/cloudtasks-tg/7af3cbd8c9084c7f",
+            "ForwardConfig": {
+              "TargetGroups": [
+                {
+                  "TargetGroupArn": "arn:aws:elasticloadbalancing:us-east-1:000000000000:targetgroup/cloudtasks-tg/7af3cbd8c9084c7f",
+                  "Weight": 1
+                }
+              ],
+              "TargetGroupStickinessConfig": {
+                "Enabled": false
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "canonicalTargets": [
+      {
+        "Target": {
+          "Id": "172.18.0.3",
+          "Port": 3000,
+          "AvailabilityZone": "all"
+        },
+        "HealthCheckPort": "3000",
+        "TargetHealth": {
+          "State": "healthy"
+        }
+      },
+      {
+        "Target": {
+          "Id": "172.18.0.4",
+          "Port": 3000,
+          "AvailabilityZone": "all"
+        },
+        "HealthCheckPort": "3000",
+        "TargetHealth": {
+          "State": "healthy"
+        }
+      }
+    ]
+  },
+  "failedExperiments": [
+    {
+      "recordedAt": "2026-10-04T11:39:20.140457+00:00",
+      "executionId": "833ad441-1ec1-43c9-aac6-9a5cff695424",
+      "pipelineStatus": "Failed",
+      "pipelineVersion": 4,
+      "sourceRevisions": [],
+      "actions": [
+        {
+          "actionName": "DeployBlueGreen",
+          "stageName": "Deploy",
+          "status": "Failed",
+          "pipelineExecutionId": "833ad441-1ec1-43c9-aac6-9a5cff695424",
+          "actionExecutionId": "0730ca12-8164-4708-a4e1-cf853f26db2c",
+          "startTime": "2026-10-04T11:35:40.409922+00:00",
+          "lastUpdateTime": "2026-10-04T11:38:35.475920+00:00",
+          "nativeExternalExecutionId": "cloudtasks-bluegreen-deploy:d64d1552",
+          "errorCode": "JobFailed",
+          "inputArtifacts": [
+            {
+              "name": "BuildOutput",
+              "s3location": {
+                "bucket": "cloudtasks-pipeline-artifacts",
+                "key": "cloudtasks-pipeline/BuildOutput/744ecae4"
+              }
+            }
+          ],
+          "outputArtifacts": [],
+          "codebuild": {
+            "id": "cloudtasks-bluegreen-deploy:d64d1552",
+            "status": "FAILED",
+            "startTime": "2026-10-04T11:35:40.666813+00:00",
+            "endTime": "2026-10-04T11:38:34.072356+00:00",
+            "sourceVersion": "arn:aws:s3:::cloudtasks-pipeline-artifacts/cloudtasks-pipeline/BuildOutput/744ecae4",
+            "artifactLocation": "arn:aws:s3:::cloudtasks-pipeline-artifacts/cloudtasks-pipeline/DeployOutput/b5bff049"
+          }
+        },
+        {
+          "actionName": "BuildAndPush",
+          "stageName": "Build",
+          "status": "Succeeded",
+          "pipelineExecutionId": "833ad441-1ec1-43c9-aac6-9a5cff695424",
+          "actionExecutionId": "749ccebb-8381-48b1-b7c7-aa6b62399720",
+          "startTime": "2026-10-04T11:29:08.148715+00:00",
+          "lastUpdateTime": "2026-10-04T11:35:40.258276+00:00",
+          "nativeExternalExecutionId": "cloudtasks-build:a42c3ea9",
+          "errorCode": null,
+          "inputArtifacts": [
+            {
+              "name": "SourceOutput",
+              "s3location": {
+                "bucket": "cloudtasks-pipeline-artifacts",
+                "key": "cloudtasks-pipeline/SourceOutput/b0ca3bba.zip"
+              }
+            }
+          ],
+          "outputArtifacts": [
+            {
+              "name": "BuildOutput",
+              "s3location": {
+                "bucket": "cloudtasks-pipeline-artifacts",
+                "key": "cloudtasks-pipeline/BuildOutput/744ecae4"
+              }
+            }
+          ],
+          "codebuild": {
+            "id": "cloudtasks-build:a42c3ea9",
+            "status": "SUCCEEDED",
+            "startTime": "2026-10-04T11:29:08.878470+00:00",
+            "endTime": "2026-10-04T11:35:39.010596+00:00",
+            "sourceVersion": "arn:aws:s3:::cloudtasks-pipeline-artifacts/cloudtasks-pipeline/SourceOutput/b0ca3bba.zip",
+            "artifactLocation": "arn:aws:s3:::cloudtasks-pipeline-artifacts/cloudtasks-pipeline/BuildOutput/744ecae4"
+          }
+        },
+        {
+          "actionName": "SourceSnapshot",
+          "stageName": "Source",
+          "status": "Succeeded",
+          "pipelineExecutionId": "833ad441-1ec1-43c9-aac6-9a5cff695424",
+          "actionExecutionId": "b00d6420-fb4c-43be-9d80-008e7a288c5d",
+          "startTime": "2026-10-04T11:28:56.906373+00:00",
+          "lastUpdateTime": "2026-10-04T11:29:08.048601+00:00",
+          "nativeExternalExecutionId": "AaEFngBmR_oGpmiYtjlMIVsnFVzQ.eoa",
+          "errorCode": null,
+          "inputArtifacts": [],
+          "outputArtifacts": [
+            {
+              "name": "SourceOutput",
+              "s3location": {
+                "bucket": "cloudtasks-pipeline-artifacts",
+                "key": "cloudtasks-pipeline/SourceOutput/b0ca3bba.zip"
+              }
+            }
+          ],
+          "sourceVersionId": "AaEFngBmR_oGpmiYtjlMIVsnFVzQ.eoa"
+        }
+      ],
+      "receiptSha256": "eb4b2b7c289468a84a6f08b6aab3e5d19030ebdff29c8f65d58c6ffc76f7a787",
+      "receipt": {
+        "executionId": "833ad441-1ec1-43c9-aac6-9a5cff695424",
+        "agentBuildId": "local:00000000-0000-0000-0000-000000000000",
+        "scenario": "Normal",
+        "bakeSeconds": 60,
+        "mode": "LocalStackBlueGreenAdapter",
+        "nativeBlueGreenControllerCertified": false,
+        "status": "RECOVERY_REQUIRED",
+        "phases": [
+          "BLUE_VERIFIED"
+        ],
+        "provenance": {
+          "imageBuildId": "cloudtasks-build:a42c3ea9",
+          "inputArtifactBucket": "cloudtasks-pipeline-artifacts",
+          "inputArtifactKey": "cloudtasks-pipeline/BuildOutput/744ecae4"
+        },
+        "blue": {
+          "definition": "arn:aws:ecs:us-east-1:000000000000:task-definition/cloudtasks:3",
+          "image": "000000000000.dkr.ecr.us-east-1.localhost.localstack.cloud:4566/cloudtasks:pipeline-30d4e112-9c6a-4fba-9873-0f9c8f1228e4",
+          "digest": "sha256:119625e7ff96ee3b23388ca1f453e18902410c4db9478f46dce23402b31ecf4c",
+          "releaseId": null,
+          "asset": "/assets/index-BjgdmimE.js",
+          "bundleSha256": "351a4c894bd466de16ba85ab26d9fd51e5fc7905dcc3c6352d43c784a2b6b59f",
+          "health": "ok",
+          "database": "ok",
+          "tasks": [
+            {
+              "taskArn": "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/534b2025-e974-4a13-8191-d84f7406afd4",
+              "containerId": "123b050ec5a930f931faaf60acf9626de035844bd066c6bf86e0faf18cde985f",
+              "imageId": "sha256:119625e7ff96ee3b23388ca1f453e18902410c4db9478f46dce23402b31ecf4c",
+              "digest": "sha256:119625e7ff96ee3b23388ca1f453e18902410c4db9478f46dce23402b31ecf4c",
+              "ip": "172.18.0.3",
+              "port": 3000,
+              "health": "healthy"
+            },
+            {
+              "taskArn": "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/0846ac0a-810e-41f3-a586-9e5ddf05162c",
+              "containerId": "b2b6c24645dbe261fc8b1531f69030908f40c25d7c8b246ef8738d5fd51df682",
+              "imageId": "sha256:119625e7ff96ee3b23388ca1f453e18902410c4db9478f46dce23402b31ecf4c",
+              "digest": "sha256:119625e7ff96ee3b23388ca1f453e18902410c4db9478f46dce23402b31ecf4c",
+              "ip": "172.18.0.4",
+              "port": 3000,
+              "health": "healthy"
+            }
+          ]
+        },
+        "errorCode": "CANDIDATE_OWNER_MISMATCH",
+        "bluePreserved": {
+          "physicalHealthy": 2,
+          "http": "blue",
+          "https": "blue",
+          "tasks": [
+            {
+              "taskArn": "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/534b2025-e974-4a13-8191-d84f7406afd4",
+              "containerId": "123b050ec5a930f931faaf60acf9626de035844bd066c6bf86e0faf18cde985f",
+              "imageId": "sha256:119625e7ff96ee3b23388ca1f453e18902410c4db9478f46dce23402b31ecf4c",
+              "digest": "sha256:119625e7ff96ee3b23388ca1f453e18902410c4db9478f46dce23402b31ecf4c",
+              "ip": "172.18.0.3",
+              "port": 3000,
+              "health": "healthy"
+            },
+            {
+              "taskArn": "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/0846ac0a-810e-41f3-a586-9e5ddf05162c",
+              "containerId": "b2b6c24645dbe261fc8b1531f69030908f40c25d7c8b246ef8738d5fd51df682",
+              "imageId": "sha256:119625e7ff96ee3b23388ca1f453e18902410c4db9478f46dce23402b31ecf4c",
+              "digest": "sha256:119625e7ff96ee3b23388ca1f453e18902410c4db9478f46dce23402b31ecf4c",
+              "ip": "172.18.0.4",
+              "port": 3000,
+              "health": "healthy"
+            }
+          ]
+        },
+        "recoveryErrorCode": "INVALID_JSON",
+        "owned": {
+          "rules": [
+            "arn:aws:elasticloadbalancing:us-east-1:000000000000:listener-rule/app/cloudtasks-alb/f37162fc36084cae/e4721886507f4ae6/92bdd20e79964d93",
+            "arn:aws:elasticloadbalancing:us-east-1:000000000000:listener-rule/app/cloudtasks-alb/f37162fc36084cae/3fddd6aa7ba340e6/0340a48c87cb4fc3"
+          ],
+          "taskIds": [
+            "2c6a884b-411b-4876-953a-e2c54a8f7f4d",
+            "84c2c08e-6bc2-4d07-9a0f-e50f6f21b6bd"
+          ],
+          "definition": "arn:aws:ecs:us-east-1:000000000000:task-definition/cloudtasks-candidate:1",
+          "group": "arn:aws:elasticloadbalancing:us-east-1:000000000000:targetgroup/ct-bg-833ad441-green/58ce3773dd2c4e24",
+          "service": "arn:aws:ecs:us-east-1:000000000000:service/cloudtasks-cluster-r20261004030336711/cloudtasks-candidate-833ad441"
+        },
+        "recordedAt": "2026-10-04T11:38:09.342Z"
+      },
+      "deploymentLockPresent": true,
+      "lockOwner": {
+        "executionId": "833ad441-1ec1-43c9-aac6-9a5cff695424"
+      },
+      "canonicalService": {
+        "serviceArn": "arn:aws:ecs:us-east-1:000000000000:service/cloudtasks-cluster-r20261004030336711/cloudtasks-service",
+        "taskDefinition": "arn:aws:ecs:us-east-1:000000000000:task-definition/cloudtasks:3",
+        "desiredCount": 2,
+        "runningCount": 2,
+        "pendingCount": 0,
+        "status": "ACTIVE"
+      },
+      "canonicalTaskArns": [
+        "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/534b2025-e974-4a13-8191-d84f7406afd4",
+        "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/0846ac0a-810e-41f3-a586-9e5ddf05162c"
+      ],
+      "listeners": [
+        {
+          "ListenerArn": "arn:aws:elasticloadbalancing:us-east-1:000000000000:listener/app/cloudtasks-alb/f37162fc36084cae/e4721886507f4ae6",
+          "Protocol": "HTTP",
+          "Port": 4566,
+          "DefaultActions": [
+            {
+              "Type": "forward",
+              "TargetGroupArn": "arn:aws:elasticloadbalancing:us-east-1:000000000000:targetgroup/cloudtasks-tg/7af3cbd8c9084c7f",
+              "ForwardConfig": {
+                "TargetGroups": [
+                  {
+                    "TargetGroupArn": "arn:aws:elasticloadbalancing:us-east-1:000000000000:targetgroup/cloudtasks-tg/7af3cbd8c9084c7f",
+                    "Weight": 1
+                  }
+                ],
+                "TargetGroupStickinessConfig": {
+                  "Enabled": false
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ListenerArn": "arn:aws:elasticloadbalancing:us-east-1:000000000000:listener/app/cloudtasks-alb/f37162fc36084cae/3fddd6aa7ba340e6",
+          "Protocol": "HTTPS",
+          "Port": 443,
+          "DefaultActions": [
+            {
+              "Type": "forward",
+              "TargetGroupArn": "arn:aws:elasticloadbalancing:us-east-1:000000000000:targetgroup/cloudtasks-tg/7af3cbd8c9084c7f",
+              "ForwardConfig": {
+                "TargetGroups": [
+                  {
+                    "TargetGroupArn": "arn:aws:elasticloadbalancing:us-east-1:000000000000:targetgroup/cloudtasks-tg/7af3cbd8c9084c7f",
+                    "Weight": 1
+                  }
+                ],
+                "TargetGroupStickinessConfig": {
+                  "Enabled": false
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "canonicalTargets": [
+        {
+          "Target": {
+            "Id": "172.18.0.3",
+            "Port": 3000,
+            "AvailabilityZone": "all"
+          },
+          "HealthCheckPort": "3000",
+          "TargetHealth": {
+            "State": "healthy"
+          }
+        },
+        {
+          "Target": {
+            "Id": "172.18.0.4",
+            "Port": 3000,
+            "AvailabilityZone": "all"
+          },
+          "HealthCheckPort": "3000",
+          "TargetHealth": {
+            "State": "healthy"
+          }
+        }
+      ]
+    },
+    {
+      "recordedAt": "2026-10-04T13:02:29.332856+00:00",
+      "executionId": "f098d443-00dc-4753-a474-201558996a56",
+      "pipelineStatus": "Failed",
+      "pipelineVersion": 4,
+      "sourceRevisions": [],
+      "actions": [
+        {
+          "actionName": "DeployBlueGreen",
+          "stageName": "Deploy",
+          "status": "Failed",
+          "pipelineExecutionId": "f098d443-00dc-4753-a474-201558996a56",
+          "actionExecutionId": "24a5f5d3-ebb3-4521-8e05-b1d56632f690",
+          "startTime": "2026-10-04T12:51:35.247850+00:00",
+          "lastUpdateTime": "2026-10-04T13:00:10.451028+00:00",
+          "nativeExternalExecutionId": "cloudtasks-bluegreen-deploy:4998e6e1",
+          "errorCode": "JobFailed",
+          "inputArtifacts": [
+            {
+              "name": "BuildOutput",
+              "s3location": {
+                "bucket": "cloudtasks-pipeline-artifacts",
+                "key": "cloudtasks-pipeline/BuildOutput/b5fb39b7"
+              }
+            }
+          ],
+          "outputArtifacts": [],
+          "codebuild": {
+            "id": "cloudtasks-bluegreen-deploy:4998e6e1",
+            "status": "FAILED",
+            "startTime": "2026-10-04T12:51:35.527923+00:00",
+            "endTime": "2026-10-04T13:00:09.602699+00:00",
+            "sourceVersion": "arn:aws:s3:::cloudtasks-pipeline-artifacts/cloudtasks-pipeline/BuildOutput/b5fb39b7",
+            "artifactLocation": "arn:aws:s3:::cloudtasks-pipeline-artifacts/cloudtasks-pipeline/DeployOutput/ed55382f"
+          }
+        },
+        {
+          "actionName": "BuildAndPush",
+          "stageName": "Build",
+          "status": "Succeeded",
+          "pipelineExecutionId": "f098d443-00dc-4753-a474-201558996a56",
+          "actionExecutionId": "0c7e1637-06d8-4190-a714-ddd984540e4f",
+          "startTime": "2026-10-04T12:49:18.115946+00:00",
+          "lastUpdateTime": "2026-10-04T12:51:35.191539+00:00",
+          "nativeExternalExecutionId": "cloudtasks-build:55fe5de5",
+          "errorCode": null,
+          "inputArtifacts": [
+            {
+              "name": "SourceOutput",
+              "s3location": {
+                "bucket": "cloudtasks-pipeline-artifacts",
+                "key": "cloudtasks-pipeline/SourceOutput/b8897e1d.zip"
+              }
+            }
+          ],
+          "outputArtifacts": [
+            {
+              "name": "BuildOutput",
+              "s3location": {
+                "bucket": "cloudtasks-pipeline-artifacts",
+                "key": "cloudtasks-pipeline/BuildOutput/b5fb39b7"
+              }
+            }
+          ],
+          "codebuild": {
+            "id": "cloudtasks-build:55fe5de5",
+            "status": "SUCCEEDED",
+            "startTime": "2026-10-04T12:49:18.229996+00:00",
+            "endTime": "2026-10-04T12:51:33.197573+00:00",
+            "sourceVersion": "arn:aws:s3:::cloudtasks-pipeline-artifacts/cloudtasks-pipeline/SourceOutput/b8897e1d.zip",
+            "artifactLocation": "arn:aws:s3:::cloudtasks-pipeline-artifacts/cloudtasks-pipeline/BuildOutput/b5fb39b7"
+          }
+        },
+        {
+          "actionName": "SourceSnapshot",
+          "stageName": "Source",
+          "status": "Succeeded",
+          "pipelineExecutionId": "f098d443-00dc-4753-a474-201558996a56",
+          "actionExecutionId": "d9c3bdb8-f6f6-4541-b599-36bd0699f4e3",
+          "startTime": "2026-10-04T12:49:17.600273+00:00",
+          "lastUpdateTime": "2026-10-04T12:49:18.096424+00:00",
+          "nativeExternalExecutionId": "AaEFngBooGK_Dm9jV2_3NG1eMBmvbxKT",
+          "errorCode": null,
+          "inputArtifacts": [],
+          "outputArtifacts": [
+            {
+              "name": "SourceOutput",
+              "s3location": {
+                "bucket": "cloudtasks-pipeline-artifacts",
+                "key": "cloudtasks-pipeline/SourceOutput/b8897e1d.zip"
+              }
+            }
+          ],
+          "sourceVersionId": "AaEFngBooGK_Dm9jV2_3NG1eMBmvbxKT"
+        }
+      ],
+      "receiptSha256": "4016132192fff079de6002a2279c231b6b7de2eefaca088789f5688cb1a3274d",
+      "receipt": {
+        "executionId": "f098d443-00dc-4753-a474-201558996a56",
+        "agentBuildId": "local:00000000-0000-0000-0000-000000000000",
+        "scenario": "Normal",
+        "bakeSeconds": 60,
+        "mode": "LocalStackBlueGreenAdapter",
+        "nativeBlueGreenControllerCertified": false,
+        "status": "RECOVERY_REQUIRED",
+        "phases": [
+          "BLUE_VERIFIED",
+          "CANDIDATE_VERIFIED",
+          "TRAFFIC_PROMOTED",
+          "BAKE_PASSED"
+        ],
+        "provenance": {
+          "imageBuildId": "cloudtasks-build:55fe5de5",
+          "inputArtifactBucket": "cloudtasks-pipeline-artifacts",
+          "inputArtifactKey": "cloudtasks-pipeline/BuildOutput/b5fb39b7"
+        },
+        "blue": {
+          "definition": "arn:aws:ecs:us-east-1:000000000000:task-definition/cloudtasks:3",
+          "image": "000000000000.dkr.ecr.us-east-1.localhost.localstack.cloud:4566/cloudtasks:pipeline-30d4e112-9c6a-4fba-9873-0f9c8f1228e4",
+          "digest": "sha256:119625e7ff96ee3b23388ca1f453e18902410c4db9478f46dce23402b31ecf4c",
+          "releaseId": null,
+          "asset": "/assets/index-BjgdmimE.js",
+          "bundleSha256": "351a4c894bd466de16ba85ab26d9fd51e5fc7905dcc3c6352d43c784a2b6b59f",
+          "health": "ok",
+          "database": "ok",
+          "tasks": [
+            {
+              "taskArn": "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/534b2025-e974-4a13-8191-d84f7406afd4",
+              "containerId": "123b050ec5a930f931faaf60acf9626de035844bd066c6bf86e0faf18cde985f",
+              "imageId": "sha256:119625e7ff96ee3b23388ca1f453e18902410c4db9478f46dce23402b31ecf4c",
+              "digest": "sha256:119625e7ff96ee3b23388ca1f453e18902410c4db9478f46dce23402b31ecf4c",
+              "ip": "172.18.0.3",
+              "port": 3000,
+              "health": "healthy"
+            },
+            {
+              "taskArn": "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/0846ac0a-810e-41f3-a586-9e5ddf05162c",
+              "containerId": "b2b6c24645dbe261fc8b1531f69030908f40c25d7c8b246ef8738d5fd51df682",
+              "imageId": "sha256:119625e7ff96ee3b23388ca1f453e18902410c4db9478f46dce23402b31ecf4c",
+              "digest": "sha256:119625e7ff96ee3b23388ca1f453e18902410c4db9478f46dce23402b31ecf4c",
+              "ip": "172.18.0.4",
+              "port": 3000,
+              "health": "healthy"
+            }
+          ]
+        },
+        "green": {
+          "definition": "arn:aws:ecs:us-east-1:000000000000:task-definition/cloudtasks-candidate:2",
+          "image": "000000000000.dkr.ecr.us-east-1.localhost.localstack.cloud:4566/cloudtasks:pipeline-f22ce522-2908-4423-be26-cc6c6814f578",
+          "digest": "sha256:4a464beaaf56e0530902cf959b166344a0c5ac8006922b2e5f7a33fa0276898d",
+          "releaseId": "pipeline-f22ce522-2908-4423-be26-cc6c6814f578",
+          "asset": "/assets/index-BjgdmimE.js",
+          "bundleSha256": "351a4c894bd466de16ba85ab26d9fd51e5fc7905dcc3c6352d43c784a2b6b59f",
+          "health": "ok",
+          "database": "ok",
+          "tasks": [
+            {
+              "taskArn": "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/9ab25282-2f36-463a-9f61-d259996070de",
+              "containerId": "a62699fd9c7159df3b34e17a61ebef595d22228ad4c412f0fdea7b5ef4419b1e",
+              "imageId": "sha256:4a464beaaf56e0530902cf959b166344a0c5ac8006922b2e5f7a33fa0276898d",
+              "digest": "sha256:4a464beaaf56e0530902cf959b166344a0c5ac8006922b2e5f7a33fa0276898d",
+              "ip": "172.18.0.6",
+              "port": 3000,
+              "health": "healthy"
+            },
+            {
+              "taskArn": "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/e994202a-551e-4d16-9a75-52328784ccf6",
+              "containerId": "5b1dc5ed3dddf323a49117a700bdd7e55003aca5c468345004ac212e3ad9f91c",
+              "imageId": "sha256:4a464beaaf56e0530902cf959b166344a0c5ac8006922b2e5f7a33fa0276898d",
+              "digest": "sha256:4a464beaaf56e0530902cf959b166344a0c5ac8006922b2e5f7a33fa0276898d",
+              "ip": "172.18.0.7",
+              "port": 3000,
+              "health": "healthy"
+            }
+          ]
+        },
+        "isolation": {
+          "productionHttp": "blue",
+          "productionHttps": "blue",
+          "testHttp": "green",
+          "testHttps": "green"
+        },
+        "sharedData": {
+          "createBlueReadGreen": true,
+          "updateGreenReadBlue": true,
+          "ownedTaskDeleted": true
+        },
+        "promotion": {
+          "http": "green",
+          "https": "green",
+          "releaseId": "pipeline-f22ce522-2908-4423-be26-cc6c6814f578"
+        },
+        "bake": {
+          "requiredSeconds": 60,
+          "elapsedSeconds": 61.117,
+          "samples": [
+            {
+              "seconds": 11,
+              "blueHealthy": 2,
+              "greenHealthy": 2,
+              "productionRelease": "pipeline-f22ce522-2908-4423-be26-cc6c6814f578",
+              "httpsPinned": true
+            },
+            {
+              "seconds": 29.2,
+              "blueHealthy": 2,
+              "greenHealthy": 2,
+              "productionRelease": "pipeline-f22ce522-2908-4423-be26-cc6c6814f578",
+              "httpsPinned": true
+            },
+            {
+              "seconds": 45.1,
+              "blueHealthy": 2,
+              "greenHealthy": 2,
+              "productionRelease": "pipeline-f22ce522-2908-4423-be26-cc6c6814f578",
+              "httpsPinned": true
+            },
+            {
+              "seconds": 61.1,
+              "blueHealthy": 2,
+              "greenHealthy": 2,
+              "productionRelease": "pipeline-f22ce522-2908-4423-be26-cc6c6814f578",
+              "httpsPinned": true
+            }
+          ]
+        },
+        "errorCode": "TARGETS_NOT_HEALTHY",
+        "recoveryErrorCode": "TARGETS_NOT_HEALTHY",
+        "owned": {
+          "rules": [
+            "arn:aws:elasticloadbalancing:us-east-1:000000000000:listener-rule/app/cloudtasks-alb/f37162fc36084cae/e4721886507f4ae6/13da40a0de594897",
+            "arn:aws:elasticloadbalancing:us-east-1:000000000000:listener-rule/app/cloudtasks-alb/f37162fc36084cae/3fddd6aa7ba340e6/19a0f0db410344cb"
+          ],
+          "taskIds": [
+            "9ab25282-2f36-463a-9f61-d259996070de",
+            "e994202a-551e-4d16-9a75-52328784ccf6"
+          ],
+          "definition": "arn:aws:ecs:us-east-1:000000000000:task-definition/cloudtasks-candidate:2",
+          "group": "arn:aws:elasticloadbalancing:us-east-1:000000000000:targetgroup/ct-bg-f098d443-green/49528423316a46de",
+          "service": "arn:aws:ecs:us-east-1:000000000000:service/cloudtasks-cluster-r20261004030336711/cloudtasks-candidate-f098d443"
+        },
+        "recordedAt": "2026-10-04T12:59:41.756Z"
+      },
+      "deploymentLockPresent": true,
+      "lockOwner": {
+        "executionId": "f098d443-00dc-4753-a474-201558996a56"
+      },
+      "canonicalService": {
+        "serviceArn": "arn:aws:ecs:us-east-1:000000000000:service/cloudtasks-cluster-r20261004030336711/cloudtasks-service",
+        "taskDefinition": "arn:aws:ecs:us-east-1:000000000000:task-definition/cloudtasks:5",
+        "desiredCount": 2,
+        "runningCount": 2,
+        "pendingCount": 0,
+        "status": "ACTIVE"
+      },
+      "canonicalTaskArns": [
+        "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/418407a8-6749-4212-b49d-f4bed03cb747",
+        "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/af34b838-4532-48ca-b393-869d63255989"
+      ],
+      "listeners": [
+        {
+          "ListenerArn": "arn:aws:elasticloadbalancing:us-east-1:000000000000:listener/app/cloudtasks-alb/f37162fc36084cae/e4721886507f4ae6",
+          "Protocol": "HTTP",
+          "Port": 4566,
+          "DefaultActions": [
+            {
+              "Type": "forward",
+              "TargetGroupArn": "arn:aws:elasticloadbalancing:us-east-1:000000000000:targetgroup/ct-bg-f098d443-green/49528423316a46de",
+              "ForwardConfig": {
+                "TargetGroups": [
+                  {
+                    "TargetGroupArn": "arn:aws:elasticloadbalancing:us-east-1:000000000000:targetgroup/ct-bg-f098d443-green/49528423316a46de",
+                    "Weight": 1
+                  }
+                ],
+                "TargetGroupStickinessConfig": {
+                  "Enabled": false
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ListenerArn": "arn:aws:elasticloadbalancing:us-east-1:000000000000:listener/app/cloudtasks-alb/f37162fc36084cae/3fddd6aa7ba340e6",
+          "Protocol": "HTTPS",
+          "Port": 443,
+          "DefaultActions": [
+            {
+              "Type": "forward",
+              "TargetGroupArn": "arn:aws:elasticloadbalancing:us-east-1:000000000000:targetgroup/ct-bg-f098d443-green/49528423316a46de",
+              "ForwardConfig": {
+                "TargetGroups": [
+                  {
+                    "TargetGroupArn": "arn:aws:elasticloadbalancing:us-east-1:000000000000:targetgroup/ct-bg-f098d443-green/49528423316a46de",
+                    "Weight": 1
+                  }
+                ],
+                "TargetGroupStickinessConfig": {
+                  "Enabled": false
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "canonicalTargets": [
+        {
+          "Target": {
+            "Id": "172.18.0.3",
+            "Port": 3000,
+            "AvailabilityZone": "all"
+          },
+          "HealthCheckPort": "3000",
+          "TargetHealth": {
+            "State": "unused",
+            "Reason": "Target.NotInUse",
+            "Description": "Target group is not configured to receive traffic from the load balancer"
+          }
+        },
+        {
+          "Target": {
+            "Id": "172.18.0.4",
+            "Port": 3000,
+            "AvailabilityZone": "all"
+          },
+          "HealthCheckPort": "3000",
+          "TargetHealth": {
+            "State": "unused",
+            "Reason": "Target.NotInUse",
+            "Description": "Target group is not configured to receive traffic from the load balancer"
+          }
+        }
+      ]
+    },
+    {
+      "recordedAt": "2026-10-04T14:17:34.951578+00:00",
+      "executionId": "971787fb-1a4d-41d8-9564-4cb2ed19a537",
+      "pipelineStatus": "Failed",
+      "pipelineVersion": 4,
+      "sourceRevisions": [],
+      "actions": [
+        {
+          "actionName": "DeployBlueGreen",
+          "stageName": "Deploy",
+          "status": "Failed",
+          "pipelineExecutionId": "971787fb-1a4d-41d8-9564-4cb2ed19a537",
+          "actionExecutionId": "65c3d92a-119a-4956-b1b0-ffdccd546536",
+          "startTime": "2026-10-04T14:03:52.717743+00:00",
+          "lastUpdateTime": "2026-10-04T14:16:27.173484+00:00",
+          "nativeExternalExecutionId": "cloudtasks-bluegreen-deploy:6bb87e13",
+          "errorCode": "JobFailed",
+          "inputArtifacts": [
+            {
+              "name": "BuildOutput",
+              "s3location": {
+                "bucket": "cloudtasks-pipeline-artifacts",
+                "key": "cloudtasks-pipeline/BuildOutput/280c639b"
+              }
+            }
+          ],
+          "outputArtifacts": [],
+          "codebuild": {
+            "id": "cloudtasks-bluegreen-deploy:6bb87e13",
+            "status": "FAILED",
+            "startTime": "2026-10-04T14:03:52.874403+00:00",
+            "endTime": "2026-10-04T14:16:26.669544+00:00",
+            "sourceVersion": "arn:aws:s3:::cloudtasks-pipeline-artifacts/cloudtasks-pipeline/BuildOutput/280c639b",
+            "artifactLocation": "arn:aws:s3:::cloudtasks-pipeline-artifacts/cloudtasks-pipeline/DeployOutput/23c30b99"
+          }
+        },
+        {
+          "actionName": "BuildAndPush",
+          "stageName": "Build",
+          "status": "Succeeded",
+          "pipelineExecutionId": "971787fb-1a4d-41d8-9564-4cb2ed19a537",
+          "actionExecutionId": "0dd560fd-977e-42f2-8048-0b7dd71a7db9",
+          "startTime": "2026-10-04T14:01:57.558413+00:00",
+          "lastUpdateTime": "2026-10-04T14:03:52.681712+00:00",
+          "nativeExternalExecutionId": "cloudtasks-build:666105c2",
+          "errorCode": null,
+          "inputArtifacts": [
+            {
+              "name": "SourceOutput",
+              "s3location": {
+                "bucket": "cloudtasks-pipeline-artifacts",
+                "key": "cloudtasks-pipeline/SourceOutput/24a6c585.zip"
+              }
+            }
+          ],
+          "outputArtifacts": [
+            {
+              "name": "BuildOutput",
+              "s3location": {
+                "bucket": "cloudtasks-pipeline-artifacts",
+                "key": "cloudtasks-pipeline/BuildOutput/280c639b"
+              }
+            }
+          ],
+          "codebuild": {
+            "id": "cloudtasks-build:666105c2",
+            "status": "SUCCEEDED",
+            "startTime": "2026-10-04T14:01:57.646417+00:00",
+            "endTime": "2026-10-04T14:03:51.575296+00:00",
+            "sourceVersion": "arn:aws:s3:::cloudtasks-pipeline-artifacts/cloudtasks-pipeline/SourceOutput/24a6c585.zip",
+            "artifactLocation": "arn:aws:s3:::cloudtasks-pipeline-artifacts/cloudtasks-pipeline/BuildOutput/280c639b"
+          }
+        },
+        {
+          "actionName": "SourceSnapshot",
+          "stageName": "Source",
+          "status": "Succeeded",
+          "pipelineExecutionId": "971787fb-1a4d-41d8-9564-4cb2ed19a537",
+          "actionExecutionId": "8fef833d-acc2-4de9-8d29-7be0febe5612",
+          "startTime": "2026-10-04T14:01:57.398980+00:00",
+          "lastUpdateTime": "2026-10-04T14:01:57.531909+00:00",
+          "nativeExternalExecutionId": "AaEFngBsYstygTNSoAZql4.bxpHl_tyO",
+          "errorCode": null,
+          "inputArtifacts": [],
+          "outputArtifacts": [
+            {
+              "name": "SourceOutput",
+              "s3location": {
+                "bucket": "cloudtasks-pipeline-artifacts",
+                "key": "cloudtasks-pipeline/SourceOutput/24a6c585.zip"
+              }
+            }
+          ],
+          "sourceVersionId": "AaEFngBsYstygTNSoAZql4.bxpHl_tyO"
+        }
+      ],
+      "receiptSha256": "41e0cdf00b357a844ef902368fb899ba486502a3af0f81425238da11614d6259",
+      "receipt": {
+        "executionId": "971787fb-1a4d-41d8-9564-4cb2ed19a537",
+        "agentBuildId": "local:00000000-0000-0000-0000-000000000000",
+        "scenario": "Normal",
+        "bakeSeconds": 60,
+        "mode": "LocalStackBlueGreenAdapter",
+        "nativeBlueGreenControllerCertified": false,
+        "status": "RECOVERY_REQUIRED",
+        "phases": [
+          "BLUE_VERIFIED",
+          "CANDIDATE_VERIFIED",
+          "TRAFFIC_PROMOTED",
+          "BAKE_PASSED"
+        ],
+        "provenance": {
+          "imageBuildId": "cloudtasks-build:666105c2",
+          "inputArtifactBucket": "cloudtasks-pipeline-artifacts",
+          "inputArtifactKey": "cloudtasks-pipeline/BuildOutput/280c639b"
+        },
+        "blue": {
+          "definition": "arn:aws:ecs:us-east-1:000000000000:task-definition/cloudtasks:6",
+          "image": "000000000000.dkr.ecr.us-east-1.localhost.localstack.cloud:4566/cloudtasks:pipeline-9d2817aa-a728-4f75-8bcf-439b9e9fc4e5",
+          "digest": "sha256:10bb4dea0e40de5c390ea4b74c78c06bcf54bcd625cd92ce0aa45044903999ce",
+          "releaseId": "pipeline-9d2817aa-a728-4f75-8bcf-439b9e9fc4e5",
+          "asset": "/assets/index-BjgdmimE.js",
+          "bundleSha256": "351a4c894bd466de16ba85ab26d9fd51e5fc7905dcc3c6352d43c784a2b6b59f",
+          "health": "ok",
+          "database": "ok",
+          "tasks": [
+            {
+              "taskArn": "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/d849875b-f75d-46e3-9cad-be34389c9113",
+              "containerId": "cfd98c718294932ba6ae21074a0431e1188b180575187e2ed05b50a152d12be9",
+              "imageId": "sha256:10bb4dea0e40de5c390ea4b74c78c06bcf54bcd625cd92ce0aa45044903999ce",
+              "digest": "sha256:10bb4dea0e40de5c390ea4b74c78c06bcf54bcd625cd92ce0aa45044903999ce",
+              "ip": "172.18.0.3",
+              "port": 3000,
+              "health": "healthy"
+            },
+            {
+              "taskArn": "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/691d3e7e-98b5-4b91-b660-9f40e8bc1f59",
+              "containerId": "beeafa946b6e977a8f1aa0a1ff798459bfb748a0e99c7abe8301a3234018b1ab",
+              "imageId": "sha256:10bb4dea0e40de5c390ea4b74c78c06bcf54bcd625cd92ce0aa45044903999ce",
+              "digest": "sha256:10bb4dea0e40de5c390ea4b74c78c06bcf54bcd625cd92ce0aa45044903999ce",
+              "ip": "172.18.0.4",
+              "port": 3000,
+              "health": "healthy"
+            }
+          ]
+        },
+        "green": {
+          "definition": "arn:aws:ecs:us-east-1:000000000000:task-definition/cloudtasks-candidate:6",
+          "image": "000000000000.dkr.ecr.us-east-1.localhost.localstack.cloud:4566/cloudtasks:pipeline-a9408050-425b-4462-8ebb-a22757016b7d",
+          "digest": "sha256:8b14ddfa62d09d219fc49ba163459ff589f088f890fb08f0af6c749c286b2a87",
+          "releaseId": "pipeline-a9408050-425b-4462-8ebb-a22757016b7d",
+          "asset": "/assets/index-BjgdmimE.js",
+          "bundleSha256": "351a4c894bd466de16ba85ab26d9fd51e5fc7905dcc3c6352d43c784a2b6b59f",
+          "health": "ok",
+          "database": "ok",
+          "tasks": [
+            {
+              "taskArn": "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/907f3b7a-6989-456d-ba50-5e22d242bb6d",
+              "containerId": "247ea07d0c8dff1c017a0b25a006c55d8ac7b228fcd06e8ed065d7d8534e20fc",
+              "imageId": "sha256:8b14ddfa62d09d219fc49ba163459ff589f088f890fb08f0af6c749c286b2a87",
+              "digest": "sha256:8b14ddfa62d09d219fc49ba163459ff589f088f890fb08f0af6c749c286b2a87",
+              "ip": "172.18.0.6",
+              "port": 3000,
+              "health": "healthy"
+            },
+            {
+              "taskArn": "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/68a11dab-08c5-4da2-be13-b4a228319f99",
+              "containerId": "11f30fedf511e219ef79aba74c846b5d0102dc92e7601ffa799e7540f14fc772",
+              "imageId": "sha256:8b14ddfa62d09d219fc49ba163459ff589f088f890fb08f0af6c749c286b2a87",
+              "digest": "sha256:8b14ddfa62d09d219fc49ba163459ff589f088f890fb08f0af6c749c286b2a87",
+              "ip": "172.18.0.7",
+              "port": 3000,
+              "health": "healthy"
+            }
+          ]
+        },
+        "isolation": {
+          "productionHttp": "blue",
+          "productionHttps": "blue",
+          "testHttp": "green",
+          "testHttps": "green"
+        },
+        "sharedData": {
+          "createBlueReadGreen": true,
+          "updateGreenReadBlue": true,
+          "ownedTaskDeleted": true
+        },
+        "promotion": {
+          "http": "green",
+          "https": "green",
+          "releaseId": "pipeline-a9408050-425b-4462-8ebb-a22757016b7d"
+        },
+        "bake": {
+          "requiredSeconds": 60,
+          "elapsedSeconds": 70.581,
+          "samples": [
+            {
+              "seconds": 12.8,
+              "blueHealthy": 2,
+              "greenHealthy": 2,
+              "blueHttp": "blue",
+              "blueHttps": "blue",
+              "productionRelease": "pipeline-a9408050-425b-4462-8ebb-a22757016b7d",
+              "httpsPinned": true
+            },
+            {
+              "seconds": 32,
+              "blueHealthy": 2,
+              "greenHealthy": 2,
+              "blueHttp": "blue",
+              "blueHttps": "blue",
+              "productionRelease": "pipeline-a9408050-425b-4462-8ebb-a22757016b7d",
+              "httpsPinned": true
+            },
+            {
+              "seconds": 51.3,
+              "blueHealthy": 2,
+              "greenHealthy": 2,
+              "blueHttp": "blue",
+              "blueHttps": "blue",
+              "productionRelease": "pipeline-a9408050-425b-4462-8ebb-a22757016b7d",
+              "httpsPinned": true
+            },
+            {
+              "seconds": 70.6,
+              "blueHealthy": 2,
+              "greenHealthy": 2,
+              "blueHttp": "blue",
+              "blueHttps": "blue",
+              "productionRelease": "pipeline-a9408050-425b-4462-8ebb-a22757016b7d",
+              "httpsPinned": true
+            }
+          ]
+        },
+        "errorCode": "SERVICE_STABILITY_TIMEOUT",
+        "recoveryErrorCode": "SERVICE_STABILITY_TIMEOUT",
+        "owned": {
+          "rules": [
+            "arn:aws:elasticloadbalancing:us-east-1:000000000000:listener-rule/app/cloudtasks-alb/f37162fc36084cae/e4721886507f4ae6/4bcd50d7f1c54f2d",
+            "arn:aws:elasticloadbalancing:us-east-1:000000000000:listener-rule/app/cloudtasks-alb/f37162fc36084cae/e4721886507f4ae6/1f66fbc72cb3438a",
+            "arn:aws:elasticloadbalancing:us-east-1:000000000000:listener-rule/app/cloudtasks-alb/f37162fc36084cae/3fddd6aa7ba340e6/572e18748aaf492c",
+            "arn:aws:elasticloadbalancing:us-east-1:000000000000:listener-rule/app/cloudtasks-alb/f37162fc36084cae/3fddd6aa7ba340e6/c0837114dc3c47e6"
+          ],
+          "taskIds": [
+            "907f3b7a-6989-456d-ba50-5e22d242bb6d",
+            "68a11dab-08c5-4da2-be13-b4a228319f99"
+          ],
+          "definition": "arn:aws:ecs:us-east-1:000000000000:task-definition/cloudtasks-candidate:6",
+          "group": "arn:aws:elasticloadbalancing:us-east-1:000000000000:targetgroup/ct-bg-971787fb-green/59da3c6e71f647fc",
+          "service": "arn:aws:ecs:us-east-1:000000000000:service/cloudtasks-cluster-r20261004030336711/cloudtasks-candidate-971787fb"
+        },
+        "recordedAt": "2026-10-04T14:16:00.985Z"
+      },
+      "deploymentLockPresent": true,
+      "lockOwner": {
+        "executionId": "971787fb-1a4d-41d8-9564-4cb2ed19a537"
+      },
+      "canonicalService": {
+        "serviceArn": "arn:aws:ecs:us-east-1:000000000000:service/cloudtasks-cluster-r20261004030336711/cloudtasks-service",
+        "taskDefinition": "arn:aws:ecs:us-east-1:000000000000:task-definition/cloudtasks:8",
+        "desiredCount": 2,
+        "runningCount": 3,
+        "pendingCount": 0,
+        "status": "ACTIVE"
+      },
+      "canonicalTaskArns": [
+        "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/50898b5d-3fd3-4ddf-bb8d-aa4cd2d307ae",
+        "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/cd969556-366d-4171-82d3-440fda172cd6",
+        "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/75f2d82f-01d5-4645-8884-2c300e78f676"
+      ],
+      "listeners": [
+        {
+          "ListenerArn": "arn:aws:elasticloadbalancing:us-east-1:000000000000:listener/app/cloudtasks-alb/f37162fc36084cae/e4721886507f4ae6",
+          "Protocol": "HTTP",
+          "Port": 4566,
+          "DefaultActions": [
+            {
+              "Type": "forward",
+              "TargetGroupArn": "arn:aws:elasticloadbalancing:us-east-1:000000000000:targetgroup/ct-bg-971787fb-green/59da3c6e71f647fc",
+              "ForwardConfig": {
+                "TargetGroups": [
+                  {
+                    "TargetGroupArn": "arn:aws:elasticloadbalancing:us-east-1:000000000000:targetgroup/ct-bg-971787fb-green/59da3c6e71f647fc",
+                    "Weight": 1
+                  }
+                ],
+                "TargetGroupStickinessConfig": {
+                  "Enabled": false
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ListenerArn": "arn:aws:elasticloadbalancing:us-east-1:000000000000:listener/app/cloudtasks-alb/f37162fc36084cae/3fddd6aa7ba340e6",
+          "Protocol": "HTTPS",
+          "Port": 443,
+          "DefaultActions": [
+            {
+              "Type": "forward",
+              "TargetGroupArn": "arn:aws:elasticloadbalancing:us-east-1:000000000000:targetgroup/ct-bg-971787fb-green/59da3c6e71f647fc",
+              "ForwardConfig": {
+                "TargetGroups": [
+                  {
+                    "TargetGroupArn": "arn:aws:elasticloadbalancing:us-east-1:000000000000:targetgroup/ct-bg-971787fb-green/59da3c6e71f647fc",
+                    "Weight": 1
+                  }
+                ],
+                "TargetGroupStickinessConfig": {
+                  "Enabled": false
+                }
+              }
+            }
+          ]
+        }
+      ],
+      "canonicalTargets": [
+        {
+          "Target": {
+            "Id": "172.18.0.3",
+            "Port": 3000,
+            "AvailabilityZone": "all"
+          },
+          "HealthCheckPort": "3000",
+          "TargetHealth": {
+            "State": "healthy"
+          }
+        },
+        {
+          "Target": {
+            "Id": "172.18.0.4",
+            "Port": 3000,
+            "AvailabilityZone": "all"
+          },
+          "HealthCheckPort": "3000",
+          "TargetHealth": {
+            "State": "healthy"
+          }
+        }
+      ]
+    }
+  ],
+  "externalTaskSetProbe": {
+    "run": "ct-ext-35462366aa",
+    "controller": "EXTERNAL",
+    "result": "EXTERNAL_TASK_SET_EXECUTION_FAILED",
+    "owned": {
+      "cluster": "arn:aws:ecs:us-east-1:000000000000:cluster/cloudtasks-cluster-r20261004030336711",
+      "blueDefinition": "arn:aws:ecs:us-east-1:000000000000:task-definition/ct-ext-35462366aa-blue:1",
+      "blueGroup": "arn:aws:elasticloadbalancing:us-east-1:000000000000:targetgroup/ct-ext-35462366aa-blue/79532cd4c7444fec",
+      "greenDefinition": "arn:aws:ecs:us-east-1:000000000000:task-definition/ct-ext-35462366aa-green:1",
+      "greenGroup": "arn:aws:elasticloadbalancing:us-east-1:000000000000:targetgroup/ct-ext-35462366aa-green/e692ebcc175d48b4",
+      "service": "arn:aws:ecs:us-east-1:000000000000:service/cloudtasks-cluster-r20261004030336711/ct-ext-35462366aa",
+      "blueSet": "arn:aws:ecs:us-east-1:000000000000:task-set/cloudtasks-cluster-r20261004030336711/ct-ext-35462366aa/ecs-svc/664039986076159403"
+    },
+    "checks": {
+      "mainUnchanged": true
+    },
+    "cleanupErrors": [],
+    "before": {
+      "definition": "arn:aws:ecs:us-east-1:000000000000:task-definition/cloudtasks:3",
+      "counts": [
+        2,
+        2,
+        0
+      ],
+      "tasks": [
+        "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/0846ac0a-810e-41f3-a586-9e5ddf05162c",
+        "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/534b2025-e974-4a13-8191-d84f7406afd4"
+      ],
+      "containers": [
+        {
+          "taskArn": "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/0846ac0a-810e-41f3-a586-9e5ddf05162c",
+          "id": "b2b6c24645dbe261fc8b1531f69030908f40c25d7c8b246ef8738d5fd51df682",
+          "running": true,
+          "health": "healthy",
+          "imageId": "sha256:119625e7ff96ee3b23388ca1f453e18902410c4db9478f46dce23402b31ecf4c"
+        },
+        {
+          "taskArn": "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/534b2025-e974-4a13-8191-d84f7406afd4",
+          "id": "123b050ec5a930f931faaf60acf9626de035844bd066c6bf86e0faf18cde985f",
+          "running": true,
+          "health": "healthy",
+          "imageId": "sha256:119625e7ff96ee3b23388ca1f453e18902410c4db9478f46dce23402b31ecf4c"
+        }
+      ],
+      "listeners": [
+        {
+          "ListenerArn": "arn:aws:elasticloadbalancing:us-east-1:000000000000:listener/app/cloudtasks-alb/f37162fc36084cae/e4721886507f4ae6",
+          "LoadBalancerArn": "arn:aws:elasticloadbalancing:us-east-1:000000000000:loadbalancer/app/cloudtasks-alb/f37162fc36084cae",
+          "Port": 4566,
+          "Protocol": "HTTP",
+          "DefaultActions": [
+            {
+              "Type": "forward",
+              "TargetGroupArn": "arn:aws:elasticloadbalancing:us-east-1:000000000000:targetgroup/cloudtasks-tg/7af3cbd8c9084c7f",
+              "ForwardConfig": {
+                "TargetGroups": [
+                  {
+                    "TargetGroupArn": "arn:aws:elasticloadbalancing:us-east-1:000000000000:targetgroup/cloudtasks-tg/7af3cbd8c9084c7f",
+                    "Weight": 1
+                  }
+                ],
+                "TargetGroupStickinessConfig": {
+                  "Enabled": false
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ListenerArn": "arn:aws:elasticloadbalancing:us-east-1:000000000000:listener/app/cloudtasks-alb/f37162fc36084cae/3fddd6aa7ba340e6",
+          "LoadBalancerArn": "arn:aws:elasticloadbalancing:us-east-1:000000000000:loadbalancer/app/cloudtasks-alb/f37162fc36084cae",
+          "Port": 443,
+          "Protocol": "HTTPS",
+          "Certificates": [
+            {
+              "CertificateArn": "arn:aws:acm:us-east-1:000000000000:certificate/65bc7307-8836-402c-a0d0-5a2db94b40ed"
+            }
+          ],
+          "SslPolicy": "ELBSecurityPolicy-TLS13-1-2-2021-06",
+          "DefaultActions": [
+            {
+              "Type": "forward",
+              "TargetGroupArn": "arn:aws:elasticloadbalancing:us-east-1:000000000000:targetgroup/cloudtasks-tg/7af3cbd8c9084c7f",
+              "ForwardConfig": {
+                "TargetGroups": [
+                  {
+                    "TargetGroupArn": "arn:aws:elasticloadbalancing:us-east-1:000000000000:targetgroup/cloudtasks-tg/7af3cbd8c9084c7f",
+                    "Weight": 1
+                  }
+                ],
+                "TargetGroupStickinessConfig": {
+                  "Enabled": false
+                }
+              }
+            }
+          ],
+          "MutualAuthentication": {
+            "Mode": "off"
+          }
+        }
+      ],
+      "targets": [
+        {
+          "Target": {
+            "Id": "172.18.0.3",
+            "Port": 3000,
+            "AvailabilityZone": "all"
+          },
+          "HealthCheckPort": "3000",
+          "TargetHealth": {
+            "State": "healthy"
+          }
+        },
+        {
+          "Target": {
+            "Id": "172.18.0.4",
+            "Port": 3000,
+            "AvailabilityZone": "all"
+          },
+          "HealthCheckPort": "3000",
+          "TargetHealth": {
+            "State": "healthy"
+          }
+        }
+      ]
+    },
+    "setsAtFailure": [
+      {
+        "id": "ecs-svc/664039986076159403",
+        "status": "ACTIVE",
+        "taskDefinition": "arn:aws:ecs:us-east-1:000000000000:task-definition/ct-ext-35462366aa-blue:1",
+        "computedDesiredCount": null,
+        "runningCount": null,
+        "pendingCount": null,
+        "stabilityStatus": "STEADY_STATE"
+      }
+    ],
+    "tasksAtFailure": [],
+    "error": "EXTERNAL_BLUE_NO_HEALTHY_EXECUTABLE_TASK",
+    "after": {
+      "definition": "arn:aws:ecs:us-east-1:000000000000:task-definition/cloudtasks:3",
+      "counts": [
+        2,
+        2,
+        0
+      ],
+      "tasks": [
+        "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/0846ac0a-810e-41f3-a586-9e5ddf05162c",
+        "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/534b2025-e974-4a13-8191-d84f7406afd4"
+      ],
+      "containers": [
+        {
+          "taskArn": "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/0846ac0a-810e-41f3-a586-9e5ddf05162c",
+          "id": "b2b6c24645dbe261fc8b1531f69030908f40c25d7c8b246ef8738d5fd51df682",
+          "running": true,
+          "health": "healthy",
+          "imageId": "sha256:119625e7ff96ee3b23388ca1f453e18902410c4db9478f46dce23402b31ecf4c"
+        },
+        {
+          "taskArn": "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/534b2025-e974-4a13-8191-d84f7406afd4",
+          "id": "123b050ec5a930f931faaf60acf9626de035844bd066c6bf86e0faf18cde985f",
+          "running": true,
+          "health": "healthy",
+          "imageId": "sha256:119625e7ff96ee3b23388ca1f453e18902410c4db9478f46dce23402b31ecf4c"
+        }
+      ],
+      "listeners": [
+        {
+          "ListenerArn": "arn:aws:elasticloadbalancing:us-east-1:000000000000:listener/app/cloudtasks-alb/f37162fc36084cae/e4721886507f4ae6",
+          "LoadBalancerArn": "arn:aws:elasticloadbalancing:us-east-1:000000000000:loadbalancer/app/cloudtasks-alb/f37162fc36084cae",
+          "Port": 4566,
+          "Protocol": "HTTP",
+          "DefaultActions": [
+            {
+              "Type": "forward",
+              "TargetGroupArn": "arn:aws:elasticloadbalancing:us-east-1:000000000000:targetgroup/cloudtasks-tg/7af3cbd8c9084c7f",
+              "ForwardConfig": {
+                "TargetGroups": [
+                  {
+                    "TargetGroupArn": "arn:aws:elasticloadbalancing:us-east-1:000000000000:targetgroup/cloudtasks-tg/7af3cbd8c9084c7f",
+                    "Weight": 1
+                  }
+                ],
+                "TargetGroupStickinessConfig": {
+                  "Enabled": false
+                }
+              }
+            }
+          ]
+        },
+        {
+          "ListenerArn": "arn:aws:elasticloadbalancing:us-east-1:000000000000:listener/app/cloudtasks-alb/f37162fc36084cae/3fddd6aa7ba340e6",
+          "LoadBalancerArn": "arn:aws:elasticloadbalancing:us-east-1:000000000000:loadbalancer/app/cloudtasks-alb/f37162fc36084cae",
+          "Port": 443,
+          "Protocol": "HTTPS",
+          "Certificates": [
+            {
+              "CertificateArn": "arn:aws:acm:us-east-1:000000000000:certificate/65bc7307-8836-402c-a0d0-5a2db94b40ed"
+            }
+          ],
+          "SslPolicy": "ELBSecurityPolicy-TLS13-1-2-2021-06",
+          "DefaultActions": [
+            {
+              "Type": "forward",
+              "TargetGroupArn": "arn:aws:elasticloadbalancing:us-east-1:000000000000:targetgroup/cloudtasks-tg/7af3cbd8c9084c7f",
+              "ForwardConfig": {
+                "TargetGroups": [
+                  {
+                    "TargetGroupArn": "arn:aws:elasticloadbalancing:us-east-1:000000000000:targetgroup/cloudtasks-tg/7af3cbd8c9084c7f",
+                    "Weight": 1
+                  }
+                ],
+                "TargetGroupStickinessConfig": {
+                  "Enabled": false
+                }
+              }
+            }
+          ],
+          "MutualAuthentication": {
+            "Mode": "off"
+          }
+        }
+      ],
+      "targets": [
+        {
+          "Target": {
+            "Id": "172.18.0.3",
+            "Port": 3000,
+            "AvailabilityZone": "all"
+          },
+          "HealthCheckPort": "3000",
+          "TargetHealth": {
+            "State": "healthy"
+          }
+        },
+        {
+          "Target": {
+            "Id": "172.18.0.4",
+            "Port": 3000,
+            "AvailabilityZone": "all"
+          },
+          "HealthCheckPort": "3000",
+          "TargetHealth": {
+            "State": "healthy"
+          }
+        }
+      ]
+    },
+    "exitCode": 2
+  },
+  "securitySourceEarlier": {
+    "activeCredentialClassesCompared": [
+      "LocalStack token",
+      "RDS password"
+    ],
+    "valuesLogged": false,
+    "source": {
+      "versionId": "AaEFngBpDWEq_LMhB0Vcc0MLZAv23pE7",
+      "sha256": "7d0d071e812163d5ee1df5c93ec23088af1203c8eeeb71486eb27015c2e5e11e",
+      "files": 37,
+      "crc": "PASSED",
+      "activeCredentialMatches": 0,
+      "recognizableCredentialMatches": 0,
+      "authorizedInputsOnly": true
+    },
+    "result": "SECURITY_CHECKS_PASSED"
+  },
+  "quality": {
+    "windowsPowerShellParserScripts": 41,
+    "windowsSimulatedRegressions": 56,
+    "linuxPowerShell7SimulatedRegressions": 56,
+    "nodeControllerAndAdapterTests": 31,
+    "apiTests": 7,
+    "frontendTests": 4,
+    "windowsNpmVerifyExit": 0,
+    "linuxNpmVerifyExecuted": true,
+    "awsDeploymentExecuted": false,
+    "linuxNpmVerifyExit": 0,
+    "linuxNpmVerifyAttemptExitBeforeNpmCi": 127,
+    "windowsFinalReviewFixVerification": {
+      "process": 20232,
+      "exitCode": 0,
+      "runtimeSeconds": 136.28
+    }
+  },
+  "administrativeRecoveries": [
+    {
+      "executionId": "f098d443-00dc-4753-a474-201558996a56",
+      "type": "ADMINISTRATIVE_RECOVERY",
+      "pipelineStatus": "Failed",
+      "deploymentReceiptStatus": "RECOVERY_REQUIRED",
+      "result": "ADMINISTRATIVE_RECOVERY_PASSED",
+      "addedBlueRules": [
+        "arn:aws:elasticloadbalancing:us-east-1:000000000000:listener-rule/app/cloudtasks-alb/f37162fc36084cae/e4721886507f4ae6/2a70f2560e1b45cd",
+        "arn:aws:elasticloadbalancing:us-east-1:000000000000:listener-rule/app/cloudtasks-alb/f37162fc36084cae/3fddd6aa7ba340e6/24b827c907d349dd"
+      ],
+      "mainTaskArns": [
+        "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/418407a8-6749-4212-b49d-f4bed03cb747",
+        "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/af34b838-4532-48ca-b393-869d63255989"
+      ],
+      "mainDefinition": "arn:aws:ecs:us-east-1:000000000000:task-definition/cloudtasks:5",
+      "mainImage": "000000000000.dkr.ecr.us-east-1.localhost.localstack.cloud:4566/cloudtasks:pipeline-30d4e112-9c6a-4fba-9873-0f9c8f1228e4",
+      "mainDigest": "sha256:119625e7ff96ee3b23388ca1f453e18902410c4db9478f46dce23402b31ecf4c",
+      "originalBlueTasksPreserved": false,
+      "reason": "Canonical target group lost its ALB association",
+      "candidateTaskIds": [
+        "9ab25282-2f36-463a-9f61-d259996070de",
+        "e994202a-551e-4d16-9a75-52328784ccf6"
+      ],
+      "cannotCertifyDeployment": true,
+      "recordedAt": "2026-10-04T13:25:53.058574+00:00",
+      "blueAssociatedAndHealthyBeforeRestore": true,
+      "canonicalRoutesRestored": true,
+      "ownedApiResourcesRemoved": true,
+      "windowsAcceptance": {
+        "executionId": "f098d443-00dc-4753-a474-201558996a56",
+        "utc": "2026-10-04T13:25:51.5495535Z",
+        "mainTasks": [
+          {
+            "taskId": "af34b838-4532-48ca-b393-869d63255989",
+            "containerId": "b213287d6c30eadb94f75d3bee8e13d7c78b6108d9e2154b2c5d1891be3dd3cb",
+            "health": "healthy",
+            "imageId": "sha256:119625e7ff96ee3b23388ca1f453e18902410c4db9478f46dce23402b31ecf4c",
+            "digest": "sha256:119625e7ff96ee3b23388ca1f453e18902410c4db9478f46dce23402b31ecf4c",
+            "ip": "172.18.0.4"
+          },
+          {
+            "taskId": "418407a8-6749-4212-b49d-f4bed03cb747",
+            "containerId": "8412bed6d4ebc4e677a4f2eea200228fd17ba5831e8d9d212eb06e346abed3ff",
+            "health": "healthy",
+            "imageId": "sha256:119625e7ff96ee3b23388ca1f453e18902410c4db9478f46dce23402b31ecf4c",
+            "digest": "sha256:119625e7ff96ee3b23388ca1f453e18902410c4db9478f46dce23402b31ecf4c",
+            "ip": "172.18.0.3"
+          }
+        ],
+        "mainIdentityPreservedDuringRecovery": true,
+        "httpsCrudPassed": true,
+        "candidateContainersAbsent": true,
+        "originalBlueTasksPreserved": false,
+        "cannotCertifyDeployment": true
+      }
+    },
+    {
+      "executionId": "971787fb-1a4d-41d8-9564-4cb2ed19a537",
+      "recordedAt": "2026-10-04T14:34:49.3182716Z",
+      "type": "ADMINISTRATIVE_RECOVERY",
+      "result": "ADMINISTRATIVE_RECOVERY_PASSED",
+      "cannotCertifyDeployment": true,
+      "pipelineStatus": "Failed",
+      "deploymentReceiptStatus": "RECOVERY_REQUIRED",
+      "mainDefinition": "arn:aws:ecs:us-east-1:000000000000:task-definition/cloudtasks:8",
+      "mainImage": "000000000000.dkr.ecr.us-east-1.localhost.localstack.cloud:4566/cloudtasks:pipeline-9d2817aa-a728-4f75-8bcf-439b9e9fc4e5",
+      "mainDigest": "sha256:10bb4dea0e40de5c390ea4b74c78c06bcf54bcd625cd92ce0aa45044903999ce",
+      "mainTasks": [
+        {
+          "taskArn": "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/037b2958-7fe6-4244-acfd-4fb0e9ffb64b",
+          "containerId": "08ab72f98bef48033cbfa5e91fe3c45da806301d5668b991f06643026b9155ff",
+          "ip": "172.18.0.3",
+          "port": 3000,
+          "health": "healthy",
+          "digest": "sha256:10bb4dea0e40de5c390ea4b74c78c06bcf54bcd625cd92ce0aa45044903999ce"
+        },
+        {
+          "taskArn": "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/82ebd784-19a1-4d73-9d20-8853fac3c4d3",
+          "containerId": "0b5e684da2c56736fd67f7d59513b944150b2ec2f5e775b310017f852e8c79ed",
+          "ip": "172.18.0.4",
+          "port": 3000,
+          "health": "healthy",
+          "digest": "sha256:10bb4dea0e40de5c390ea4b74c78c06bcf54bcd625cd92ce0aa45044903999ce"
+        }
+      ],
+      "originalBlueTasksPreserved": false,
+      "canonicalEmptyBeforeRebuild": true,
+      "httpsCrudPassed": true,
+      "ownedCandidateResourcesRemoved": true,
+      "lastSuccessMetadataSha256Unchanged": true
+    }
+  ],
+  "stalledCancellation": {
+    "recordedAt": "2026-10-04T12:43:50.964010+00:00",
+    "executionId": "a38c21c2-5496-44b7-8987-5a4c67ac99bb",
+    "pipelineStatus": "Stopping",
+    "buildId": "cloudtasks-build:3150e0db",
+    "buildStatusBefore": "IN_PROGRESS",
+    "nativeDeployBegan": false,
+    "stalledOperation": "cp -f Node 24.19.0 runtime binary",
+    "ownedDockerRunnersStopped": true,
+    "productionPreserved": true,
+    "awsStopBuildSupported": false,
+    "acceptance": "CANCELLED_NOT_APPROVED",
+    "metadataBuildsDeleted": [],
+    "metadataBuildsNotDeletedCodes": [
+      "BUILD_IN_PROGRESS"
+    ]
+  },
+  "currentSourceSecurity": {
+    "activeCredentialClassesCompared": [
+      "LocalStack token",
+      "RDS password"
+    ],
+    "valuesLogged": false,
+    "source": {
+      "versionId": "AaEFngBto3X9iu_6_4vxl_uo5ZkGmmqn",
+      "sha256": "d506efc6ccd84768e066e7ca2a85c69787e645de1215eba5f7b9ca1229fc4288",
+      "files": 37,
+      "crc": "PASSED",
+      "activeCredentialMatches": 0,
+      "recognizableCredentialMatches": 0,
+      "authorizedInputsOnly": true
+    },
+    "result": "SECURITY_CHECKS_PASSED"
+  },
+  "historicalAcceptedBeforeFinalReviewFixes": [
+    {
+      "report": {
+        "recordedAt": "2026-10-04T14:46:55.549645+00:00",
+        "executionId": "3da7a16d-8987-4cbf-949e-99719808b810",
+        "pipelineStatus": "Succeeded",
+        "pipelineVersion": 4,
+        "sourceRevisions": [],
+        "actions": [
+          {
+            "actionName": "DeployBlueGreen",
+            "stageName": "Deploy",
+            "status": "Succeeded",
+            "pipelineExecutionId": "3da7a16d-8987-4cbf-949e-99719808b810",
+            "actionExecutionId": "bb70788c-ff3e-40c3-85d4-a40996f77930",
+            "startTime": "2026-10-04T14:40:32.576247+00:00",
+            "lastUpdateTime": "2026-10-04T14:46:06.431892+00:00",
+            "nativeExternalExecutionId": "cloudtasks-bluegreen-deploy:65f5c7c2",
+            "errorCode": null,
+            "inputArtifacts": [
+              {
+                "name": "BuildOutput",
+                "s3location": {
+                  "bucket": "cloudtasks-pipeline-artifacts",
+                  "key": "cloudtasks-pipeline/BuildOutput/617431cc"
+                }
+              }
+            ],
+            "outputArtifacts": [
+              {
+                "name": "DeployOutput",
+                "s3location": {
+                  "bucket": "cloudtasks-pipeline-artifacts",
+                  "key": "cloudtasks-pipeline/DeployOutput/b64d7e92"
+                }
+              }
+            ],
+            "codebuild": {
+              "id": "cloudtasks-bluegreen-deploy:65f5c7c2",
+              "status": "SUCCEEDED",
+              "startTime": "2026-10-04T14:40:32.667890+00:00",
+              "endTime": "2026-10-04T14:46:04.961059+00:00",
+              "sourceVersion": "arn:aws:s3:::cloudtasks-pipeline-artifacts/cloudtasks-pipeline/BuildOutput/617431cc",
+              "artifactLocation": "arn:aws:s3:::cloudtasks-pipeline-artifacts/cloudtasks-pipeline/DeployOutput/b64d7e92"
+            }
+          },
+          {
+            "actionName": "BuildAndPush",
+            "stageName": "Build",
+            "status": "Succeeded",
+            "pipelineExecutionId": "3da7a16d-8987-4cbf-949e-99719808b810",
+            "actionExecutionId": "accdc33d-6896-4e5b-81af-f587d31f5846",
+            "startTime": "2026-10-04T14:38:36.918612+00:00",
+            "lastUpdateTime": "2026-10-04T14:40:32.559216+00:00",
+            "nativeExternalExecutionId": "cloudtasks-build:3a40fe23",
+            "errorCode": null,
+            "inputArtifacts": [
+              {
+                "name": "SourceOutput",
+                "s3location": {
+                  "bucket": "cloudtasks-pipeline-artifacts",
+                  "key": "cloudtasks-pipeline/SourceOutput/c54d1b2a.zip"
+                }
+              }
+            ],
+            "outputArtifacts": [
+              {
+                "name": "BuildOutput",
+                "s3location": {
+                  "bucket": "cloudtasks-pipeline-artifacts",
+                  "key": "cloudtasks-pipeline/BuildOutput/617431cc"
+                }
+              }
+            ],
+            "codebuild": {
+              "id": "cloudtasks-build:3a40fe23",
+              "status": "SUCCEEDED",
+              "startTime": "2026-10-04T14:38:37.101720+00:00",
+              "endTime": "2026-10-04T14:40:31.479217+00:00",
+              "sourceVersion": "arn:aws:s3:::cloudtasks-pipeline-artifacts/cloudtasks-pipeline/SourceOutput/c54d1b2a.zip",
+              "artifactLocation": "arn:aws:s3:::cloudtasks-pipeline-artifacts/cloudtasks-pipeline/BuildOutput/617431cc"
+            }
+          },
+          {
+            "actionName": "SourceSnapshot",
+            "stageName": "Source",
+            "status": "Succeeded",
+            "pipelineExecutionId": "3da7a16d-8987-4cbf-949e-99719808b810",
+            "actionExecutionId": "ab57f545-260a-4c2d-8959-dfaabba1fbdb",
+            "startTime": "2026-10-04T14:38:36.601345+00:00",
+            "lastUpdateTime": "2026-10-04T14:38:36.866546+00:00",
+            "nativeExternalExecutionId": "AaEFngBto3X9iu_6_4vxl_uo5ZkGmmqn",
+            "errorCode": null,
+            "inputArtifacts": [],
+            "outputArtifacts": [
+              {
+                "name": "SourceOutput",
+                "s3location": {
+                  "bucket": "cloudtasks-pipeline-artifacts",
+                  "key": "cloudtasks-pipeline/SourceOutput/c54d1b2a.zip"
+                }
+              }
+            ],
+            "sourceVersionId": "AaEFngBto3X9iu_6_4vxl_uo5ZkGmmqn"
+          }
+        ],
+        "receiptSha256": "1ca1db6fb1e7299f2258e9578adc4226798cca7de94c50425b010596570a4ffb",
+        "receipt": {
+          "executionId": "3da7a16d-8987-4cbf-949e-99719808b810",
+          "agentBuildId": "local:00000000-0000-0000-0000-000000000000",
+          "scenario": "Normal",
+          "bakeSeconds": 60,
+          "mode": "LocalStackBlueGreenAdapter",
+          "nativeBlueGreenControllerCertified": false,
+          "status": "SUCCEEDED",
+          "phases": [
+            "BLUE_VERIFIED",
+            "CANDIDATE_VERIFIED",
+            "TRAFFIC_PROMOTED",
+            "BAKE_PASSED",
+            "CANONICAL_VERIFIED"
+          ],
+          "provenance": {
+            "imageBuildId": "cloudtasks-build:3a40fe23",
+            "inputArtifactBucket": "cloudtasks-pipeline-artifacts",
+            "inputArtifactKey": "cloudtasks-pipeline/BuildOutput/617431cc"
+          },
+          "blue": {
+            "definition": "arn:aws:ecs:us-east-1:000000000000:task-definition/cloudtasks:8",
+            "image": "000000000000.dkr.ecr.us-east-1.localhost.localstack.cloud:4566/cloudtasks:pipeline-9d2817aa-a728-4f75-8bcf-439b9e9fc4e5",
+            "digest": "sha256:10bb4dea0e40de5c390ea4b74c78c06bcf54bcd625cd92ce0aa45044903999ce",
+            "releaseId": "pipeline-9d2817aa-a728-4f75-8bcf-439b9e9fc4e5",
+            "asset": "/assets/index-BjgdmimE.js",
+            "bundleSha256": "351a4c894bd466de16ba85ab26d9fd51e5fc7905dcc3c6352d43c784a2b6b59f",
+            "health": "ok",
+            "database": "ok",
+            "tasks": [
+              {
+                "taskArn": "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/037b2958-7fe6-4244-acfd-4fb0e9ffb64b",
+                "containerId": "08ab72f98bef48033cbfa5e91fe3c45da806301d5668b991f06643026b9155ff",
+                "imageId": "sha256:10bb4dea0e40de5c390ea4b74c78c06bcf54bcd625cd92ce0aa45044903999ce",
+                "digest": "sha256:10bb4dea0e40de5c390ea4b74c78c06bcf54bcd625cd92ce0aa45044903999ce",
+                "ip": "172.18.0.3",
+                "port": 3000,
+                "health": "healthy"
+              },
+              {
+                "taskArn": "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/82ebd784-19a1-4d73-9d20-8853fac3c4d3",
+                "containerId": "0b5e684da2c56736fd67f7d59513b944150b2ec2f5e775b310017f852e8c79ed",
+                "imageId": "sha256:10bb4dea0e40de5c390ea4b74c78c06bcf54bcd625cd92ce0aa45044903999ce",
+                "digest": "sha256:10bb4dea0e40de5c390ea4b74c78c06bcf54bcd625cd92ce0aa45044903999ce",
+                "ip": "172.18.0.4",
+                "port": 3000,
+                "health": "healthy"
+              }
+            ]
+          },
+          "green": {
+            "definition": "arn:aws:ecs:us-east-1:000000000000:task-definition/cloudtasks-candidate:7",
+            "image": "000000000000.dkr.ecr.us-east-1.localhost.localstack.cloud:4566/cloudtasks:pipeline-b91588c9-0bde-4737-8492-3a6407ccfaf5",
+            "digest": "sha256:253f097747fc047bb8d0f97cb8919ea684f434661191d9900927fb67ff562360",
+            "releaseId": "pipeline-b91588c9-0bde-4737-8492-3a6407ccfaf5",
+            "asset": "/assets/index-BjgdmimE.js",
+            "bundleSha256": "351a4c894bd466de16ba85ab26d9fd51e5fc7905dcc3c6352d43c784a2b6b59f",
+            "health": "ok",
+            "database": "ok",
+            "tasks": [
+              {
+                "taskArn": "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/0caa745d-556a-4089-94c7-5e7607559f96",
+                "containerId": "b632c4e34f41f51e603bfc448fc7629d39679abbd532de3ef89f28fa8477c24a",
+                "imageId": "sha256:253f097747fc047bb8d0f97cb8919ea684f434661191d9900927fb67ff562360",
+                "digest": "sha256:253f097747fc047bb8d0f97cb8919ea684f434661191d9900927fb67ff562360",
+                "ip": "172.18.0.6",
+                "port": 3000,
+                "health": "healthy"
+              },
+              {
+                "taskArn": "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/6102af72-d8fa-4404-be6d-d6e2d6864499",
+                "containerId": "004413990e0a5f8f41286c533a474d4b8309df0233e2a6c924db0c4efaa83c59",
+                "imageId": "sha256:253f097747fc047bb8d0f97cb8919ea684f434661191d9900927fb67ff562360",
+                "digest": "sha256:253f097747fc047bb8d0f97cb8919ea684f434661191d9900927fb67ff562360",
+                "ip": "172.18.0.7",
+                "port": 3000,
+                "health": "healthy"
+              }
+            ]
+          },
+          "isolation": {
+            "productionHttp": "blue",
+            "productionHttps": "blue",
+            "testHttp": "green",
+            "testHttps": "green"
+          },
+          "sharedData": {
+            "createBlueReadGreen": true,
+            "updateGreenReadBlue": true,
+            "ownedTaskDeleted": true
+          },
+          "promotion": {
+            "http": "green",
+            "https": "green",
+            "releaseId": "pipeline-b91588c9-0bde-4737-8492-3a6407ccfaf5"
+          },
+          "bake": {
+            "requiredSeconds": 60,
+            "elapsedSeconds": 72.529,
+            "samples": [
+              {
+                "seconds": 11.6,
+                "blueHealthy": 2,
+                "greenHealthy": 2,
+                "blueHttp": "blue",
+                "blueHttps": "blue",
+                "productionRelease": "pipeline-b91588c9-0bde-4737-8492-3a6407ccfaf5",
+                "httpsPinned": true
+              },
+              {
+                "seconds": 30.3,
+                "blueHealthy": 2,
+                "greenHealthy": 2,
+                "blueHttp": "blue",
+                "blueHttps": "blue",
+                "productionRelease": "pipeline-b91588c9-0bde-4737-8492-3a6407ccfaf5",
+                "httpsPinned": true
+              },
+              {
+                "seconds": 48.7,
+                "blueHealthy": 2,
+                "greenHealthy": 2,
+                "blueHttp": "blue",
+                "blueHttps": "blue",
+                "productionRelease": "pipeline-b91588c9-0bde-4737-8492-3a6407ccfaf5",
+                "httpsPinned": true
+              },
+              {
+                "seconds": 72.5,
+                "blueHealthy": 2,
+                "greenHealthy": 2,
+                "blueHttp": "blue",
+                "blueHttps": "blue",
+                "productionRelease": "pipeline-b91588c9-0bde-4737-8492-3a6407ccfaf5",
+                "httpsPinned": true
+              }
+            ]
+          },
+          "final": {
+            "taskDefinition": "arn:aws:ecs:us-east-1:000000000000:task-definition/cloudtasks:9",
+            "image": "000000000000.dkr.ecr.us-east-1.localhost.localstack.cloud:4566/cloudtasks:pipeline-b91588c9-0bde-4737-8492-3a6407ccfaf5",
+            "digest": "sha256:253f097747fc047bb8d0f97cb8919ea684f434661191d9900927fb67ff562360",
+            "releaseId": "pipeline-b91588c9-0bde-4737-8492-3a6407ccfaf5",
+            "tasks": [
+              {
+                "taskArn": "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/d582d8eb-6727-45a4-978f-4391a07157ca",
+                "containerId": "4f55284775abd97c9fe386638b3fe861a89f0c6b487ae0609418d087da9b00b0",
+                "imageId": "sha256:253f097747fc047bb8d0f97cb8919ea684f434661191d9900927fb67ff562360",
+                "digest": "sha256:253f097747fc047bb8d0f97cb8919ea684f434661191d9900927fb67ff562360",
+                "ip": "172.18.0.3",
+                "port": 3000,
+                "health": "healthy"
+              },
+              {
+                "taskArn": "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/0ca7385a-d5c7-4cc7-9bdc-ba724b0f135d",
+                "containerId": "821273e1e9931c1c7ae977005dbb9eef34231b634ebf56d0fe815082f852a565",
+                "imageId": "sha256:253f097747fc047bb8d0f97cb8919ea684f434661191d9900927fb67ff562360",
+                "digest": "sha256:253f097747fc047bb8d0f97cb8919ea684f434661191d9900927fb67ff562360",
+                "ip": "172.18.0.4",
+                "port": 3000,
+                "health": "healthy"
+              }
+            ],
+            "targetGroup": "arn:aws:elasticloadbalancing:us-east-1:000000000000:targetgroup/cloudtasks-tg/7af3cbd8c9084c7f",
+            "http": "green",
+            "https": "green",
+            "canonicalRetirement": {
+              "taskArns": [
+                "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/037b2958-7fe6-4244-acfd-4fb0e9ffb64b",
+                "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/82ebd784-19a1-4d73-9d20-8853fac3c4d3",
+                "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/d5641ff4-ef30-45f0-9e10-b26dbd2c0bf8",
+                "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/790d7a96-6845-44d7-8ce3-2db138492039",
+                "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/6bae67e8-1b48-4d2e-a88a-4736bb951880",
+                "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/fe593ed3-971d-482b-86fd-37c67956cfbb",
+                "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/d8f8cadd-f0f5-42f0-a34e-ecafcd87aa20",
+                "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/534b2025-e974-4a13-8191-d84f7406afd4",
+                "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/0846ac0a-810e-41f3-a586-9e5ddf05162c",
+                "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/a4642343-dcac-4468-80f8-6d8cf298898f",
+                "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/4aaa9c41-3aff-406d-a4ee-3855d0b4fae9",
+                "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/418407a8-6749-4212-b49d-f4bed03cb747",
+                "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/af34b838-4532-48ca-b393-869d63255989",
+                "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/d849875b-f75d-46e3-9cad-be34389c9113",
+                "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/691d3e7e-98b5-4b91-b660-9f40e8bc1f59",
+                "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/cefdb297-8760-49e9-898c-6c5a85443315",
+                "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/706b8081-ca6d-4122-b773-bb3d64f3eb50",
+                "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/04a5dde1-18e3-46a5-8810-e66b412efae4",
+                "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/50898b5d-3fd3-4ddf-bb8d-aa4cd2d307ae",
+                "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/cd969556-366d-4171-82d3-440fda172cd6",
+                "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/75f2d82f-01d5-4645-8884-2c300e78f676"
+              ],
+              "emptySamples": 2,
+              "physicalRunning": 0,
+              "productionHttp": "green",
+              "productionHttps": "green"
+            }
+          },
+          "cleanup": {
+            "temporaryServiceRemoved": true,
+            "temporaryRulesRemoved": true,
+            "temporaryGroupRemoved": true,
+            "temporaryDefinitionDeregistered": true,
+            "temporaryContainersRemoved": true,
+            "temporaryLogsRemoved": true
+          },
+          "owned": {
+            "rules": [
+              "arn:aws:elasticloadbalancing:us-east-1:000000000000:listener-rule/app/cloudtasks-alb/f37162fc36084cae/e4721886507f4ae6/ec0fe66ebdb84a11",
+              "arn:aws:elasticloadbalancing:us-east-1:000000000000:listener-rule/app/cloudtasks-alb/f37162fc36084cae/e4721886507f4ae6/1469a37e191f4715",
+              "arn:aws:elasticloadbalancing:us-east-1:000000000000:listener-rule/app/cloudtasks-alb/f37162fc36084cae/3fddd6aa7ba340e6/349b60b59c6c4323",
+              "arn:aws:elasticloadbalancing:us-east-1:000000000000:listener-rule/app/cloudtasks-alb/f37162fc36084cae/3fddd6aa7ba340e6/5f5c43923c30442d"
+            ],
+            "taskIds": [
+              "0caa745d-556a-4089-94c7-5e7607559f96",
+              "6102af72-d8fa-4404-be6d-d6e2d6864499",
+              "0caa745d-556a-4089-94c7-5e7607559f96",
+              "6102af72-d8fa-4404-be6d-d6e2d6864499",
+              "0caa745d-556a-4089-94c7-5e7607559f96",
+              "6102af72-d8fa-4404-be6d-d6e2d6864499",
+              "0caa745d-556a-4089-94c7-5e7607559f96",
+              "6102af72-d8fa-4404-be6d-d6e2d6864499"
+            ],
+            "definition": "arn:aws:ecs:us-east-1:000000000000:task-definition/cloudtasks-candidate:7",
+            "group": "arn:aws:elasticloadbalancing:us-east-1:000000000000:targetgroup/ct-bg-3da7a16d-green/124ea8d008624799",
+            "service": "arn:aws:ecs:us-east-1:000000000000:service/cloudtasks-cluster-r20261004030336711/cloudtasks-candidate-3da7a16d"
+          },
+          "recordedAt": "2026-10-04T14:45:43.701Z"
+        },
+        "deploymentLockPresent": false,
+        "canonicalService": {
+          "serviceArn": "arn:aws:ecs:us-east-1:000000000000:service/cloudtasks-cluster-r20261004030336711/cloudtasks-service",
+          "taskDefinition": "arn:aws:ecs:us-east-1:000000000000:task-definition/cloudtasks:9",
+          "desiredCount": 2,
+          "runningCount": 2,
+          "pendingCount": 0,
+          "status": "ACTIVE"
+        },
+        "canonicalTaskArns": [
+          "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/d582d8eb-6727-45a4-978f-4391a07157ca",
+          "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/0ca7385a-d5c7-4cc7-9bdc-ba724b0f135d"
+        ],
+        "listeners": [
+          {
+            "ListenerArn": "arn:aws:elasticloadbalancing:us-east-1:000000000000:listener/app/cloudtasks-alb/f37162fc36084cae/e4721886507f4ae6",
+            "Protocol": "HTTP",
+            "Port": 4566,
+            "DefaultActions": [
+              {
+                "Type": "forward",
+                "TargetGroupArn": "arn:aws:elasticloadbalancing:us-east-1:000000000000:targetgroup/cloudtasks-tg/7af3cbd8c9084c7f",
+                "ForwardConfig": {
+                  "TargetGroups": [
+                    {
+                      "TargetGroupArn": "arn:aws:elasticloadbalancing:us-east-1:000000000000:targetgroup/cloudtasks-tg/7af3cbd8c9084c7f",
+                      "Weight": 1
+                    }
+                  ],
+                  "TargetGroupStickinessConfig": {
+                    "Enabled": false
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "ListenerArn": "arn:aws:elasticloadbalancing:us-east-1:000000000000:listener/app/cloudtasks-alb/f37162fc36084cae/3fddd6aa7ba340e6",
+            "Protocol": "HTTPS",
+            "Port": 443,
+            "DefaultActions": [
+              {
+                "Type": "forward",
+                "TargetGroupArn": "arn:aws:elasticloadbalancing:us-east-1:000000000000:targetgroup/cloudtasks-tg/7af3cbd8c9084c7f",
+                "ForwardConfig": {
+                  "TargetGroups": [
+                    {
+                      "TargetGroupArn": "arn:aws:elasticloadbalancing:us-east-1:000000000000:targetgroup/cloudtasks-tg/7af3cbd8c9084c7f",
+                      "Weight": 1
+                    }
+                  ],
+                  "TargetGroupStickinessConfig": {
+                    "Enabled": false
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "canonicalTargets": [
+          {
+            "Target": {
+              "Id": "172.18.0.3",
+              "Port": 3000,
+              "AvailabilityZone": "all"
+            },
+            "HealthCheckPort": "3000",
+            "TargetHealth": {
+              "State": "healthy"
+            }
+          },
+          {
+            "Target": {
+              "Id": "172.18.0.4",
+              "Port": 3000,
+              "AvailabilityZone": "all"
+            },
+            "HealthCheckPort": "3000",
+            "TargetHealth": {
+              "State": "healthy"
+            }
+          }
+        ]
+      },
+      "recordedDeploymentState": {
+        "pipelineName": "cloudtasks-pipeline",
+        "executionId": "3da7a16d-8987-4cbf-949e-99719808b810",
+        "executionMode": "NativeCodePipeline",
+        "pipelineStatus": "Succeeded",
+        "buildArtifactSha256": "59db19c4a8af0d10a89e3969b4b14e980f135c0a43cc60cb2aa06bbd5cf5dacd",
+        "buildArtifactBucket": "cloudtasks-pipeline-artifacts",
+        "buildArtifactKey": "cloudtasks-pipeline/BuildOutput/617431cc",
+        "codeBuildId": "cloudtasks-build:3a40fe23",
+        "codeBuildImageId": "sha256:3d9f03274c986ae91fa40046c09612304eafcc1c879927d15aabc41cbe5b1c1e",
+        "localStackContainerId": "1fc6feac010d4e263fe3a4be6bd584a5c9dbf75bde8e55b42e1957af15a2ad37",
+        "localStackImageId": "sha256:801a3dff7f6a23857e7310b7602e67d52a29dfdcb03e09f7c608d5c57d24b792",
+        "sourceVersionId": "AaEFngBto3X9iu_6_4vxl_uo5ZkGmmqn",
+        "sourceSha256": "d506efc6ccd84768e066e7ca2a85c69787e645de1215eba5f7b9ca1229fc4288",
+        "executedAt": "2026-10-04T14:46:29.6062781Z",
+        "clusterName": "cloudtasks-cluster-r20261004030336711",
+        "serviceName": "cloudtasks-service",
+        "previousTaskDefinition": "arn:aws:ecs:us-east-1:000000000000:task-definition/cloudtasks:8",
+        "previousImage": "000000000000.dkr.ecr.us-east-1.localhost.localstack.cloud:4566/cloudtasks:pipeline-9d2817aa-a728-4f75-8bcf-439b9e9fc4e5",
+        "deployedTaskDefinition": "arn:aws:ecs:us-east-1:000000000000:task-definition/cloudtasks:9",
+        "deployedImage": "000000000000.dkr.ecr.us-east-1.localhost.localstack.cloud:4566/cloudtasks:pipeline-b91588c9-0bde-4737-8492-3a6407ccfaf5",
+        "deployedImageDigest": "sha256:253f097747fc047bb8d0f97cb8919ea684f434661191d9900927fb67ff562360",
+        "sourceBucket": "cloudtasks-pipeline-source",
+        "sourceObjectKey": "cloudtasks-source.zip",
+        "deploymentMode": "LocalStackBlueGreenAdapter",
+        "nativeBlueGreenControllerCertified": false,
+        "deployCodeBuildId": "cloudtasks-bluegreen-deploy:65f5c7c2",
+        "deployArtifactSha256": "57b381187a4a74f8ae10425f75e72a79ba8b8abefd3f52c9282aa576a520a709",
+        "deployArtifactBucket": "cloudtasks-pipeline-artifacts",
+        "deployArtifactKey": "cloudtasks-pipeline/DeployOutput/b64d7e92"
+      }
+    },
+    {
+      "report": {
+        "recordedAt": "2026-10-04T14:56:35.771970+00:00",
+        "executionId": "7a77b36e-d308-437f-9bdf-72844efd4bc1",
+        "pipelineStatus": "Succeeded",
+        "pipelineVersion": 4,
+        "sourceRevisions": [],
+        "actions": [
+          {
+            "actionName": "DeployBlueGreen",
+            "stageName": "Deploy",
+            "status": "Succeeded",
+            "pipelineExecutionId": "7a77b36e-d308-437f-9bdf-72844efd4bc1",
+            "actionExecutionId": "79863797-ccb8-4c2f-a8af-dee4742206a3",
+            "startTime": "2026-10-04T14:50:03.757556+00:00",
+            "lastUpdateTime": "2026-10-04T14:55:48.008733+00:00",
+            "nativeExternalExecutionId": "cloudtasks-bluegreen-deploy:c236d903",
+            "errorCode": null,
+            "inputArtifacts": [
+              {
+                "name": "BuildOutput",
+                "s3location": {
+                  "bucket": "cloudtasks-pipeline-artifacts",
+                  "key": "cloudtasks-pipeline/BuildOutput/c1892e97"
+                }
+              }
+            ],
+            "outputArtifacts": [
+              {
+                "name": "DeployOutput",
+                "s3location": {
+                  "bucket": "cloudtasks-pipeline-artifacts",
+                  "key": "cloudtasks-pipeline/DeployOutput/20730a8d"
+                }
+              }
+            ],
+            "codebuild": {
+              "id": "cloudtasks-bluegreen-deploy:c236d903",
+              "status": "SUCCEEDED",
+              "startTime": "2026-10-04T14:50:03.897800+00:00",
+              "endTime": "2026-10-04T14:55:47.314023+00:00",
+              "sourceVersion": "arn:aws:s3:::cloudtasks-pipeline-artifacts/cloudtasks-pipeline/BuildOutput/c1892e97",
+              "artifactLocation": "arn:aws:s3:::cloudtasks-pipeline-artifacts/cloudtasks-pipeline/DeployOutput/20730a8d"
+            }
+          },
+          {
+            "actionName": "BuildAndPush",
+            "stageName": "Build",
+            "status": "Succeeded",
+            "pipelineExecutionId": "7a77b36e-d308-437f-9bdf-72844efd4bc1",
+            "actionExecutionId": "fec30a53-fc87-4f78-b544-cea7ca55d232",
+            "startTime": "2026-10-04T14:48:07.809195+00:00",
+            "lastUpdateTime": "2026-10-04T14:50:03.726564+00:00",
+            "nativeExternalExecutionId": "cloudtasks-build:b50c65ab",
+            "errorCode": null,
+            "inputArtifacts": [
+              {
+                "name": "SourceOutput",
+                "s3location": {
+                  "bucket": "cloudtasks-pipeline-artifacts",
+                  "key": "cloudtasks-pipeline/SourceOutput/e3c80f1e.zip"
+                }
+              }
+            ],
+            "outputArtifacts": [
+              {
+                "name": "BuildOutput",
+                "s3location": {
+                  "bucket": "cloudtasks-pipeline-artifacts",
+                  "key": "cloudtasks-pipeline/BuildOutput/c1892e97"
+                }
+              }
+            ],
+            "codebuild": {
+              "id": "cloudtasks-build:b50c65ab",
+              "status": "SUCCEEDED",
+              "startTime": "2026-10-04T14:48:07.999796+00:00",
+              "endTime": "2026-10-04T14:50:02.797454+00:00",
+              "sourceVersion": "arn:aws:s3:::cloudtasks-pipeline-artifacts/cloudtasks-pipeline/SourceOutput/e3c80f1e.zip",
+              "artifactLocation": "arn:aws:s3:::cloudtasks-pipeline-artifacts/cloudtasks-pipeline/BuildOutput/c1892e97"
+            }
+          },
+          {
+            "actionName": "SourceSnapshot",
+            "stageName": "Source",
+            "status": "Succeeded",
+            "pipelineExecutionId": "7a77b36e-d308-437f-9bdf-72844efd4bc1",
+            "actionExecutionId": "32130a64-21d8-416e-8383-eb05b206670e",
+            "startTime": "2026-10-04T14:48:07.565186+00:00",
+            "lastUpdateTime": "2026-10-04T14:48:07.751646+00:00",
+            "nativeExternalExecutionId": "AaEFngBuyyP0EBz3ItXwjbSzxVSdGsxi",
+            "errorCode": null,
+            "inputArtifacts": [],
+            "outputArtifacts": [
+              {
+                "name": "SourceOutput",
+                "s3location": {
+                  "bucket": "cloudtasks-pipeline-artifacts",
+                  "key": "cloudtasks-pipeline/SourceOutput/e3c80f1e.zip"
+                }
+              }
+            ],
+            "sourceVersionId": "AaEFngBuyyP0EBz3ItXwjbSzxVSdGsxi"
+          }
+        ],
+        "receiptSha256": "6953acefc70873f7d7f9afa1fac9c2735d83eaa6cfef64b2a315106214048e7a",
+        "receipt": {
+          "executionId": "7a77b36e-d308-437f-9bdf-72844efd4bc1",
+          "agentBuildId": "local:00000000-0000-0000-0000-000000000000",
+          "scenario": "Normal",
+          "bakeSeconds": 60,
+          "mode": "LocalStackBlueGreenAdapter",
+          "nativeBlueGreenControllerCertified": false,
+          "status": "SUCCEEDED",
+          "phases": [
+            "BLUE_VERIFIED",
+            "CANDIDATE_VERIFIED",
+            "TRAFFIC_PROMOTED",
+            "BAKE_PASSED",
+            "CANONICAL_VERIFIED"
+          ],
+          "provenance": {
+            "imageBuildId": "cloudtasks-build:b50c65ab",
+            "inputArtifactBucket": "cloudtasks-pipeline-artifacts",
+            "inputArtifactKey": "cloudtasks-pipeline/BuildOutput/c1892e97"
+          },
+          "blue": {
+            "definition": "arn:aws:ecs:us-east-1:000000000000:task-definition/cloudtasks:9",
+            "image": "000000000000.dkr.ecr.us-east-1.localhost.localstack.cloud:4566/cloudtasks:pipeline-b91588c9-0bde-4737-8492-3a6407ccfaf5",
+            "digest": "sha256:253f097747fc047bb8d0f97cb8919ea684f434661191d9900927fb67ff562360",
+            "releaseId": "pipeline-b91588c9-0bde-4737-8492-3a6407ccfaf5",
+            "asset": "/assets/index-BjgdmimE.js",
+            "bundleSha256": "351a4c894bd466de16ba85ab26d9fd51e5fc7905dcc3c6352d43c784a2b6b59f",
+            "health": "ok",
+            "database": "ok",
+            "tasks": [
+              {
+                "taskArn": "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/d582d8eb-6727-45a4-978f-4391a07157ca",
+                "containerId": "4f55284775abd97c9fe386638b3fe861a89f0c6b487ae0609418d087da9b00b0",
+                "imageId": "sha256:253f097747fc047bb8d0f97cb8919ea684f434661191d9900927fb67ff562360",
+                "digest": "sha256:253f097747fc047bb8d0f97cb8919ea684f434661191d9900927fb67ff562360",
+                "ip": "172.18.0.3",
+                "port": 3000,
+                "health": "healthy"
+              },
+              {
+                "taskArn": "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/0ca7385a-d5c7-4cc7-9bdc-ba724b0f135d",
+                "containerId": "821273e1e9931c1c7ae977005dbb9eef34231b634ebf56d0fe815082f852a565",
+                "imageId": "sha256:253f097747fc047bb8d0f97cb8919ea684f434661191d9900927fb67ff562360",
+                "digest": "sha256:253f097747fc047bb8d0f97cb8919ea684f434661191d9900927fb67ff562360",
+                "ip": "172.18.0.4",
+                "port": 3000,
+                "health": "healthy"
+              }
+            ]
+          },
+          "green": {
+            "definition": "arn:aws:ecs:us-east-1:000000000000:task-definition/cloudtasks-candidate:8",
+            "image": "000000000000.dkr.ecr.us-east-1.localhost.localstack.cloud:4566/cloudtasks:pipeline-07c5e042-dd02-4c0c-94b4-5374bb6de80c",
+            "digest": "sha256:441d9e5f99c692dec056a529dbed3457c258c38b8b5b563af272a7f0ffe62901",
+            "releaseId": "pipeline-07c5e042-dd02-4c0c-94b4-5374bb6de80c",
+            "asset": "/assets/index-BjgdmimE.js",
+            "bundleSha256": "351a4c894bd466de16ba85ab26d9fd51e5fc7905dcc3c6352d43c784a2b6b59f",
+            "health": "ok",
+            "database": "ok",
+            "tasks": [
+              {
+                "taskArn": "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/fca75cf6-ab65-4182-ac79-4f7039c85c6b",
+                "containerId": "7dfff5b64ee5bdac98b99e0bcc75881641798f430b3c18aa6db910f295a43f20",
+                "imageId": "sha256:441d9e5f99c692dec056a529dbed3457c258c38b8b5b563af272a7f0ffe62901",
+                "digest": "sha256:441d9e5f99c692dec056a529dbed3457c258c38b8b5b563af272a7f0ffe62901",
+                "ip": "172.18.0.6",
+                "port": 3000,
+                "health": "healthy"
+              },
+              {
+                "taskArn": "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/af98c07b-29a5-4c5a-926b-582efe43648c",
+                "containerId": "2db377df82c35dc37a2a97881f9cdb7df216ffbaec93e0cb726fd29ae7ac2f20",
+                "imageId": "sha256:441d9e5f99c692dec056a529dbed3457c258c38b8b5b563af272a7f0ffe62901",
+                "digest": "sha256:441d9e5f99c692dec056a529dbed3457c258c38b8b5b563af272a7f0ffe62901",
+                "ip": "172.18.0.7",
+                "port": 3000,
+                "health": "healthy"
+              }
+            ]
+          },
+          "isolation": {
+            "productionHttp": "blue",
+            "productionHttps": "blue",
+            "testHttp": "green",
+            "testHttps": "green"
+          },
+          "sharedData": {
+            "createBlueReadGreen": true,
+            "updateGreenReadBlue": true,
+            "ownedTaskDeleted": true
+          },
+          "promotion": {
+            "http": "green",
+            "https": "green",
+            "releaseId": "pipeline-07c5e042-dd02-4c0c-94b4-5374bb6de80c"
+          },
+          "bake": {
+            "requiredSeconds": 60,
+            "elapsedSeconds": 76.115,
+            "samples": [
+              {
+                "seconds": 11.8,
+                "blueHealthy": 2,
+                "greenHealthy": 2,
+                "blueHttp": "blue",
+                "blueHttps": "blue",
+                "productionRelease": "pipeline-07c5e042-dd02-4c0c-94b4-5374bb6de80c",
+                "httpsPinned": true
+              },
+              {
+                "seconds": 30.9,
+                "blueHealthy": 2,
+                "greenHealthy": 2,
+                "blueHttp": "blue",
+                "blueHttps": "blue",
+                "productionRelease": "pipeline-07c5e042-dd02-4c0c-94b4-5374bb6de80c",
+                "httpsPinned": true
+              },
+              {
+                "seconds": 49.4,
+                "blueHealthy": 2,
+                "greenHealthy": 2,
+                "blueHttp": "blue",
+                "blueHttps": "blue",
+                "productionRelease": "pipeline-07c5e042-dd02-4c0c-94b4-5374bb6de80c",
+                "httpsPinned": true
+              },
+              {
+                "seconds": 76.1,
+                "blueHealthy": 2,
+                "greenHealthy": 2,
+                "blueHttp": "blue",
+                "blueHttps": "blue",
+                "productionRelease": "pipeline-07c5e042-dd02-4c0c-94b4-5374bb6de80c",
+                "httpsPinned": true
+              }
+            ]
+          },
+          "final": {
+            "taskDefinition": "arn:aws:ecs:us-east-1:000000000000:task-definition/cloudtasks:10",
+            "image": "000000000000.dkr.ecr.us-east-1.localhost.localstack.cloud:4566/cloudtasks:pipeline-07c5e042-dd02-4c0c-94b4-5374bb6de80c",
+            "digest": "sha256:441d9e5f99c692dec056a529dbed3457c258c38b8b5b563af272a7f0ffe62901",
+            "releaseId": "pipeline-07c5e042-dd02-4c0c-94b4-5374bb6de80c",
+            "tasks": [
+              {
+                "taskArn": "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/f636af32-ab38-4475-9deb-a3e60936cb18",
+                "containerId": "b5976518a5cbd5e12ecac1010c2d9acc37c6d7f4527eb0501f004cdd76180736",
+                "imageId": "sha256:441d9e5f99c692dec056a529dbed3457c258c38b8b5b563af272a7f0ffe62901",
+                "digest": "sha256:441d9e5f99c692dec056a529dbed3457c258c38b8b5b563af272a7f0ffe62901",
+                "ip": "172.18.0.3",
+                "port": 3000,
+                "health": "healthy"
+              },
+              {
+                "taskArn": "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/fd0156ee-a1c9-4041-a884-2a5652fb6405",
+                "containerId": "7d740a36749a066a46ef6430027e1864f4f21357d65dfa08bb5a90c2f27a9730",
+                "imageId": "sha256:441d9e5f99c692dec056a529dbed3457c258c38b8b5b563af272a7f0ffe62901",
+                "digest": "sha256:441d9e5f99c692dec056a529dbed3457c258c38b8b5b563af272a7f0ffe62901",
+                "ip": "172.18.0.4",
+                "port": 3000,
+                "health": "healthy"
+              }
+            ],
+            "targetGroup": "arn:aws:elasticloadbalancing:us-east-1:000000000000:targetgroup/cloudtasks-tg/7af3cbd8c9084c7f",
+            "http": "green",
+            "https": "green",
+            "canonicalRetirement": {
+              "taskArns": [
+                "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/d582d8eb-6727-45a4-978f-4391a07157ca",
+                "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/0ca7385a-d5c7-4cc7-9bdc-ba724b0f135d",
+                "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/d5641ff4-ef30-45f0-9e10-b26dbd2c0bf8",
+                "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/790d7a96-6845-44d7-8ce3-2db138492039",
+                "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/6bae67e8-1b48-4d2e-a88a-4736bb951880",
+                "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/fe593ed3-971d-482b-86fd-37c67956cfbb",
+                "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/d8f8cadd-f0f5-42f0-a34e-ecafcd87aa20",
+                "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/534b2025-e974-4a13-8191-d84f7406afd4",
+                "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/0846ac0a-810e-41f3-a586-9e5ddf05162c",
+                "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/a4642343-dcac-4468-80f8-6d8cf298898f",
+                "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/4aaa9c41-3aff-406d-a4ee-3855d0b4fae9",
+                "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/418407a8-6749-4212-b49d-f4bed03cb747",
+                "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/af34b838-4532-48ca-b393-869d63255989",
+                "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/d849875b-f75d-46e3-9cad-be34389c9113",
+                "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/691d3e7e-98b5-4b91-b660-9f40e8bc1f59",
+                "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/cefdb297-8760-49e9-898c-6c5a85443315",
+                "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/706b8081-ca6d-4122-b773-bb3d64f3eb50",
+                "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/04a5dde1-18e3-46a5-8810-e66b412efae4",
+                "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/50898b5d-3fd3-4ddf-bb8d-aa4cd2d307ae",
+                "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/cd969556-366d-4171-82d3-440fda172cd6",
+                "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/75f2d82f-01d5-4645-8884-2c300e78f676",
+                "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/037b2958-7fe6-4244-acfd-4fb0e9ffb64b",
+                "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/82ebd784-19a1-4d73-9d20-8853fac3c4d3"
+              ],
+              "emptySamples": 2,
+              "physicalRunning": 0,
+              "productionHttp": "green",
+              "productionHttps": "green"
+            }
+          },
+          "cleanup": {
+            "temporaryServiceRemoved": true,
+            "temporaryRulesRemoved": true,
+            "temporaryGroupRemoved": true,
+            "temporaryDefinitionDeregistered": true,
+            "temporaryContainersRemoved": true,
+            "temporaryLogsRemoved": true
+          },
+          "owned": {
+            "rules": [
+              "arn:aws:elasticloadbalancing:us-east-1:000000000000:listener-rule/app/cloudtasks-alb/f37162fc36084cae/e4721886507f4ae6/0347c7eaf51d4005",
+              "arn:aws:elasticloadbalancing:us-east-1:000000000000:listener-rule/app/cloudtasks-alb/f37162fc36084cae/e4721886507f4ae6/bac5db028e624276",
+              "arn:aws:elasticloadbalancing:us-east-1:000000000000:listener-rule/app/cloudtasks-alb/f37162fc36084cae/3fddd6aa7ba340e6/ce5edd5804cb484f",
+              "arn:aws:elasticloadbalancing:us-east-1:000000000000:listener-rule/app/cloudtasks-alb/f37162fc36084cae/3fddd6aa7ba340e6/3f1da201cccc438a"
+            ],
+            "taskIds": [
+              "fca75cf6-ab65-4182-ac79-4f7039c85c6b",
+              "af98c07b-29a5-4c5a-926b-582efe43648c",
+              "fca75cf6-ab65-4182-ac79-4f7039c85c6b",
+              "af98c07b-29a5-4c5a-926b-582efe43648c",
+              "fca75cf6-ab65-4182-ac79-4f7039c85c6b",
+              "af98c07b-29a5-4c5a-926b-582efe43648c",
+              "fca75cf6-ab65-4182-ac79-4f7039c85c6b",
+              "af98c07b-29a5-4c5a-926b-582efe43648c"
+            ],
+            "definition": "arn:aws:ecs:us-east-1:000000000000:task-definition/cloudtasks-candidate:8",
+            "group": "arn:aws:elasticloadbalancing:us-east-1:000000000000:targetgroup/ct-bg-7a77b36e-green/8a9532ce0b634801",
+            "service": "arn:aws:ecs:us-east-1:000000000000:service/cloudtasks-cluster-r20261004030336711/cloudtasks-candidate-7a77b36e"
+          },
+          "recordedAt": "2026-10-04T14:55:25.177Z"
+        },
+        "deploymentLockPresent": false,
+        "canonicalService": {
+          "serviceArn": "arn:aws:ecs:us-east-1:000000000000:service/cloudtasks-cluster-r20261004030336711/cloudtasks-service",
+          "taskDefinition": "arn:aws:ecs:us-east-1:000000000000:task-definition/cloudtasks:10",
+          "desiredCount": 2,
+          "runningCount": 2,
+          "pendingCount": 0,
+          "status": "ACTIVE"
+        },
+        "canonicalTaskArns": [
+          "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/f636af32-ab38-4475-9deb-a3e60936cb18",
+          "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/fd0156ee-a1c9-4041-a884-2a5652fb6405"
+        ],
+        "listeners": [
+          {
+            "ListenerArn": "arn:aws:elasticloadbalancing:us-east-1:000000000000:listener/app/cloudtasks-alb/f37162fc36084cae/e4721886507f4ae6",
+            "Protocol": "HTTP",
+            "Port": 4566,
+            "DefaultActions": [
+              {
+                "Type": "forward",
+                "TargetGroupArn": "arn:aws:elasticloadbalancing:us-east-1:000000000000:targetgroup/cloudtasks-tg/7af3cbd8c9084c7f",
+                "ForwardConfig": {
+                  "TargetGroups": [
+                    {
+                      "TargetGroupArn": "arn:aws:elasticloadbalancing:us-east-1:000000000000:targetgroup/cloudtasks-tg/7af3cbd8c9084c7f",
+                      "Weight": 1
+                    }
+                  ],
+                  "TargetGroupStickinessConfig": {
+                    "Enabled": false
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "ListenerArn": "arn:aws:elasticloadbalancing:us-east-1:000000000000:listener/app/cloudtasks-alb/f37162fc36084cae/3fddd6aa7ba340e6",
+            "Protocol": "HTTPS",
+            "Port": 443,
+            "DefaultActions": [
+              {
+                "Type": "forward",
+                "TargetGroupArn": "arn:aws:elasticloadbalancing:us-east-1:000000000000:targetgroup/cloudtasks-tg/7af3cbd8c9084c7f",
+                "ForwardConfig": {
+                  "TargetGroups": [
+                    {
+                      "TargetGroupArn": "arn:aws:elasticloadbalancing:us-east-1:000000000000:targetgroup/cloudtasks-tg/7af3cbd8c9084c7f",
+                      "Weight": 1
+                    }
+                  ],
+                  "TargetGroupStickinessConfig": {
+                    "Enabled": false
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "canonicalTargets": [
+          {
+            "Target": {
+              "Id": "172.18.0.3",
+              "Port": 3000,
+              "AvailabilityZone": "all"
+            },
+            "HealthCheckPort": "3000",
+            "TargetHealth": {
+              "State": "healthy"
+            }
+          },
+          {
+            "Target": {
+              "Id": "172.18.0.4",
+              "Port": 3000,
+              "AvailabilityZone": "all"
+            },
+            "HealthCheckPort": "3000",
+            "TargetHealth": {
+              "State": "healthy"
+            }
+          }
+        ]
+      },
+      "recordedDeploymentState": {
+        "pipelineName": "cloudtasks-pipeline",
+        "executionId": "7a77b36e-d308-437f-9bdf-72844efd4bc1",
+        "executionMode": "NativeCodePipeline",
+        "pipelineStatus": "Succeeded",
+        "buildArtifactSha256": "e1ecf5e89e5bf13cbd358ccfe17a91538010685af7c90ce5f45b11299dbf131a",
+        "buildArtifactBucket": "cloudtasks-pipeline-artifacts",
+        "buildArtifactKey": "cloudtasks-pipeline/BuildOutput/c1892e97",
+        "codeBuildId": "cloudtasks-build:b50c65ab",
+        "codeBuildImageId": "sha256:3d9f03274c986ae91fa40046c09612304eafcc1c879927d15aabc41cbe5b1c1e",
+        "localStackContainerId": "1fc6feac010d4e263fe3a4be6bd584a5c9dbf75bde8e55b42e1957af15a2ad37",
+        "localStackImageId": "sha256:801a3dff7f6a23857e7310b7602e67d52a29dfdcb03e09f7c608d5c57d24b792",
+        "sourceVersionId": "AaEFngBuyyP0EBz3ItXwjbSzxVSdGsxi",
+        "sourceSha256": "d506efc6ccd84768e066e7ca2a85c69787e645de1215eba5f7b9ca1229fc4288",
+        "executedAt": "2026-10-04T14:56:10.1866963Z",
+        "clusterName": "cloudtasks-cluster-r20261004030336711",
+        "serviceName": "cloudtasks-service",
+        "previousTaskDefinition": "arn:aws:ecs:us-east-1:000000000000:task-definition/cloudtasks:9",
+        "previousImage": "000000000000.dkr.ecr.us-east-1.localhost.localstack.cloud:4566/cloudtasks:pipeline-b91588c9-0bde-4737-8492-3a6407ccfaf5",
+        "deployedTaskDefinition": "arn:aws:ecs:us-east-1:000000000000:task-definition/cloudtasks:10",
+        "deployedImage": "000000000000.dkr.ecr.us-east-1.localhost.localstack.cloud:4566/cloudtasks:pipeline-07c5e042-dd02-4c0c-94b4-5374bb6de80c",
+        "deployedImageDigest": "sha256:441d9e5f99c692dec056a529dbed3457c258c38b8b5b563af272a7f0ffe62901",
+        "sourceBucket": "cloudtasks-pipeline-source",
+        "sourceObjectKey": "cloudtasks-source.zip",
+        "deploymentMode": "LocalStackBlueGreenAdapter",
+        "nativeBlueGreenControllerCertified": false,
+        "deployCodeBuildId": "cloudtasks-bluegreen-deploy:c236d903",
+        "deployArtifactSha256": "d25ebb808899de01b919d13dfc3a00c7ffe39829e173fe32fcd5272c2e75892b",
+        "deployArtifactBucket": "cloudtasks-pipeline-artifacts",
+        "deployArtifactKey": "cloudtasks-pipeline/DeployOutput/20730a8d"
+      }
+    }
+  ],
+  "historicalNegativesBeforeFinalReviewFixes": [
+    {
+      "testedBeforeCanonicalQuiescenceChange": true,
+      "report": {
+        "recordedAt": "2026-10-04T13:49:51.865917+00:00",
+        "executionId": "658bbdc4-b19f-4f55-8e5a-13eb64bfb2dd",
+        "pipelineStatus": "Failed",
+        "pipelineVersion": 4,
+        "sourceRevisions": [],
+        "actions": [
+          {
+            "actionName": "DeployBlueGreen",
+            "stageName": "Deploy",
+            "status": "Failed",
+            "pipelineExecutionId": "658bbdc4-b19f-4f55-8e5a-13eb64bfb2dd",
+            "actionExecutionId": "d79377d5-6114-4316-a41d-4b5043028111",
+            "startTime": "2026-10-04T13:45:10.073470+00:00",
+            "lastUpdateTime": "2026-10-04T13:49:47.691059+00:00",
+            "nativeExternalExecutionId": "cloudtasks-bluegreen-deploy:5e5723ec",
+            "errorCode": "JobFailed",
+            "inputArtifacts": [
+              {
+                "name": "BuildOutput",
+                "s3location": {
+                  "bucket": "cloudtasks-pipeline-artifacts",
+                  "key": "cloudtasks-pipeline/BuildOutput/87b7f8ad"
+                }
+              }
+            ],
+            "outputArtifacts": [],
+            "codebuild": {
+              "id": "cloudtasks-bluegreen-deploy:5e5723ec",
+              "status": "FAILED",
+              "startTime": "2026-10-04T13:45:41.147195+00:00",
+              "endTime": "2026-10-04T13:49:47.112797+00:00",
+              "sourceVersion": "arn:aws:s3:::cloudtasks-pipeline-artifacts/cloudtasks-pipeline/BuildOutput/87b7f8ad",
+              "artifactLocation": "arn:aws:s3:::cloudtasks-pipeline-artifacts/cloudtasks-pipeline/DeployOutput/25431fdf"
+            }
+          },
+          {
+            "actionName": "BuildAndPush",
+            "stageName": "Build",
+            "status": "Succeeded",
+            "pipelineExecutionId": "658bbdc4-b19f-4f55-8e5a-13eb64bfb2dd",
+            "actionExecutionId": "e0826b92-77c9-4c19-abe3-4743fa6b8032",
+            "startTime": "2026-10-04T13:43:16.477348+00:00",
+            "lastUpdateTime": "2026-10-04T13:45:10.015403+00:00",
+            "nativeExternalExecutionId": "cloudtasks-build:90283638",
+            "errorCode": null,
+            "inputArtifacts": [
+              {
+                "name": "SourceOutput",
+                "s3location": {
+                  "bucket": "cloudtasks-pipeline-artifacts",
+                  "key": "cloudtasks-pipeline/SourceOutput/a937bf37.zip"
+                }
+              }
+            ],
+            "outputArtifacts": [
+              {
+                "name": "BuildOutput",
+                "s3location": {
+                  "bucket": "cloudtasks-pipeline-artifacts",
+                  "key": "cloudtasks-pipeline/BuildOutput/87b7f8ad"
+                }
+              }
+            ],
+            "codebuild": {
+              "id": "cloudtasks-build:90283638",
+              "status": "SUCCEEDED",
+              "startTime": "2026-10-04T13:43:16.616210+00:00",
+              "endTime": "2026-10-04T13:45:09.441752+00:00",
+              "sourceVersion": "arn:aws:s3:::cloudtasks-pipeline-artifacts/cloudtasks-pipeline/SourceOutput/a937bf37.zip",
+              "artifactLocation": "arn:aws:s3:::cloudtasks-pipeline-artifacts/cloudtasks-pipeline/BuildOutput/87b7f8ad"
+            }
+          },
+          {
+            "actionName": "SourceSnapshot",
+            "stageName": "Source",
+            "status": "Succeeded",
+            "pipelineExecutionId": "658bbdc4-b19f-4f55-8e5a-13eb64bfb2dd",
+            "actionExecutionId": "d70c5775-f58b-414c-9a44-2ef955e18df3",
+            "startTime": "2026-10-04T13:43:16.237816+00:00",
+            "lastUpdateTime": "2026-10-04T13:43:16.462019+00:00",
+            "nativeExternalExecutionId": "AaEFngBqhxWp0M3wTdf8F7J9FdkT2gqN",
+            "errorCode": null,
+            "inputArtifacts": [],
+            "outputArtifacts": [
+              {
+                "name": "SourceOutput",
+                "s3location": {
+                  "bucket": "cloudtasks-pipeline-artifacts",
+                  "key": "cloudtasks-pipeline/SourceOutput/a937bf37.zip"
+                }
+              }
+            ],
+            "sourceVersionId": "AaEFngBqhxWp0M3wTdf8F7J9FdkT2gqN"
+          }
+        ],
+        "receiptSha256": "1c48170da3764dd6d68319d300a4baf0adabb4dc482fc88ffb0fcc934276911f",
+        "receipt": {
+          "executionId": "658bbdc4-b19f-4f55-8e5a-13eb64bfb2dd",
+          "agentBuildId": "local:00000000-0000-0000-0000-000000000000",
+          "scenario": "RejectCandidate",
+          "bakeSeconds": 60,
+          "mode": "LocalStackBlueGreenAdapter",
+          "nativeBlueGreenControllerCertified": false,
+          "status": "REJECTED",
+          "phases": [
+            "BLUE_VERIFIED"
+          ],
+          "provenance": {
+            "imageBuildId": "cloudtasks-build:90283638",
+            "inputArtifactBucket": "cloudtasks-pipeline-artifacts",
+            "inputArtifactKey": "cloudtasks-pipeline/BuildOutput/87b7f8ad"
+          },
+          "blue": {
+            "definition": "arn:aws:ecs:us-east-1:000000000000:task-definition/cloudtasks:6",
+            "image": "000000000000.dkr.ecr.us-east-1.localhost.localstack.cloud:4566/cloudtasks:pipeline-9d2817aa-a728-4f75-8bcf-439b9e9fc4e5",
+            "digest": "sha256:10bb4dea0e40de5c390ea4b74c78c06bcf54bcd625cd92ce0aa45044903999ce",
+            "releaseId": "pipeline-9d2817aa-a728-4f75-8bcf-439b9e9fc4e5",
+            "asset": "/assets/index-BjgdmimE.js",
+            "bundleSha256": "351a4c894bd466de16ba85ab26d9fd51e5fc7905dcc3c6352d43c784a2b6b59f",
+            "health": "ok",
+            "database": "ok",
+            "tasks": [
+              {
+                "taskArn": "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/d849875b-f75d-46e3-9cad-be34389c9113",
+                "containerId": "cfd98c718294932ba6ae21074a0431e1188b180575187e2ed05b50a152d12be9",
+                "imageId": "sha256:10bb4dea0e40de5c390ea4b74c78c06bcf54bcd625cd92ce0aa45044903999ce",
+                "digest": "sha256:10bb4dea0e40de5c390ea4b74c78c06bcf54bcd625cd92ce0aa45044903999ce",
+                "ip": "172.18.0.3",
+                "port": 3000,
+                "health": "healthy"
+              },
+              {
+                "taskArn": "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/691d3e7e-98b5-4b91-b660-9f40e8bc1f59",
+                "containerId": "beeafa946b6e977a8f1aa0a1ff798459bfb748a0e99c7abe8301a3234018b1ab",
+                "imageId": "sha256:10bb4dea0e40de5c390ea4b74c78c06bcf54bcd625cd92ce0aa45044903999ce",
+                "digest": "sha256:10bb4dea0e40de5c390ea4b74c78c06bcf54bcd625cd92ce0aa45044903999ce",
+                "ip": "172.18.0.4",
+                "port": 3000,
+                "health": "healthy"
+              }
+            ]
+          },
+          "errorCode": "CANDIDATE_UNHEALTHY",
+          "bluePreserved": {
+            "physicalHealthy": 2,
+            "http": "blue",
+            "https": "blue",
+            "tasks": [
+              {
+                "taskArn": "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/d849875b-f75d-46e3-9cad-be34389c9113",
+                "containerId": "cfd98c718294932ba6ae21074a0431e1188b180575187e2ed05b50a152d12be9",
+                "imageId": "sha256:10bb4dea0e40de5c390ea4b74c78c06bcf54bcd625cd92ce0aa45044903999ce",
+                "digest": "sha256:10bb4dea0e40de5c390ea4b74c78c06bcf54bcd625cd92ce0aa45044903999ce",
+                "ip": "172.18.0.3",
+                "port": 3000,
+                "health": "healthy"
+              },
+              {
+                "taskArn": "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/691d3e7e-98b5-4b91-b660-9f40e8bc1f59",
+                "containerId": "beeafa946b6e977a8f1aa0a1ff798459bfb748a0e99c7abe8301a3234018b1ab",
+                "imageId": "sha256:10bb4dea0e40de5c390ea4b74c78c06bcf54bcd625cd92ce0aa45044903999ce",
+                "digest": "sha256:10bb4dea0e40de5c390ea4b74c78c06bcf54bcd625cd92ce0aa45044903999ce",
+                "ip": "172.18.0.4",
+                "port": 3000,
+                "health": "healthy"
+              }
+            ]
+          },
+          "cleanup": {
+            "temporaryServiceRemoved": true,
+            "temporaryRulesRemoved": true,
+            "temporaryGroupRemoved": true,
+            "temporaryDefinitionDeregistered": true,
+            "temporaryContainersRemoved": true,
+            "temporaryLogsRemoved": true
+          },
+          "owned": {
+            "rules": [
+              "arn:aws:elasticloadbalancing:us-east-1:000000000000:listener-rule/app/cloudtasks-alb/f37162fc36084cae/e4721886507f4ae6/5eb5ece8d2af4179",
+              "arn:aws:elasticloadbalancing:us-east-1:000000000000:listener-rule/app/cloudtasks-alb/f37162fc36084cae/e4721886507f4ae6/41210bf588b9456d",
+              "arn:aws:elasticloadbalancing:us-east-1:000000000000:listener-rule/app/cloudtasks-alb/f37162fc36084cae/3fddd6aa7ba340e6/3a1bbcbde85346a3",
+              "arn:aws:elasticloadbalancing:us-east-1:000000000000:listener-rule/app/cloudtasks-alb/f37162fc36084cae/3fddd6aa7ba340e6/54fc0520d91b4a70"
+            ],
+            "taskIds": [
+              "93eb1247-ced3-41d4-afd3-605af6002bae",
+              "9703e6da-e8b0-4569-b427-c7cb608b8622",
+              "52dcd4fa-1d9a-4566-90b2-f19cbf65f26b",
+              "5f64a6c1-2258-45c8-bd10-0d5c7d50b955",
+              "8ac2ba57-a712-41f3-bbb9-2b9b940e6238",
+              "9703e6da-e8b0-4569-b427-c7cb608b8622",
+              "52dcd4fa-1d9a-4566-90b2-f19cbf65f26b",
+              "93eb1247-ced3-41d4-afd3-605af6002bae",
+              "8bc967fc-c376-4381-88d2-e605f5a93435",
+              "f3b696cf-0a73-41ae-ab69-ec9857ddaadd",
+              "0c8a2984-648c-49dd-92e8-91fba2bc0629",
+              "fca6b818-d134-4d62-9b1a-39abdbb34636",
+              "3cabd89e-ec8c-49c8-9256-8a90905a8570",
+              "5d7a2d2e-4db1-42ce-ab92-0e1766ae0fc6",
+              "ec2ceccb-920d-4d9e-922a-bf11988d918a",
+              "6dbcc8ce-3894-4038-a972-d742cea43240",
+              "5a40cfda-0fd9-424e-bc9a-1067c6eaae00",
+              "5f64a6c1-2258-45c8-bd10-0d5c7d50b955",
+              "9703e6da-e8b0-4569-b427-c7cb608b8622",
+              "52dcd4fa-1d9a-4566-90b2-f19cbf65f26b",
+              "93eb1247-ced3-41d4-afd3-605af6002bae",
+              "8bc967fc-c376-4381-88d2-e605f5a93435",
+              "f3b696cf-0a73-41ae-ab69-ec9857ddaadd",
+              "0c8a2984-648c-49dd-92e8-91fba2bc0629",
+              "fca6b818-d134-4d62-9b1a-39abdbb34636",
+              "3cabd89e-ec8c-49c8-9256-8a90905a8570",
+              "5d7a2d2e-4db1-42ce-ab92-0e1766ae0fc6",
+              "ec2ceccb-920d-4d9e-922a-bf11988d918a",
+              "6dbcc8ce-3894-4038-a972-d742cea43240",
+              "5a40cfda-0fd9-424e-bc9a-1067c6eaae00",
+              "5f64a6c1-2258-45c8-bd10-0d5c7d50b955",
+              "8ac2ba57-a712-41f3-bbb9-2b9b940e6238",
+              "5bc47a96-d356-4d0b-b37c-881b8a56f1ca",
+              "7cb01bba-777f-40ef-af73-242189b9f41a",
+              "9703e6da-e8b0-4569-b427-c7cb608b8622",
+              "52dcd4fa-1d9a-4566-90b2-f19cbf65f26b",
+              "93eb1247-ced3-41d4-afd3-605af6002bae",
+              "8bc967fc-c376-4381-88d2-e605f5a93435",
+              "f3b696cf-0a73-41ae-ab69-ec9857ddaadd",
+              "0c8a2984-648c-49dd-92e8-91fba2bc0629",
+              "fca6b818-d134-4d62-9b1a-39abdbb34636",
+              "3cabd89e-ec8c-49c8-9256-8a90905a8570",
+              "5d7a2d2e-4db1-42ce-ab92-0e1766ae0fc6",
+              "ec2ceccb-920d-4d9e-922a-bf11988d918a",
+              "6dbcc8ce-3894-4038-a972-d742cea43240",
+              "5a40cfda-0fd9-424e-bc9a-1067c6eaae00",
+              "5f64a6c1-2258-45c8-bd10-0d5c7d50b955",
+              "8ac2ba57-a712-41f3-bbb9-2b9b940e6238",
+              "5bc47a96-d356-4d0b-b37c-881b8a56f1ca",
+              "7cb01bba-777f-40ef-af73-242189b9f41a"
+            ],
+            "definition": "arn:aws:ecs:us-east-1:000000000000:task-definition/cloudtasks-candidate:4",
+            "group": "arn:aws:elasticloadbalancing:us-east-1:000000000000:targetgroup/ct-bg-658bbdc4-green/854e427e47754602",
+            "service": "arn:aws:ecs:us-east-1:000000000000:service/cloudtasks-cluster-r20261004030336711/cloudtasks-candidate-658bbdc4"
+          },
+          "recordedAt": "2026-10-04T13:49:18.683Z"
+        },
+        "deploymentLockPresent": false,
+        "canonicalService": {
+          "serviceArn": "arn:aws:ecs:us-east-1:000000000000:service/cloudtasks-cluster-r20261004030336711/cloudtasks-service",
+          "taskDefinition": "arn:aws:ecs:us-east-1:000000000000:task-definition/cloudtasks:6",
+          "desiredCount": 2,
+          "runningCount": 2,
+          "pendingCount": 0,
+          "status": "ACTIVE"
+        },
+        "canonicalTaskArns": [
+          "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/d849875b-f75d-46e3-9cad-be34389c9113",
+          "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/691d3e7e-98b5-4b91-b660-9f40e8bc1f59"
+        ],
+        "listeners": [
+          {
+            "ListenerArn": "arn:aws:elasticloadbalancing:us-east-1:000000000000:listener/app/cloudtasks-alb/f37162fc36084cae/e4721886507f4ae6",
+            "Protocol": "HTTP",
+            "Port": 4566,
+            "DefaultActions": [
+              {
+                "Type": "forward",
+                "TargetGroupArn": "arn:aws:elasticloadbalancing:us-east-1:000000000000:targetgroup/cloudtasks-tg/7af3cbd8c9084c7f",
+                "ForwardConfig": {
+                  "TargetGroups": [
+                    {
+                      "TargetGroupArn": "arn:aws:elasticloadbalancing:us-east-1:000000000000:targetgroup/cloudtasks-tg/7af3cbd8c9084c7f",
+                      "Weight": 1
+                    }
+                  ],
+                  "TargetGroupStickinessConfig": {
+                    "Enabled": false
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "ListenerArn": "arn:aws:elasticloadbalancing:us-east-1:000000000000:listener/app/cloudtasks-alb/f37162fc36084cae/3fddd6aa7ba340e6",
+            "Protocol": "HTTPS",
+            "Port": 443,
+            "DefaultActions": [
+              {
+                "Type": "forward",
+                "TargetGroupArn": "arn:aws:elasticloadbalancing:us-east-1:000000000000:targetgroup/cloudtasks-tg/7af3cbd8c9084c7f",
+                "ForwardConfig": {
+                  "TargetGroups": [
+                    {
+                      "TargetGroupArn": "arn:aws:elasticloadbalancing:us-east-1:000000000000:targetgroup/cloudtasks-tg/7af3cbd8c9084c7f",
+                      "Weight": 1
+                    }
+                  ],
+                  "TargetGroupStickinessConfig": {
+                    "Enabled": false
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "canonicalTargets": [
+          {
+            "Target": {
+              "Id": "172.18.0.3",
+              "Port": 3000,
+              "AvailabilityZone": "all"
+            },
+            "HealthCheckPort": "3000",
+            "TargetHealth": {
+              "State": "healthy"
+            }
+          },
+          {
+            "Target": {
+              "Id": "172.18.0.4",
+              "Port": 3000,
+              "AvailabilityZone": "all"
+            },
+            "HealthCheckPort": "3000",
+            "TargetHealth": {
+              "State": "healthy"
+            }
+          }
+        ]
+      },
+      "independentWindowsProof": {
+        "utc": "2026-10-04T13:50:08.8794611Z",
+        "scenario": "RejectCandidate",
+        "executionId": "658bbdc4-b19f-4f55-8e5a-13eb64bfb2dd",
+        "result": "CONTROLLED_NEGATIVE_BEHAVIOR_PASSED",
+        "pipelineStatus": "Failed",
+        "deployBuildStatus": "FAILED",
+        "receiptStatus": "REJECTED",
+        "errorCode": "CANDIDATE_UNHEALTHY",
+        "productionBefore": {
+          "definition": "arn:aws:ecs:us-east-1:000000000000:task-definition/cloudtasks:6",
+          "tasks": [
+            {
+              "taskArn": "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/691d3e7e-98b5-4b91-b660-9f40e8bc1f59",
+              "containerId": "beeafa946b6e977a8f1aa0a1ff798459bfb748a0e99c7abe8301a3234018b1ab",
+              "imageId": "sha256:10bb4dea0e40de5c390ea4b74c78c06bcf54bcd625cd92ce0aa45044903999ce",
+              "health": "healthy"
+            },
+            {
+              "taskArn": "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/d849875b-f75d-46e3-9cad-be34389c9113",
+              "containerId": "cfd98c718294932ba6ae21074a0431e1188b180575187e2ed05b50a152d12be9",
+              "imageId": "sha256:10bb4dea0e40de5c390ea4b74c78c06bcf54bcd625cd92ce0aa45044903999ce",
+              "health": "healthy"
+            }
+          ]
+        },
+        "productionAfter": {
+          "definition": "arn:aws:ecs:us-east-1:000000000000:task-definition/cloudtasks:6",
+          "tasks": [
+            {
+              "taskArn": "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/691d3e7e-98b5-4b91-b660-9f40e8bc1f59",
+              "containerId": "beeafa946b6e977a8f1aa0a1ff798459bfb748a0e99c7abe8301a3234018b1ab",
+              "imageId": "sha256:10bb4dea0e40de5c390ea4b74c78c06bcf54bcd625cd92ce0aa45044903999ce",
+              "health": "healthy"
+            },
+            {
+              "taskArn": "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/d849875b-f75d-46e3-9cad-be34389c9113",
+              "containerId": "cfd98c718294932ba6ae21074a0431e1188b180575187e2ed05b50a152d12be9",
+              "imageId": "sha256:10bb4dea0e40de5c390ea4b74c78c06bcf54bcd625cd92ce0aa45044903999ce",
+              "health": "healthy"
+            }
+          ]
+        },
+        "sameTaskContainerImageIdentities": true,
+        "successfulDeploymentMetadataUnchanged": true,
+        "httpsCrudPassed": true,
+        "httpsReleaseIdentityPreserved": true,
+        "ownedCandidateContainersAbsent": true,
+        "ownedCandidateApiResourcesAbsent": true,
+        "deploymentLockAbsent": true,
+        "failedDeploymentNotApproved": true
+      }
+    },
+    {
+      "testedBeforeCanonicalQuiescenceChange": true,
+      "report": {
+        "recordedAt": "2026-10-04T13:58:39.014311+00:00",
+        "executionId": "de4b471a-f7e9-4289-b524-3a4a6ff1013a",
+        "pipelineStatus": "Failed",
+        "pipelineVersion": 4,
+        "sourceRevisions": [],
+        "actions": [
+          {
+            "actionName": "DeployBlueGreen",
+            "stageName": "Deploy",
+            "status": "Failed",
+            "pipelineExecutionId": "de4b471a-f7e9-4289-b524-3a4a6ff1013a",
+            "actionExecutionId": "d4e5e05f-606e-4a0b-a667-f3ea2755c5c4",
+            "startTime": "2026-10-04T13:55:02.232068+00:00",
+            "lastUpdateTime": "2026-10-04T13:58:35.157714+00:00",
+            "nativeExternalExecutionId": "cloudtasks-bluegreen-deploy:99de38eb",
+            "errorCode": "JobFailed",
+            "inputArtifacts": [
+              {
+                "name": "BuildOutput",
+                "s3location": {
+                  "bucket": "cloudtasks-pipeline-artifacts",
+                  "key": "cloudtasks-pipeline/BuildOutput/e0f96c66"
+                }
+              }
+            ],
+            "outputArtifacts": [],
+            "codebuild": {
+              "id": "cloudtasks-bluegreen-deploy:99de38eb",
+              "status": "FAILED",
+              "startTime": "2026-10-04T13:55:02.324453+00:00",
+              "endTime": "2026-10-04T13:58:34.179135+00:00",
+              "sourceVersion": "arn:aws:s3:::cloudtasks-pipeline-artifacts/cloudtasks-pipeline/BuildOutput/e0f96c66",
+              "artifactLocation": "arn:aws:s3:::cloudtasks-pipeline-artifacts/cloudtasks-pipeline/DeployOutput/9a91b5b8"
+            }
+          },
+          {
+            "actionName": "BuildAndPush",
+            "stageName": "Build",
+            "status": "Succeeded",
+            "pipelineExecutionId": "de4b471a-f7e9-4289-b524-3a4a6ff1013a",
+            "actionExecutionId": "08ab34df-d84f-428a-8aef-81d84609a3cf",
+            "startTime": "2026-10-04T13:52:58.542445+00:00",
+            "lastUpdateTime": "2026-10-04T13:55:02.199258+00:00",
+            "nativeExternalExecutionId": "cloudtasks-build:a337ddf1",
+            "errorCode": null,
+            "inputArtifacts": [
+              {
+                "name": "SourceOutput",
+                "s3location": {
+                  "bucket": "cloudtasks-pipeline-artifacts",
+                  "key": "cloudtasks-pipeline/SourceOutput/fd349378.zip"
+                }
+              }
+            ],
+            "outputArtifacts": [
+              {
+                "name": "BuildOutput",
+                "s3location": {
+                  "bucket": "cloudtasks-pipeline-artifacts",
+                  "key": "cloudtasks-pipeline/BuildOutput/e0f96c66"
+                }
+              }
+            ],
+            "codebuild": {
+              "id": "cloudtasks-build:a337ddf1",
+              "status": "SUCCEEDED",
+              "startTime": "2026-10-04T13:52:58.669528+00:00",
+              "endTime": "2026-10-04T13:55:01.996081+00:00",
+              "sourceVersion": "arn:aws:s3:::cloudtasks-pipeline-artifacts/cloudtasks-pipeline/SourceOutput/fd349378.zip",
+              "artifactLocation": "arn:aws:s3:::cloudtasks-pipeline-artifacts/cloudtasks-pipeline/BuildOutput/e0f96c66"
+            }
+          },
+          {
+            "actionName": "SourceSnapshot",
+            "stageName": "Source",
+            "status": "Succeeded",
+            "pipelineExecutionId": "de4b471a-f7e9-4289-b524-3a4a6ff1013a",
+            "actionExecutionId": "895bbde6-1104-418f-a430-8984ee495b89",
+            "startTime": "2026-10-04T13:52:58.348923+00:00",
+            "lastUpdateTime": "2026-10-04T13:52:58.502313+00:00",
+            "nativeExternalExecutionId": "AaEFngBrh24g_gBK7Hjlb0mgFl.hfP8g",
+            "errorCode": null,
+            "inputArtifacts": [],
+            "outputArtifacts": [
+              {
+                "name": "SourceOutput",
+                "s3location": {
+                  "bucket": "cloudtasks-pipeline-artifacts",
+                  "key": "cloudtasks-pipeline/SourceOutput/fd349378.zip"
+                }
+              }
+            ],
+            "sourceVersionId": "AaEFngBrh24g_gBK7Hjlb0mgFl.hfP8g"
+          }
+        ],
+        "receiptSha256": "fdf866e79bfc5a9d60aaeb5b560a8d3aa1184bdac0f8c4cac54ba3704c404072",
+        "receipt": {
+          "executionId": "de4b471a-f7e9-4289-b524-3a4a6ff1013a",
+          "agentBuildId": "local:00000000-0000-0000-0000-000000000000",
+          "scenario": "Rollback",
+          "bakeSeconds": 60,
+          "mode": "LocalStackBlueGreenAdapter",
+          "nativeBlueGreenControllerCertified": false,
+          "status": "ROLLED_BACK",
+          "phases": [
+            "BLUE_VERIFIED",
+            "CANDIDATE_VERIFIED",
+            "TRAFFIC_PROMOTED"
+          ],
+          "provenance": {
+            "imageBuildId": "cloudtasks-build:a337ddf1",
+            "inputArtifactBucket": "cloudtasks-pipeline-artifacts",
+            "inputArtifactKey": "cloudtasks-pipeline/BuildOutput/e0f96c66"
+          },
+          "blue": {
+            "definition": "arn:aws:ecs:us-east-1:000000000000:task-definition/cloudtasks:6",
+            "image": "000000000000.dkr.ecr.us-east-1.localhost.localstack.cloud:4566/cloudtasks:pipeline-9d2817aa-a728-4f75-8bcf-439b9e9fc4e5",
+            "digest": "sha256:10bb4dea0e40de5c390ea4b74c78c06bcf54bcd625cd92ce0aa45044903999ce",
+            "releaseId": "pipeline-9d2817aa-a728-4f75-8bcf-439b9e9fc4e5",
+            "asset": "/assets/index-BjgdmimE.js",
+            "bundleSha256": "351a4c894bd466de16ba85ab26d9fd51e5fc7905dcc3c6352d43c784a2b6b59f",
+            "health": "ok",
+            "database": "ok",
+            "tasks": [
+              {
+                "taskArn": "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/d849875b-f75d-46e3-9cad-be34389c9113",
+                "containerId": "cfd98c718294932ba6ae21074a0431e1188b180575187e2ed05b50a152d12be9",
+                "imageId": "sha256:10bb4dea0e40de5c390ea4b74c78c06bcf54bcd625cd92ce0aa45044903999ce",
+                "digest": "sha256:10bb4dea0e40de5c390ea4b74c78c06bcf54bcd625cd92ce0aa45044903999ce",
+                "ip": "172.18.0.3",
+                "port": 3000,
+                "health": "healthy"
+              },
+              {
+                "taskArn": "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/691d3e7e-98b5-4b91-b660-9f40e8bc1f59",
+                "containerId": "beeafa946b6e977a8f1aa0a1ff798459bfb748a0e99c7abe8301a3234018b1ab",
+                "imageId": "sha256:10bb4dea0e40de5c390ea4b74c78c06bcf54bcd625cd92ce0aa45044903999ce",
+                "digest": "sha256:10bb4dea0e40de5c390ea4b74c78c06bcf54bcd625cd92ce0aa45044903999ce",
+                "ip": "172.18.0.4",
+                "port": 3000,
+                "health": "healthy"
+              }
+            ]
+          },
+          "green": {
+            "definition": "arn:aws:ecs:us-east-1:000000000000:task-definition/cloudtasks-candidate:5",
+            "image": "000000000000.dkr.ecr.us-east-1.localhost.localstack.cloud:4566/cloudtasks:pipeline-7f4e44ef-3867-4b54-aa11-8a121ffb5cc8",
+            "digest": "sha256:c1882bafa5d11a295b81bdf16727cbd07784e5d39f8b15ae8e5454b98d805ce1",
+            "releaseId": "pipeline-7f4e44ef-3867-4b54-aa11-8a121ffb5cc8",
+            "asset": "/assets/index-BjgdmimE.js",
+            "bundleSha256": "351a4c894bd466de16ba85ab26d9fd51e5fc7905dcc3c6352d43c784a2b6b59f",
+            "health": "ok",
+            "database": "ok",
+            "tasks": [
+              {
+                "taskArn": "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/440b7b2f-f36a-48f8-bcca-e2572a30a73f",
+                "containerId": "6a590cee600f703d1e78017a8ab1d995e8906206721a5af463295bb02a24e1f1",
+                "imageId": "sha256:c1882bafa5d11a295b81bdf16727cbd07784e5d39f8b15ae8e5454b98d805ce1",
+                "digest": "sha256:c1882bafa5d11a295b81bdf16727cbd07784e5d39f8b15ae8e5454b98d805ce1",
+                "ip": "172.18.0.6",
+                "port": 3000,
+                "health": "healthy"
+              },
+              {
+                "taskArn": "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/385d2e06-d28a-4aca-8129-ac022d84af2a",
+                "containerId": "a46b72d597eab5617c0511533186af452b651a15de7a718aca2963256aa0bbb2",
+                "imageId": "sha256:c1882bafa5d11a295b81bdf16727cbd07784e5d39f8b15ae8e5454b98d805ce1",
+                "digest": "sha256:c1882bafa5d11a295b81bdf16727cbd07784e5d39f8b15ae8e5454b98d805ce1",
+                "ip": "172.18.0.7",
+                "port": 3000,
+                "health": "healthy"
+              }
+            ]
+          },
+          "isolation": {
+            "productionHttp": "blue",
+            "productionHttps": "blue",
+            "testHttp": "green",
+            "testHttps": "green"
+          },
+          "sharedData": {
+            "createBlueReadGreen": true,
+            "updateGreenReadBlue": true,
+            "ownedTaskDeleted": true
+          },
+          "promotion": {
+            "http": "green",
+            "https": "green",
+            "releaseId": "pipeline-7f4e44ef-3867-4b54-aa11-8a121ffb5cc8"
+          },
+          "errorCode": "CONTROLLED_BAKE_FAILURE",
+          "rollback": {
+            "productionImage": "000000000000.dkr.ecr.us-east-1.localhost.localstack.cloud:4566/cloudtasks:pipeline-9d2817aa-a728-4f75-8bcf-439b9e9fc4e5",
+            "productionRelease": "pipeline-9d2817aa-a728-4f75-8bcf-439b9e9fc4e5",
+            "http": "blue",
+            "https": "blue"
+          },
+          "bluePreserved": {
+            "physicalHealthy": 2,
+            "http": "blue",
+            "https": "blue",
+            "tasks": [
+              {
+                "taskArn": "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/d849875b-f75d-46e3-9cad-be34389c9113",
+                "containerId": "cfd98c718294932ba6ae21074a0431e1188b180575187e2ed05b50a152d12be9",
+                "imageId": "sha256:10bb4dea0e40de5c390ea4b74c78c06bcf54bcd625cd92ce0aa45044903999ce",
+                "digest": "sha256:10bb4dea0e40de5c390ea4b74c78c06bcf54bcd625cd92ce0aa45044903999ce",
+                "ip": "172.18.0.3",
+                "port": 3000,
+                "health": "healthy"
+              },
+              {
+                "taskArn": "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/691d3e7e-98b5-4b91-b660-9f40e8bc1f59",
+                "containerId": "beeafa946b6e977a8f1aa0a1ff798459bfb748a0e99c7abe8301a3234018b1ab",
+                "imageId": "sha256:10bb4dea0e40de5c390ea4b74c78c06bcf54bcd625cd92ce0aa45044903999ce",
+                "digest": "sha256:10bb4dea0e40de5c390ea4b74c78c06bcf54bcd625cd92ce0aa45044903999ce",
+                "ip": "172.18.0.4",
+                "port": 3000,
+                "health": "healthy"
+              }
+            ]
+          },
+          "cleanup": {
+            "temporaryServiceRemoved": true,
+            "temporaryRulesRemoved": true,
+            "temporaryGroupRemoved": true,
+            "temporaryDefinitionDeregistered": true,
+            "temporaryContainersRemoved": true,
+            "temporaryLogsRemoved": true
+          },
+          "owned": {
+            "rules": [
+              "arn:aws:elasticloadbalancing:us-east-1:000000000000:listener-rule/app/cloudtasks-alb/f37162fc36084cae/e4721886507f4ae6/0b2161bd52b5462b",
+              "arn:aws:elasticloadbalancing:us-east-1:000000000000:listener-rule/app/cloudtasks-alb/f37162fc36084cae/e4721886507f4ae6/6d022657b7db4fab",
+              "arn:aws:elasticloadbalancing:us-east-1:000000000000:listener-rule/app/cloudtasks-alb/f37162fc36084cae/3fddd6aa7ba340e6/bdd5c1984f7d4668",
+              "arn:aws:elasticloadbalancing:us-east-1:000000000000:listener-rule/app/cloudtasks-alb/f37162fc36084cae/3fddd6aa7ba340e6/67ef700c0f114993"
+            ],
+            "taskIds": [
+              "440b7b2f-f36a-48f8-bcca-e2572a30a73f",
+              "385d2e06-d28a-4aca-8129-ac022d84af2a",
+              "440b7b2f-f36a-48f8-bcca-e2572a30a73f",
+              "385d2e06-d28a-4aca-8129-ac022d84af2a",
+              "440b7b2f-f36a-48f8-bcca-e2572a30a73f",
+              "385d2e06-d28a-4aca-8129-ac022d84af2a",
+              "440b7b2f-f36a-48f8-bcca-e2572a30a73f",
+              "385d2e06-d28a-4aca-8129-ac022d84af2a"
+            ],
+            "definition": "arn:aws:ecs:us-east-1:000000000000:task-definition/cloudtasks-candidate:5",
+            "group": "arn:aws:elasticloadbalancing:us-east-1:000000000000:targetgroup/ct-bg-de4b471a-green/59e593adaa9843ab",
+            "service": "arn:aws:ecs:us-east-1:000000000000:service/cloudtasks-cluster-r20261004030336711/cloudtasks-candidate-de4b471a"
+          },
+          "recordedAt": "2026-10-04T13:58:07.103Z"
+        },
+        "deploymentLockPresent": false,
+        "canonicalService": {
+          "serviceArn": "arn:aws:ecs:us-east-1:000000000000:service/cloudtasks-cluster-r20261004030336711/cloudtasks-service",
+          "taskDefinition": "arn:aws:ecs:us-east-1:000000000000:task-definition/cloudtasks:6",
+          "desiredCount": 2,
+          "runningCount": 2,
+          "pendingCount": 0,
+          "status": "ACTIVE"
+        },
+        "canonicalTaskArns": [
+          "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/d849875b-f75d-46e3-9cad-be34389c9113",
+          "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/691d3e7e-98b5-4b91-b660-9f40e8bc1f59"
+        ],
+        "listeners": [
+          {
+            "ListenerArn": "arn:aws:elasticloadbalancing:us-east-1:000000000000:listener/app/cloudtasks-alb/f37162fc36084cae/e4721886507f4ae6",
+            "Protocol": "HTTP",
+            "Port": 4566,
+            "DefaultActions": [
+              {
+                "Type": "forward",
+                "TargetGroupArn": "arn:aws:elasticloadbalancing:us-east-1:000000000000:targetgroup/cloudtasks-tg/7af3cbd8c9084c7f",
+                "ForwardConfig": {
+                  "TargetGroups": [
+                    {
+                      "TargetGroupArn": "arn:aws:elasticloadbalancing:us-east-1:000000000000:targetgroup/cloudtasks-tg/7af3cbd8c9084c7f",
+                      "Weight": 1
+                    }
+                  ],
+                  "TargetGroupStickinessConfig": {
+                    "Enabled": false
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "ListenerArn": "arn:aws:elasticloadbalancing:us-east-1:000000000000:listener/app/cloudtasks-alb/f37162fc36084cae/3fddd6aa7ba340e6",
+            "Protocol": "HTTPS",
+            "Port": 443,
+            "DefaultActions": [
+              {
+                "Type": "forward",
+                "TargetGroupArn": "arn:aws:elasticloadbalancing:us-east-1:000000000000:targetgroup/cloudtasks-tg/7af3cbd8c9084c7f",
+                "ForwardConfig": {
+                  "TargetGroups": [
+                    {
+                      "TargetGroupArn": "arn:aws:elasticloadbalancing:us-east-1:000000000000:targetgroup/cloudtasks-tg/7af3cbd8c9084c7f",
+                      "Weight": 1
+                    }
+                  ],
+                  "TargetGroupStickinessConfig": {
+                    "Enabled": false
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "canonicalTargets": [
+          {
+            "Target": {
+              "Id": "172.18.0.3",
+              "Port": 3000,
+              "AvailabilityZone": "all"
+            },
+            "HealthCheckPort": "3000",
+            "TargetHealth": {
+              "State": "healthy"
+            }
+          },
+          {
+            "Target": {
+              "Id": "172.18.0.4",
+              "Port": 3000,
+              "AvailabilityZone": "all"
+            },
+            "HealthCheckPort": "3000",
+            "TargetHealth": {
+              "State": "healthy"
+            }
+          }
+        ]
+      },
+      "independentWindowsProof": {
+        "utc": "2026-10-04T13:58:52.4794006Z",
+        "scenario": "Rollback",
+        "executionId": "de4b471a-f7e9-4289-b524-3a4a6ff1013a",
+        "result": "CONTROLLED_NEGATIVE_BEHAVIOR_PASSED",
+        "pipelineStatus": "Failed",
+        "deployBuildStatus": "FAILED",
+        "receiptStatus": "ROLLED_BACK",
+        "errorCode": "CONTROLLED_BAKE_FAILURE",
+        "productionBefore": {
+          "definition": "arn:aws:ecs:us-east-1:000000000000:task-definition/cloudtasks:6",
+          "tasks": [
+            {
+              "taskArn": "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/691d3e7e-98b5-4b91-b660-9f40e8bc1f59",
+              "containerId": "beeafa946b6e977a8f1aa0a1ff798459bfb748a0e99c7abe8301a3234018b1ab",
+              "imageId": "sha256:10bb4dea0e40de5c390ea4b74c78c06bcf54bcd625cd92ce0aa45044903999ce",
+              "health": "healthy"
+            },
+            {
+              "taskArn": "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/d849875b-f75d-46e3-9cad-be34389c9113",
+              "containerId": "cfd98c718294932ba6ae21074a0431e1188b180575187e2ed05b50a152d12be9",
+              "imageId": "sha256:10bb4dea0e40de5c390ea4b74c78c06bcf54bcd625cd92ce0aa45044903999ce",
+              "health": "healthy"
+            }
+          ]
+        },
+        "productionAfter": {
+          "definition": "arn:aws:ecs:us-east-1:000000000000:task-definition/cloudtasks:6",
+          "tasks": [
+            {
+              "taskArn": "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/691d3e7e-98b5-4b91-b660-9f40e8bc1f59",
+              "containerId": "beeafa946b6e977a8f1aa0a1ff798459bfb748a0e99c7abe8301a3234018b1ab",
+              "imageId": "sha256:10bb4dea0e40de5c390ea4b74c78c06bcf54bcd625cd92ce0aa45044903999ce",
+              "health": "healthy"
+            },
+            {
+              "taskArn": "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/d849875b-f75d-46e3-9cad-be34389c9113",
+              "containerId": "cfd98c718294932ba6ae21074a0431e1188b180575187e2ed05b50a152d12be9",
+              "imageId": "sha256:10bb4dea0e40de5c390ea4b74c78c06bcf54bcd625cd92ce0aa45044903999ce",
+              "health": "healthy"
+            }
+          ]
+        },
+        "sameTaskContainerImageIdentities": true,
+        "successfulDeploymentMetadataUnchanged": true,
+        "httpsCrudPassed": true,
+        "httpsReleaseIdentityPreserved": true,
+        "ownedCandidateContainersAbsent": true,
+        "ownedCandidateApiResourcesAbsent": true,
+        "deploymentLockAbsent": true,
+        "failedDeploymentNotApproved": true
+      }
+    }
+  ],
+  "acceptedDeliveries": [
+    {
+      "report": {
+        "recordedAt": "2026-10-04T18:17:38.555542+00:00",
+        "executionId": "0ef42e01-9b62-4f90-a2aa-f397b8b5e293",
+        "pipelineStatus": "Succeeded",
+        "pipelineVersion": 4,
+        "sourceRevisions": [],
+        "actions": [
+          {
+            "actionName": "DeployBlueGreen",
+            "stageName": "Deploy",
+            "status": "Succeeded",
+            "pipelineExecutionId": "0ef42e01-9b62-4f90-a2aa-f397b8b5e293",
+            "actionExecutionId": "70c942b9-cb76-458e-867c-3c93a080d1a4",
+            "startTime": "2026-10-04T18:11:15.626922+00:00",
+            "lastUpdateTime": "2026-10-04T18:16:48.550413+00:00",
+            "nativeExternalExecutionId": "cloudtasks-bluegreen-deploy:264d3ba1",
+            "errorCode": null,
+            "inputArtifacts": [
+              {
+                "name": "BuildOutput",
+                "s3location": {
+                  "bucket": "cloudtasks-pipeline-artifacts",
+                  "key": "cloudtasks-pipeline/BuildOutput/2372021e"
+                }
+              }
+            ],
+            "outputArtifacts": [
+              {
+                "name": "DeployOutput",
+                "s3location": {
+                  "bucket": "cloudtasks-pipeline-artifacts",
+                  "key": "cloudtasks-pipeline/DeployOutput/47c07d0f"
+                }
+              }
+            ],
+            "codebuild": {
+              "id": "cloudtasks-bluegreen-deploy:264d3ba1",
+              "status": "SUCCEEDED",
+              "startTime": "2026-10-04T18:11:15.723712+00:00",
+              "endTime": "2026-10-04T18:16:48.226299+00:00",
+              "sourceVersion": "arn:aws:s3:::cloudtasks-pipeline-artifacts/cloudtasks-pipeline/BuildOutput/2372021e",
+              "artifactLocation": "arn:aws:s3:::cloudtasks-pipeline-artifacts/cloudtasks-pipeline/DeployOutput/47c07d0f"
+            }
+          },
+          {
+            "actionName": "BuildAndPush",
+            "stageName": "Build",
+            "status": "Succeeded",
+            "pipelineExecutionId": "0ef42e01-9b62-4f90-a2aa-f397b8b5e293",
+            "actionExecutionId": "d48abb8e-be1b-4831-a6b6-64b49dc72df6",
+            "startTime": "2026-10-04T18:09:09.766291+00:00",
+            "lastUpdateTime": "2026-10-04T18:11:15.408932+00:00",
+            "nativeExternalExecutionId": "cloudtasks-build:e527f64f",
+            "errorCode": null,
+            "inputArtifacts": [
+              {
+                "name": "SourceOutput",
+                "s3location": {
+                  "bucket": "cloudtasks-pipeline-artifacts",
+                  "key": "cloudtasks-pipeline/SourceOutput/67ad232e.zip"
+                }
+              }
+            ],
+            "outputArtifacts": [
+              {
+                "name": "BuildOutput",
+                "s3location": {
+                  "bucket": "cloudtasks-pipeline-artifacts",
+                  "key": "cloudtasks-pipeline/BuildOutput/2372021e"
+                }
+              }
+            ],
+            "codebuild": {
+              "id": "cloudtasks-build:e527f64f",
+              "status": "SUCCEEDED",
+              "startTime": "2026-10-04T18:09:09.941402+00:00",
+              "endTime": "2026-10-04T18:11:13.767370+00:00",
+              "sourceVersion": "arn:aws:s3:::cloudtasks-pipeline-artifacts/cloudtasks-pipeline/SourceOutput/67ad232e.zip",
+              "artifactLocation": "arn:aws:s3:::cloudtasks-pipeline-artifacts/cloudtasks-pipeline/BuildOutput/2372021e"
+            }
+          },
+          {
+            "actionName": "SourceSnapshot",
+            "stageName": "Source",
+            "status": "Succeeded",
+            "pipelineExecutionId": "0ef42e01-9b62-4f90-a2aa-f397b8b5e293",
+            "actionExecutionId": "2cdbd75b-4c8e-4a45-9df1-3ed379130446",
+            "startTime": "2026-10-04T18:09:09.270340+00:00",
+            "lastUpdateTime": "2026-10-04T18:09:09.742112+00:00",
+            "nativeExternalExecutionId": "AaEFngBv2CNUyEHELAs5fSicxSWijVqC",
+            "errorCode": null,
+            "inputArtifacts": [],
+            "outputArtifacts": [
+              {
+                "name": "SourceOutput",
+                "s3location": {
+                  "bucket": "cloudtasks-pipeline-artifacts",
+                  "key": "cloudtasks-pipeline/SourceOutput/67ad232e.zip"
+                }
+              }
+            ],
+            "sourceVersionId": "AaEFngBv2CNUyEHELAs5fSicxSWijVqC"
+          }
+        ],
+        "receiptSha256": "4176a13c5f6c65832f931b2b289115285939f6ffe74a4e9d4210c8c29747f7a5",
+        "receipt": {
+          "executionId": "0ef42e01-9b62-4f90-a2aa-f397b8b5e293",
+          "agentBuildId": "local:00000000-0000-0000-0000-000000000000",
+          "scenario": "Normal",
+          "bakeSeconds": 60,
+          "mode": "LocalStackBlueGreenAdapter",
+          "nativeBlueGreenControllerCertified": false,
+          "status": "SUCCEEDED",
+          "phases": [
+            "BLUE_VERIFIED",
+            "CANDIDATE_VERIFIED",
+            "TRAFFIC_PROMOTED",
+            "BAKE_PASSED",
+            "CANONICAL_VERIFIED"
+          ],
+          "provenance": {
+            "imageBuildId": "cloudtasks-build:e527f64f",
+            "inputArtifactBucket": "cloudtasks-pipeline-artifacts",
+            "inputArtifactKey": "cloudtasks-pipeline/BuildOutput/2372021e"
+          },
+          "blue": {
+            "definition": "arn:aws:ecs:us-east-1:000000000000:task-definition/cloudtasks:10",
+            "image": "000000000000.dkr.ecr.us-east-1.localhost.localstack.cloud:4566/cloudtasks:pipeline-07c5e042-dd02-4c0c-94b4-5374bb6de80c",
+            "digest": "sha256:441d9e5f99c692dec056a529dbed3457c258c38b8b5b563af272a7f0ffe62901",
+            "releaseId": "pipeline-07c5e042-dd02-4c0c-94b4-5374bb6de80c",
+            "asset": "/assets/index-BjgdmimE.js",
+            "bundleSha256": "351a4c894bd466de16ba85ab26d9fd51e5fc7905dcc3c6352d43c784a2b6b59f",
+            "health": "ok",
+            "database": "ok",
+            "tasks": [
+              {
+                "taskArn": "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/f636af32-ab38-4475-9deb-a3e60936cb18",
+                "containerId": "b5976518a5cbd5e12ecac1010c2d9acc37c6d7f4527eb0501f004cdd76180736",
+                "imageId": "sha256:441d9e5f99c692dec056a529dbed3457c258c38b8b5b563af272a7f0ffe62901",
+                "digest": "sha256:441d9e5f99c692dec056a529dbed3457c258c38b8b5b563af272a7f0ffe62901",
+                "ip": "172.18.0.3",
+                "port": 3000,
+                "health": "healthy"
+              },
+              {
+                "taskArn": "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/fd0156ee-a1c9-4041-a884-2a5652fb6405",
+                "containerId": "7d740a36749a066a46ef6430027e1864f4f21357d65dfa08bb5a90c2f27a9730",
+                "imageId": "sha256:441d9e5f99c692dec056a529dbed3457c258c38b8b5b563af272a7f0ffe62901",
+                "digest": "sha256:441d9e5f99c692dec056a529dbed3457c258c38b8b5b563af272a7f0ffe62901",
+                "ip": "172.18.0.4",
+                "port": 3000,
+                "health": "healthy"
+              }
+            ]
+          },
+          "green": {
+            "definition": "arn:aws:ecs:us-east-1:000000000000:task-definition/cloudtasks-candidate:9",
+            "image": "000000000000.dkr.ecr.us-east-1.localhost.localstack.cloud:4566/cloudtasks:pipeline-90924691-77a8-4bf3-b911-0d1586e4dde2",
+            "digest": "sha256:a0d7bef526f44b075e803ab37c833a8088a821f0a1e455109981a588b7a6192a",
+            "releaseId": "pipeline-90924691-77a8-4bf3-b911-0d1586e4dde2",
+            "asset": "/assets/index-BjgdmimE.js",
+            "bundleSha256": "351a4c894bd466de16ba85ab26d9fd51e5fc7905dcc3c6352d43c784a2b6b59f",
+            "health": "ok",
+            "database": "ok",
+            "tasks": [
+              {
+                "taskArn": "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/fad11df6-1002-45a3-a3ab-b0c459c659bf",
+                "containerId": "a1c664ad07d45d6e014833208f690b97edee0d869d76887bb284c553bed4af20",
+                "imageId": "sha256:a0d7bef526f44b075e803ab37c833a8088a821f0a1e455109981a588b7a6192a",
+                "digest": "sha256:a0d7bef526f44b075e803ab37c833a8088a821f0a1e455109981a588b7a6192a",
+                "ip": "172.18.0.6",
+                "port": 3000,
+                "health": "healthy"
+              },
+              {
+                "taskArn": "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/df5ef98d-6460-43cc-8916-9f7c514baf75",
+                "containerId": "9ae30266dbcbe90b95147e698962a0c3243f65f0e0469ec85372ccfba5584510",
+                "imageId": "sha256:a0d7bef526f44b075e803ab37c833a8088a821f0a1e455109981a588b7a6192a",
+                "digest": "sha256:a0d7bef526f44b075e803ab37c833a8088a821f0a1e455109981a588b7a6192a",
+                "ip": "172.18.0.7",
+                "port": 3000,
+                "health": "healthy"
+              }
+            ]
+          },
+          "isolation": {
+            "productionHttp": "blue",
+            "productionHttps": "blue",
+            "testHttp": "green",
+            "testHttps": "green"
+          },
+          "sharedData": {
+            "createBlueReadGreen": true,
+            "updateGreenReadBlue": true,
+            "ownedTaskDeleted": true
+          },
+          "promotion": {
+            "http": "green",
+            "https": "green",
+            "releaseId": "pipeline-90924691-77a8-4bf3-b911-0d1586e4dde2"
+          },
+          "bake": {
+            "requiredSeconds": 60,
+            "elapsedSeconds": 63.27,
+            "samples": [
+              {
+                "seconds": 10.8,
+                "blueHealthy": 2,
+                "greenHealthy": 2,
+                "blueHttp": "blue",
+                "blueHttps": "blue",
+                "productionRelease": "pipeline-90924691-77a8-4bf3-b911-0d1586e4dde2",
+                "httpsPinned": true
+              },
+              {
+                "seconds": 28.9,
+                "blueHealthy": 2,
+                "greenHealthy": 2,
+                "blueHttp": "blue",
+                "blueHttps": "blue",
+                "productionRelease": "pipeline-90924691-77a8-4bf3-b911-0d1586e4dde2",
+                "httpsPinned": true
+              },
+              {
+                "seconds": 45.7,
+                "blueHealthy": 2,
+                "greenHealthy": 2,
+                "blueHttp": "blue",
+                "blueHttps": "blue",
+                "productionRelease": "pipeline-90924691-77a8-4bf3-b911-0d1586e4dde2",
+                "httpsPinned": true
+              },
+              {
+                "seconds": 63.3,
+                "blueHealthy": 2,
+                "greenHealthy": 2,
+                "blueHttp": "blue",
+                "blueHttps": "blue",
+                "productionRelease": "pipeline-90924691-77a8-4bf3-b911-0d1586e4dde2",
+                "httpsPinned": true
+              }
+            ]
+          },
+          "final": {
+            "taskDefinition": "arn:aws:ecs:us-east-1:000000000000:task-definition/cloudtasks:11",
+            "image": "000000000000.dkr.ecr.us-east-1.localhost.localstack.cloud:4566/cloudtasks:pipeline-90924691-77a8-4bf3-b911-0d1586e4dde2",
+            "digest": "sha256:a0d7bef526f44b075e803ab37c833a8088a821f0a1e455109981a588b7a6192a",
+            "releaseId": "pipeline-90924691-77a8-4bf3-b911-0d1586e4dde2",
+            "tasks": [
+              {
+                "taskArn": "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/4bbb9474-b8d0-45ce-8a46-4649ce09b559",
+                "containerId": "9fa88f1512327f621024bb1aeea011e43437f13a18a1a9173dda41b151cd77ed",
+                "imageId": "sha256:a0d7bef526f44b075e803ab37c833a8088a821f0a1e455109981a588b7a6192a",
+                "digest": "sha256:a0d7bef526f44b075e803ab37c833a8088a821f0a1e455109981a588b7a6192a",
+                "ip": "172.18.0.3",
+                "port": 3000,
+                "health": "healthy"
+              },
+              {
+                "taskArn": "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/8139c1b5-2355-4a8a-be1f-c0d33bf657d6",
+                "containerId": "3ff5c75dfed95d4718670487f7e4c10be5fd91819592859074ce0fd8afbb0394",
+                "imageId": "sha256:a0d7bef526f44b075e803ab37c833a8088a821f0a1e455109981a588b7a6192a",
+                "digest": "sha256:a0d7bef526f44b075e803ab37c833a8088a821f0a1e455109981a588b7a6192a",
+                "ip": "172.18.0.4",
+                "port": 3000,
+                "health": "healthy"
+              }
+            ],
+            "targetGroup": "arn:aws:elasticloadbalancing:us-east-1:000000000000:targetgroup/cloudtasks-tg/7af3cbd8c9084c7f",
+            "http": "green",
+            "https": "green",
+            "canonicalRetirement": {
+              "taskArns": [
+                "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/f636af32-ab38-4475-9deb-a3e60936cb18",
+                "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/fd0156ee-a1c9-4041-a884-2a5652fb6405",
+                "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/d5641ff4-ef30-45f0-9e10-b26dbd2c0bf8",
+                "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/790d7a96-6845-44d7-8ce3-2db138492039",
+                "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/6bae67e8-1b48-4d2e-a88a-4736bb951880",
+                "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/fe593ed3-971d-482b-86fd-37c67956cfbb",
+                "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/d8f8cadd-f0f5-42f0-a34e-ecafcd87aa20",
+                "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/534b2025-e974-4a13-8191-d84f7406afd4",
+                "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/0846ac0a-810e-41f3-a586-9e5ddf05162c",
+                "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/a4642343-dcac-4468-80f8-6d8cf298898f",
+                "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/4aaa9c41-3aff-406d-a4ee-3855d0b4fae9",
+                "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/418407a8-6749-4212-b49d-f4bed03cb747",
+                "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/af34b838-4532-48ca-b393-869d63255989",
+                "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/d849875b-f75d-46e3-9cad-be34389c9113",
+                "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/691d3e7e-98b5-4b91-b660-9f40e8bc1f59",
+                "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/cefdb297-8760-49e9-898c-6c5a85443315",
+                "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/706b8081-ca6d-4122-b773-bb3d64f3eb50",
+                "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/04a5dde1-18e3-46a5-8810-e66b412efae4",
+                "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/50898b5d-3fd3-4ddf-bb8d-aa4cd2d307ae",
+                "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/cd969556-366d-4171-82d3-440fda172cd6",
+                "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/75f2d82f-01d5-4645-8884-2c300e78f676",
+                "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/037b2958-7fe6-4244-acfd-4fb0e9ffb64b",
+                "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/82ebd784-19a1-4d73-9d20-8853fac3c4d3",
+                "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/d582d8eb-6727-45a4-978f-4391a07157ca",
+                "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/0ca7385a-d5c7-4cc7-9bdc-ba724b0f135d"
+              ],
+              "emptySamples": 2,
+              "physicalRunning": 0,
+              "productionHttp": "green",
+              "productionHttps": "green"
+            }
+          },
+          "cleanup": {
+            "temporaryServiceRemoved": true,
+            "temporaryRulesRemoved": true,
+            "temporaryGroupRemoved": true,
+            "temporaryDefinitionDeregistered": true,
+            "temporaryContainersRemoved": true,
+            "temporaryLogsRemoved": true
+          },
+          "owned": {
+            "rules": [
+              "arn:aws:elasticloadbalancing:us-east-1:000000000000:listener-rule/app/cloudtasks-alb/f37162fc36084cae/e4721886507f4ae6/9ecb0c847f164174",
+              "arn:aws:elasticloadbalancing:us-east-1:000000000000:listener-rule/app/cloudtasks-alb/f37162fc36084cae/e4721886507f4ae6/d9638304fc3441f6",
+              "arn:aws:elasticloadbalancing:us-east-1:000000000000:listener-rule/app/cloudtasks-alb/f37162fc36084cae/3fddd6aa7ba340e6/079cbdf73d504379",
+              "arn:aws:elasticloadbalancing:us-east-1:000000000000:listener-rule/app/cloudtasks-alb/f37162fc36084cae/3fddd6aa7ba340e6/34ef160a5eb549d4"
+            ],
+            "taskIds": [
+              "fad11df6-1002-45a3-a3ab-b0c459c659bf",
+              "df5ef98d-6460-43cc-8916-9f7c514baf75",
+              "fad11df6-1002-45a3-a3ab-b0c459c659bf",
+              "df5ef98d-6460-43cc-8916-9f7c514baf75",
+              "fad11df6-1002-45a3-a3ab-b0c459c659bf",
+              "df5ef98d-6460-43cc-8916-9f7c514baf75",
+              "fad11df6-1002-45a3-a3ab-b0c459c659bf",
+              "df5ef98d-6460-43cc-8916-9f7c514baf75"
+            ],
+            "definition": "arn:aws:ecs:us-east-1:000000000000:task-definition/cloudtasks-candidate:9",
+            "group": "arn:aws:elasticloadbalancing:us-east-1:000000000000:targetgroup/ct-bg-0ef42e01-green/1c014e2ca57f4c10",
+            "service": "arn:aws:ecs:us-east-1:000000000000:service/cloudtasks-cluster-r20261004030336711/cloudtasks-candidate-0ef42e01"
+          },
+          "recordedAt": "2026-10-04T18:16:21.369Z"
+        },
+        "deploymentLockPresent": false,
+        "canonicalService": {
+          "serviceArn": "arn:aws:ecs:us-east-1:000000000000:service/cloudtasks-cluster-r20261004030336711/cloudtasks-service",
+          "taskDefinition": "arn:aws:ecs:us-east-1:000000000000:task-definition/cloudtasks:11",
+          "desiredCount": 2,
+          "runningCount": 2,
+          "pendingCount": 0,
+          "status": "ACTIVE"
+        },
+        "canonicalTaskArns": [
+          "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/4bbb9474-b8d0-45ce-8a46-4649ce09b559",
+          "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261004030336711/8139c1b5-2355-4a8a-be1f-c0d33bf657d6"
+        ],
+        "listeners": [
+          {
+            "ListenerArn": "arn:aws:elasticloadbalancing:us-east-1:000000000000:listener/app/cloudtasks-alb/f37162fc36084cae/e4721886507f4ae6",
+            "Protocol": "HTTP",
+            "Port": 4566,
+            "DefaultActions": [
+              {
+                "Type": "forward",
+                "TargetGroupArn": "arn:aws:elasticloadbalancing:us-east-1:000000000000:targetgroup/cloudtasks-tg/7af3cbd8c9084c7f",
+                "ForwardConfig": {
+                  "TargetGroups": [
+                    {
+                      "TargetGroupArn": "arn:aws:elasticloadbalancing:us-east-1:000000000000:targetgroup/cloudtasks-tg/7af3cbd8c9084c7f",
+                      "Weight": 1
+                    }
+                  ],
+                  "TargetGroupStickinessConfig": {
+                    "Enabled": false
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "ListenerArn": "arn:aws:elasticloadbalancing:us-east-1:000000000000:listener/app/cloudtasks-alb/f37162fc36084cae/3fddd6aa7ba340e6",
+            "Protocol": "HTTPS",
+            "Port": 443,
+            "DefaultActions": [
+              {
+                "Type": "forward",
+                "TargetGroupArn": "arn:aws:elasticloadbalancing:us-east-1:000000000000:targetgroup/cloudtasks-tg/7af3cbd8c9084c7f",
+                "ForwardConfig": {
+                  "TargetGroups": [
+                    {
+                      "TargetGroupArn": "arn:aws:elasticloadbalancing:us-east-1:000000000000:targetgroup/cloudtasks-tg/7af3cbd8c9084c7f",
+                      "Weight": 1
+                    }
+                  ],
+                  "TargetGroupStickinessConfig": {
+                    "Enabled": false
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "canonicalTargets": [
+          {
+            "Target": {
+              "Id": "172.18.0.3",
+              "Port": 3000,
+              "AvailabilityZone": "all"
+            },
+            "HealthCheckPort": "3000",
+            "TargetHealth": {
+              "State": "healthy"
+            }
+          },
+          {
+            "Target": {
+              "Id": "172.18.0.4",
+              "Port": 3000,
+              "AvailabilityZone": "all"
+            },
+            "HealthCheckPort": "3000",
+            "TargetHealth": {
+              "State": "healthy"
+            }
+          }
+        ]
+      },
+      "state": {
+        "pipelineName": "cloudtasks-pipeline",
+        "executionId": "0ef42e01-9b62-4f90-a2aa-f397b8b5e293",
+        "executionMode": "NativeCodePipeline",
+        "pipelineStatus": "Succeeded",
+        "buildArtifactSha256": "567a5e5aebd4e365ecd9444bb2c0fd7922a1e937933213de5fca9eb89a3db7da",
+        "buildArtifactBucket": "cloudtasks-pipeline-artifacts",
+        "buildArtifactKey": "cloudtasks-pipeline/BuildOutput/2372021e",
+        "codeBuildId": "cloudtasks-build:e527f64f",
+        "codeBuildImageId": "sha256:3d9f03274c986ae91fa40046c09612304eafcc1c879927d15aabc41cbe5b1c1e",
+        "localStackContainerId": "1fc6feac010d4e263fe3a4be6bd584a5c9dbf75bde8e55b42e1957af15a2ad37",
+        "localStackImageId": "sha256:801a3dff7f6a23857e7310b7602e67d52a29dfdcb03e09f7c608d5c57d24b792",
+        "sourceVersionId": "AaEFngBv2CNUyEHELAs5fSicxSWijVqC",
+        "sourceSha256": "c0666a8a6c87328878a7b6d1de34ff9576f3e2e0411e473cdafe5e51188d41bd",
+        "executedAt": "2026-10-04T18:17:11.8051433Z",
+        "clusterName": "cloudtasks-cluster-r20261004030336711",
+        "serviceName": "cloudtasks-service",
+        "previousTaskDefinition": "arn:aws:ecs:us-east-1:000000000000:task-definition/cloudtasks:10",
+        "previousImage": "000000000000.dkr.ecr.us-east-1.localhost.localstack.cloud:4566/cloudtasks:pipeline-07c5e042-dd02-4c0c-94b4-5374bb6de80c",
+        "deployedTaskDefinition": "arn:aws:ecs:us-east-1:000000000000:task-definition/cloudtasks:11",
+        "deployedImage": "000000000000.dkr.ecr.us-east-1.localhost.localstack.cloud:4566/cloudtasks:pipeline-90924691-77a8-4bf3-b911-0d1586e4dde2",
+        "deployedImageDigest": "sha256:a0d7bef526f44b075e803ab37c833a8088a821f0a1e455109981a588b7a6192a",
+        "sourceBucket": "cloudtasks-pipeline-source",
+        "sourceObjectKey": "cloudtasks-source.zip",
+        "deploymentMode": "LocalStackBlueGreenAdapter",
+        "nativeBlueGreenControllerCertified": false,
+        "deployCodeBuildId": "cloudtasks-bluegreen-deploy:264d3ba1",
+        "deployArtifactSha256": "c8631d8e0a4e3da59864a3f9da808a114db526e5d9f1343fc64f612dd7919458",
+        "deployArtifactBucket": "cloudtasks-pipeline-artifacts",
+        "deployArtifactKey": "cloudtasks-pipeline/DeployOutput/47c07d0f"
+      }
+    }
+  ],
+  "controlledNegativeTests": [],
+  "historicalConsecutiveNativeWindowsProcess": {
+    "pid": 18684,
+    "exitCode": 0,
+    "runtimeSeconds": 1147.17,
+    "twoSuccessMarkersObserved": true,
+    "fullTestCicdAfterBoth": true,
+    "noAdministrativeMutationBetweenDeliveries": true
+  },
+  "historicalNegativeEvidenceApplicability": {
+    "negativeNativeRunsPrecededCanonicalQuiescenceRefinement": true,
+    "imageBuildSourceSha256": "7d0d071e812163d5ee1df5c93ec23088af1203c8eeeb71486eb27015c2e5e11e",
+    "currentPositiveSourceSha256": "d506efc6ccd84768e066e7ca2a85c69787e645de1215eba5f7b9ca1229fc4288",
+    "unchangedMethodsComparedByteForByte": [
+      "validateCandidate",
+      "verifyBlue",
+      "validateIsolation",
+      "validateSharedData",
+      "promote",
+      "observe"
+    ],
+    "cleanupBeforeCanonicalChangeBranchUnchanged": true,
+    "negativeRunsNeverEnteredConverge": true,
+    "currentStateMachineTestsReexecuted": true,
+    "reason": "Refinement executes after a successfully completed bake. Both negative native scenarios exit earlier, retain canonicalChanged=false and use unchanged validation/promotion/rollback/cleanup paths. They are not claimed as new native executions of the refined Source."
+  },
+  "finalWholeBranchReview": {
+    "independentReviewer": true,
+    "reviewPasses": 1,
+    "reviewedSourceSha256": "d506efc6ccd84768e066e7ca2a85c69787e645de1215eba5f7b9ca1229fc4288",
+    "criticalFindings": 0,
+    "importantFindings": 5,
+    "additionalReceiptProofFindingRegradedImportant": true,
+    "implementationFixPasses": 1,
+    "findingsFixed": [
+      "candidate defaults and API readback before canonical retirement, including equal release identity",
+      "canonicalChanged immediately before attempted canonical mutation",
+      "response interruption rejection and cleared wall-clock deadline",
+      "attempt both original listeners and verify final actions",
+      "discover lost-response rules by exact listener/priority/execution-header/target before verified cleanup",
+      "reject missing or incomplete canonicalRetirement proof at receipt acceptance"
+    ],
+    "redEvidence": {
+      "initialNodeTests": 30,
+      "initialNodePassed": 22,
+      "initialNodeFailed": 8,
+      "additionalUncertainRuleInventoryFailed": true,
+      "retirementAcceptanceCasesFailedBeforeFix": 6
+    },
+    "greenEvidence": {
+      "nodeTests": 31,
+      "nodeFailures": 0,
+      "powerShellRegressions": 56,
+      "powerShellFailures": 0,
+      "linuxNpmVerifyExit": 0,
+      "windowsNpmVerifyExit": 0
+    },
+    "deferredMinor": "Safe operation/phase/recovery-code/execution/journal console diagnostics; journal remains available and provider text suppressed.",
+    "noSecondReviewRequested": true,
+    "offlineBoundaryTestsAreNotNativeInjectedFaultExecutions": true
+  },
+  "prepublicationSecurity": {
+    "activeCredentialClassesCompared": [
+      "LocalStack token",
+      "RDS password"
+    ],
+    "valuesLogged": false,
+    "source": {
+      "versionId": "AaEFngBuyyP0EBz3ItXwjbSzxVSdGsxi",
+      "sha256": "d506efc6ccd84768e066e7ca2a85c69787e645de1215eba5f7b9ca1229fc4288",
+      "files": 37,
+      "crc": "PASSED",
+      "activeCredentialMatches": 0,
+      "recognizableCredentialMatches": 0,
+      "authorizedInputsOnly": true
+    },
+    "delivery": {
+      "sha256": "12134f3f8771283652e19e64e57a02ee9cc590c3774f9972170158fc021ac4de",
+      "files": 114,
+      "crc": "PASSED",
+      "singleProjectRoot": true,
+      "activeCredentialMatches": 0,
+      "recognizableCredentialMatches": 0
+    },
+    "image": {
+      "archiveMembers": 19,
+      "layersScanned": 10,
+      "uncompressedBytesCompared": 188427746,
+      "activeCredentialMatches": 0,
+      "allSavedImageLayersCompared": true
+    },
+    "result": "SECURITY_CHECKS_PASSED",
+    "scope": "Interim ZIP and earlier Source before final review fixes; final Source/ZIP/image scan remains a separate requirement."
+  }
+}

@@ -1,0 +1,24 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 24
+    commands:
+      - node --version
+      - aws --version
+      - docker version --format '{{.Server.Version}}'
+  pre_build:
+    commands:
+      - test -f imagedefinitions.json
+      - test -S /var/run/docker.sock
+  build:
+    commands:
+      - node scripts/localstack/blue-green-localstack.mjs
+  post_build:
+    commands:
+      - test "${CODEBUILD_BUILD_SUCCEEDING:-0}" -eq 1
+
+artifacts:
+  files:
+    - deployment-receipt.json

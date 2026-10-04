@@ -7,7 +7,7 @@
 - Ubuntu/Node 24: `npm ci`, `npm run verify` e Docker build.
 - Windows/PowerShell 5.1: parser de todos os scripts (41 após preservar os dois scripts AWS existentes) e regressões isoladas com executável nativo temporário simulando Docker/AWS.
 
-As 37 regressões verificam captura do processo nativo, falhas de pipeline/build, identidade do Source e do artifact, proteção de credenciais e recusa de tasks antigas/sem saúde/digest errado. As dependências externas são simuladas; esse teste não certifica um deploy real. Ele foi executado no Windows PowerShell 5.1 e no Linux PowerShell 7.6.6. O [run GitHub 37134970506](https://github.com/fernetone/cloudtasks-aws-portfolio/actions/runs/37134970506) concluiu os dois jobs com sucesso, incluindo parser/regressões no Windows e qualidade/Docker no Ubuntu. [EVIDENCE-GITHUB.json](EVIDENCE-GITHUB.json) registra o commit validado.
+As 56 regressões verificam captura do processo nativo, falhas de pipeline/build, identidade do Source e do artifact, proteção de credenciais e recusa de tasks antigas/sem saúde/digest errado. As dependências externas são simuladas; esse teste não certifica um deploy real. A suite atual foi executada no Windows PowerShell 5.1 e no Linux PowerShell 7.6.6. O run histórico [GitHub 37134970506](https://github.com/fernetone/cloudtasks-aws-portfolio/actions/runs/37134970506) concluiu os dois jobs com sucesso, incluindo parser/regressões no Windows e qualidade/Docker no Ubuntu. [EVIDENCE-GITHUB.json](EVIDENCE-GITHUB.json) registra o commit validado.
 
 Esse workflow é CI do repositório. A entrega da aplicação continua sendo responsabilidade da CodePipeline/CodeBuild.
 
@@ -16,7 +16,7 @@ Esse workflow é CI do repositório. A entrega da aplicação continua sendo res
 Alvo AWS: GitHub/CodeConnections → CodePipeline → CodeBuild → ECR → ECS.
 Laboratório: Source S3 versionado → CodePipeline V1 → CodeBuild → ECR → ECS.
 
-A ação ECS padrão consome `imagedefinitions.json`. Quality gate bloqueia publicação/deploy em caso de erro. `npm ci` e `package-lock.json` são obrigatórios em CI, buildspecs e Dockerfile.
+A ação ECS padrão consome `imagedefinitions.json` no modo Rolling. BlueGreen seleciona um CodeBuild de implantação que consome o mesmo BuildOutput, executa o adaptador local e retorna o recibo no DeployOutput. Os 31 testes Node de estado/guards integram `npm run verify`, além dos 7 testes API e 4 frontend. Quality gate bloqueia publicação/deploy em caso de erro. `npm ci` e `package-lock.json` são obrigatórios em CI, buildspecs e Dockerfile.
 
 A tag `pipeline-<UUID v4>` é gerada dentro do CodeBuild, independentemente de `CODEBUILD_BUILD_ID`, e publicada no ECR imutável. O helper `cicd-artifact-context.ps1` exige o CodeBuild vinculado, a mesma localização S3 do BuildOutput na ação e na API CodeBuild, o container/repositório corretos e o hash do artifact. A aceitação verifica também o Source VersionId/hash, digest ECR, task definition e tasks físicas. Não existe aprovação por fallback externo.
 
@@ -30,4 +30,8 @@ Veja [PIPELINE.md](PIPELINE.md) para operação, teste negativo e critério de a
 
 `buildspec.yml` representa AWS real; `buildspec.localstack.yml` contém endpoint e credenciais fictícias do emulador. Não usar token LocalStack nem senha RDS como variável de build. O socket Docker do laboratório é compartilhado com o runner; execute apenas Source confiável nesse daemon.
 
-Não foram executados AWS real nem reconstrução de uma sessão fria nesta homologação. A publicação e o CI do GitHub foram executados separadamente e não representam um deploy no LocalStack ou na AWS real. Blue/Green está em análise na etapa 9; CloudFront e Amazon Q/MCP continuam posteriores. Os defeitos e riscos observados do executor estão documentados na auditoria; o cache da imagem oficial não comprova correção permanente da conectividade TLS/CDN.
+Não foi executada AWS real. A homologação de 03/10 não reconstruiu sessão fria; a sessão 2026.9.0 de 04/10 foi reconstruída e validada separadamente. A publicação e o CI do GitHub foram executados separadamente e não representam um deploy no LocalStack ou na AWS real. Blue/Green local usa o adaptador explícito da etapa 9; a certificação do controlador AWS nativo permanece separada; CloudFront e Amazon Q/MCP continuam posteriores. Os defeitos e riscos observados do executor estão documentados na auditoria; o cache da imagem oficial não comprova correção permanente da conectividade TLS/CDN.
+
+## Validação atual do Blue/Green
+
+As provas nativas atuais e os ensaios reprovados ficam em [EVIDENCE-BLUE-GREEN-ADAPTER.json](EVIDENCE-BLUE-GREEN-ADAPTER.json). GitHub Actions testa código e Docker, não implanta no laboratório pessoal. Rejeição/rollback controlados precisam manter CodePipeline Failed e CodeBuild FAILED; a aprovação do comportamento negativo não aprova a entrega.

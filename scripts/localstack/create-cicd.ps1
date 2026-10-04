@@ -1,7 +1,13 @@
+param(
+    [ValidateSet('Rolling','BlueGreen')][string]$DeploymentMode = 'Rolling',
+    [ValidateSet('Normal','RejectCandidate','Rollback')][string]$BlueGreenScenario = 'Normal'
+)
 $ErrorActionPreference = "Stop"
+if ($DeploymentMode -ne 'BlueGreen' -and $BlueGreenScenario -ne 'Normal') { throw 'Cenario Blue/Green requer -DeploymentMode BlueGreen.' }
 
 $PipelineName = "cloudtasks-pipeline"
 $BuildProjectName = "cloudtasks-build"
+$DeployProjectName = 'cloudtasks-bluegreen-deploy'
 $CodeBuildImage = "public.ecr.aws/codebuild/amazonlinux-x86_64-standard:5.0"
 $SourceBucket = "cloudtasks-pipeline-source"
 $SourceObjectKey = "cloudtasks-source.zip"
@@ -107,6 +113,21 @@ function Get-ContainerEnvValue {
         }
     }
     return $null
+}
+
+function Get-CloudTasksGatewayTlsPin {
+    # Trust bootstrap is scoped to the loopback port of the inspected LocalStack
+    # container. CodeBuild then pins these certificate bytes before HTTP data.
+    $tcp = New-Object Net.Sockets.TcpClient('127.0.0.1',4566)
+    $tls = New-Object Net.Security.SslStream($tcp.GetStream(),$false,
+        ([Net.Security.RemoteCertificateValidationCallback]{ param($sender,$certificate,$chain,$errors) return $true }))
+    try {
+        $tls.AuthenticateAsClient('localhost.localstack.cloud')
+        $sha = [Security.Cryptography.SHA256]::Create()
+        try { return ([BitConverter]::ToString($sha.ComputeHash($tls.RemoteCertificate.GetRawCertData()))).Replace('-','').ToLowerInvariant() }
+        finally { $sha.Dispose() }
+    }
+    finally { $tls.Dispose(); $tcp.Dispose() }
 }
 
 function Ensure-CicdBuildImage {
@@ -357,6 +378,47 @@ function Assert-NoActivePipelineExecution {
     }
 }
 
+function Assert-NoBlueGreenRecoveryLock {
+    $buckets = Invoke-AwsLocalJson @('s3api','list-buckets')
+    if (@($buckets.Buckets | Where-Object { [string]$_.Name -ceq $ArtifactBucket }).Count -eq 0) { return }
+    $objects = Invoke-AwsLocalJson @('s3api','list-objects-v2','--bucket',$ArtifactBucket,'--prefix','cloudtasks/blue-green/deploy.lock')
+    if (@($objects.Contents | Where-Object { [string]$_.Key -ceq 'cloudtasks/blue-green/deploy.lock' }).Count -gt 0) {
+        throw 'Existe lock Blue/Green de uma operacao ativa ou que requer recuperacao. Preserve os recursos e confira o recibo antes de iniciar outra entrega.'
+    }
+}
+
+function Convert-CicdCanonicalValue {
+    param([AllowNull()][object]$Value)
+    if ($null -eq $Value) { return $null }
+    $dictionary = $Value -is [Collections.IDictionary]
+    if ($dictionary -or $Value -is [pscustomobject]) {
+        $names = if ($dictionary) { @($Value.Keys) } else { @($Value.PSObject.Properties.Name) }
+        $result = [ordered]@{}
+        foreach ($name in @($names | Sort-Object)) {
+            $raw = if ($dictionary) { $Value[$name] } else { $Value.PSObject.Properties[$name].Value }
+            if ($name -ceq 'EnvironmentVariables' -and $raw -is [string]) { $raw = [object[]]($raw | ConvertFrom-Json -ErrorAction Stop) }
+            $result[$name] = Convert-CicdCanonicalValue -Value $raw
+        }
+        return [pscustomobject]$result
+    }
+    if ($Value -is [Collections.IEnumerable] -and $Value -isnot [string]) {
+        $result = @(foreach ($item in $Value) { Convert-CicdCanonicalValue -Value $item })
+        return ,$result
+    }
+    return $Value
+}
+
+function Get-CicdPipelineSignature {
+    param([object]$Declaration)
+    $fields = [ordered]@{}
+    if ($Declaration -is [Collections.IDictionary]) {
+        foreach ($key in $Declaration.Keys) { if ($key -cne 'version') { $fields[$key] = $Declaration[$key] } }
+    } else {
+        foreach ($property in $Declaration.PSObject.Properties) { if ($property.Name -cne 'version') { $fields[$property.Name] = $property.Value } }
+    }
+    return (Convert-CicdCanonicalValue -Value $fields | ConvertTo-Json -Depth 20 -Compress)
+}
+
 function Get-PipelineActionDetails {
     param([Parameter(Mandatory = $true)][string]$ExecutionId)
 
@@ -387,7 +449,7 @@ function Wait-PipelineExecution {
         $failed = @($actions | Where-Object { [string]$_.status -in @('Failed','Abandoned') })
         if ($failed.Count -gt 0) {
             Write-PipelineActionSummary -Actions $actions
-            throw "Acao CodePipeline falhou na execucao $ExecutionId. A etapa 8 permanece pendente."
+            throw "Acao CodePipeline falhou na execucao $ExecutionId. Esta entrega nao foi aprovada; homologacoes anteriores permanecem separadas."
         }
         $buildAction = $actions | Where-Object { [string]$_.stageName -eq 'Build' -and [string]$_.actionName -eq 'BuildAndPush' } | Select-Object -First 1
         $build = $null
@@ -401,7 +463,8 @@ function Wait-PipelineExecution {
         if ($status -in @('Failed','Stopped','Superseded','Cancelled')) { throw "CodePipeline $ExecutionId terminou com status $status." }
         if ($status -eq 'Succeeded') {
             $complete = $true
-            foreach ($name in @('SourceSnapshot','BuildAndPush','DeployECS')) {
+            $deployName = if ($DeploymentMode -eq 'BlueGreen') { 'DeployBlueGreen' } else { 'DeployECS' }
+            foreach ($name in @('SourceSnapshot','BuildAndPush',$deployName)) {
                 $action = $actions | Where-Object { [string]$_.actionName -eq $name } | Select-Object -First 1
                 if ($null -eq $action -or [string]$action.status -ne 'Succeeded') { $complete = $false }
             }
@@ -413,6 +476,13 @@ function Wait-PipelineExecution {
                 if ([string]::IsNullOrWhiteSpace($nativeSourceVersion)) { $nativeSourceVersion = [string]$revision.revisionId }
                 if ($nativeSourceVersion -ne $SourceVersionId) {
                     throw 'Source nativo nao comprova o VersionId exato publicado para esta execucao.'
+                }
+                if ($DeploymentMode -eq 'BlueGreen') {
+                    $deployAction = $actions | Where-Object { [string]$_.actionName -eq 'DeployBlueGreen' } | Select-Object -First 1
+                    $deployBuildId = [string]$deployAction.output.executionResult.externalExecutionId
+                    if ([string]::IsNullOrWhiteSpace($deployBuildId)) { throw 'Deploy Blue/Green sem CodeBuild vinculado.' }
+                    $deployBuild = Get-CodeBuildById -BuildId $deployBuildId
+                    if ($null -eq $deployBuild -or [string]$deployBuild.buildStatus -cne 'SUCCEEDED') { throw 'CodeBuild de deploy Blue/Green nao SUCCEEDED.' }
                 }
                 return [pscustomobject]@{ Mode = 'NativeCodePipeline'; PipelineExecution = $result.pipelineExecution; CodeBuildId = [string]$build.id }
             }
@@ -451,7 +521,9 @@ try {
     New-Item -ItemType Directory -Path $script:CloudTasksRuntimeRoot -Force | Out-Null
     try { $lockStream = [IO.File]::Open($lockPath, [IO.FileMode]::OpenOrCreate, [IO.FileAccess]::ReadWrite, [IO.FileShare]::None) }
     catch { throw 'Outra operacao CI/CD esta usando este laboratorio. Aguarde sua conclusao.' }
+Assert-NoBlueGreenRecoveryLock
 Write-Host "CloudTasks - CodePipeline + CodeBuild + ECR + ECS" -ForegroundColor Cyan
+Write-Host "Deployment mode: $DeploymentMode / scenario=$BlueGreenScenario"
 Write-Host ""
 
 Write-Host "[1/10] Validando runtime e configuracao do CodeBuild..." -ForegroundColor Cyan
@@ -554,6 +626,54 @@ else {
     $null = Invoke-AwsLocalWithJsonFile -ArgumentsBeforeFile @("codebuild", "create-project") -Json $buildProjectJson -FileArgument "cli-input-json"
 }
 
+if ($DeploymentMode -eq 'BlueGreen') {
+    $alb = @(Invoke-AwsLocalJson @('elbv2','describe-load-balancers','--names','cloudtasks-alb')).LoadBalancers | Select-Object -First 1
+    if ($null -eq $alb) { throw 'Blue/Green requer o ALB/HTTPS existente.' }
+    $listeners = @(Invoke-AwsLocalJson @('elbv2','describe-listeners','--load-balancer-arn',([string]$alb.LoadBalancerArn))).Listeners
+    $tlsPin = Get-CloudTasksGatewayTlsPin
+    $definition = (Invoke-AwsLocalJson @('ecs','describe-task-definition','--task-definition',$previousTaskDefinition)).taskDefinition
+    $ecsServiceArn = "arn:aws:ecs:${Region}:${AccountId}:service/$ClusterName/$ServiceName"
+    $candidateServiceArn = "arn:aws:ecs:${Region}:${AccountId}:service/$ClusterName/cloudtasks-candidate-*"
+    $lbRulePrefix = ([string]$alb.LoadBalancerArn).Replace('loadbalancer/','listener-rule/') + '/*/*'
+    $roleResources = @($definition.executionRoleArn, $definition.taskRoleArn) | Where-Object { -not [string]::IsNullOrWhiteSpace([string]$_) }
+    $deployPolicy = [ordered]@{ Version = '2012-10-17'; Statement = @(
+        @{ Effect='Allow'; Action=@('s3:GetObject','s3:GetObjectVersion','s3:PutObject'); Resource=@("arn:aws:s3:::$ArtifactBucket/*", "arn:aws:s3:::$SourceBucket/*") },
+        @{ Effect='Allow'; Action=@('s3:DeleteObject'); Resource="arn:aws:s3:::$ArtifactBucket/cloudtasks/blue-green/*" },
+        @{ Effect='Allow'; Action=@('ecs:DescribeServices','ecs:DescribeTaskDefinition','ecs:ListTasks','ecs:DescribeTasks','ecs:RegisterTaskDefinition'); Resource='*' },
+        @{ Effect='Allow'; Action=@('ecs:CreateService','ecs:UpdateService','ecs:DeleteService','ecs:TagResource'); Resource=@($ecsServiceArn,$candidateServiceArn) },
+        @{ Effect='Allow'; Action=@('ecs:DeregisterTaskDefinition'); Resource="arn:aws:ecs:${Region}:${AccountId}:task-definition/cloudtasks-candidate:*" },
+        @{ Effect='Allow'; Action=@('iam:PassRole'); Resource=@($roleResources); Condition=@{ StringEquals=@{ 'iam:PassedToService'='ecs-tasks.amazonaws.com' } } },
+        @{ Effect='Allow'; Action=@('ecr:DescribeRepositories','ecr:DescribeImages'); Resource="arn:aws:ecr:${Region}:${AccountId}:repository/cloudtasks" },
+        @{ Effect='Allow'; Action=@('elasticloadbalancing:DescribeLoadBalancers','elasticloadbalancing:DescribeTargetGroups','elasticloadbalancing:DescribeListeners','elasticloadbalancing:DescribeRules','elasticloadbalancing:DescribeTargetHealth','elasticloadbalancing:CreateTargetGroup'); Resource='*' },
+        @{ Effect='Allow'; Action=@('elasticloadbalancing:ModifyListener','elasticloadbalancing:CreateRule','elasticloadbalancing:DeleteRule','elasticloadbalancing:RegisterTargets','elasticloadbalancing:DeregisterTargets','elasticloadbalancing:ModifyTargetGroupAttributes','elasticloadbalancing:DeleteTargetGroup'); Resource=@($listeners.ListenerArn) + @($lbRulePrefix,"arn:aws:elasticloadbalancing:${Region}:${AccountId}:targetgroup/cloudtasks-tg/*","arn:aws:elasticloadbalancing:${Region}:${AccountId}:targetgroup/ct-bg-*-green/*") },
+        @{ Effect='Allow'; Action=@('logs:CreateLogGroup','logs:CreateLogStream','logs:PutLogEvents'); Resource="arn:aws:logs:${Region}:${AccountId}:log-group:/aws/codebuild/$DeployProjectName*" },
+        @{ Effect='Allow'; Action=@('logs:DescribeLogStreams'); Resource="arn:aws:logs:${Region}:${AccountId}:log-group:/cloudtasks/ecs:*" },
+        @{ Effect='Allow'; Action=@('logs:DeleteLogStream'); Resource="arn:aws:logs:${Region}:${AccountId}:log-group:/cloudtasks/ecs:log-stream:bg-*" },
+        @{ Effect='Allow'; Action='sts:GetCallerIdentity'; Resource='*' }
+        @{ Effect='Allow'; Action=@('codepipeline:GetPipelineExecution','codepipeline:ListActionExecutions'); Resource="arn:aws:codepipeline:${Region}:${AccountId}:$PipelineName" }
+        @{ Effect='Allow'; Action='codebuild:BatchGetBuilds'; Resource="arn:aws:codebuild:${Region}:${AccountId}:project/$BuildProjectName" }
+    ) }
+    $deployRoleArn = Ensure-Role -RoleName 'cloudtasks-bluegreen-deploy-role' -ServicePrincipal 'codebuild.amazonaws.com' -PolicyName 'cloudtasks-bluegreen' -PolicyDocument $deployPolicy
+    $deployProject = [ordered]@{
+        name=$DeployProjectName; description='Explicit LocalStack Blue/Green adapter; not native ECS certification'
+        source=@{type='CODEPIPELINE';buildspec='buildspec.bluegreen.localstack.yml'}; artifacts=@{type='CODEPIPELINE'}
+        environment=@{type='LINUX_CONTAINER';image=$CodeBuildImage;computeType='BUILD_GENERAL1_SMALL';privilegedMode=$true;
+            environmentVariables=@(
+                @{name='AWS_ENDPOINT_URL';value='http://cloudtasks-localstack:4566';type='PLAINTEXT'},
+                @{name='AWS_DEFAULT_REGION';value=$Region;type='PLAINTEXT'},
+                @{name='DOCKER_HOST';value='unix:///var/run/docker.sock';type='PLAINTEXT'},
+                @{name='BG_CLUSTER';value=$ClusterName;type='PLAINTEXT'},
+                @{name='BG_SERVICE';value=$ServiceName;type='PLAINTEXT'},
+                @{name='BG_BAKE_SECONDS';value='60';type='PLAINTEXT'},
+                @{name='BG_SCENARIO';value=$BlueGreenScenario;type='PLAINTEXT'},
+                @{name='LOCALSTACK_TLS_CERT_SHA256';value=$tlsPin;type='PLAINTEXT'}
+            )}
+        serviceRole=$deployRoleArn;timeoutInMinutes=15
+    }
+    $verb = if (@((Invoke-AwsLocalJson @('codebuild','list-projects')).projects) -contains $DeployProjectName) { 'update-project' } else { 'create-project' }
+    $null = Invoke-AwsLocalWithJsonFile -ArgumentsBeforeFile @('codebuild',$verb) -Json ($deployProject | ConvertTo-Json -Depth 12 -Compress) -FileArgument 'cli-input-json'
+}
+
 Write-Host "[6/10] Garantindo IAM do CodePipeline..." -ForegroundColor Cyan
 $codePipelinePolicy = [ordered]@{
     Version = "2012-10-17"
@@ -616,6 +736,17 @@ $pipelineDeclaration = [ordered]@{
     executionMode = "SUPERSEDED"
     pipelineType = "V1"
 }
+if ($DeploymentMode -eq 'BlueGreen') {
+    $pipelineDeclaration.stages[2].actions = @([ordered]@{
+        name='DeployBlueGreen'
+        actionTypeId=@{category='Build';owner='AWS';provider='CodeBuild';version='1'}
+        runOrder=1
+        configuration=@{ ProjectName=$DeployProjectName;
+            EnvironmentVariables=(ConvertTo-Json -InputObject @(@{name='BG_EXECUTION_ID';value='#{codepipeline.PipelineExecutionId}';type='PLAINTEXT'}) -Compress) }
+        inputArtifacts=@(@{name='BuildOutput'})
+        outputArtifacts=@(@{name='DeployOutput'})
+    })
+}
 $pipelineJson = $pipelineDeclaration | ConvertTo-Json -Depth 16 -Compress
 
 $pipelines = Invoke-AwsLocalJson @("codepipeline", "list-pipelines")
@@ -640,7 +771,10 @@ if ($null -eq $pipelineExists) {
 }
 else {
     Assert-NoActivePipelineExecution
-    $null = Invoke-AwsLocalWithJsonFile -ArgumentsBeforeFile @("codepipeline", "update-pipeline") -Json $pipelineJson -FileArgument "pipeline"
+    $currentDeclaration = (Invoke-AwsLocalJson @('codepipeline','get-pipeline','--name',$PipelineName)).pipeline
+    if ((Get-CicdPipelineSignature $currentDeclaration) -cne (Get-CicdPipelineSignature $pipelineDeclaration)) {
+        $null = Invoke-AwsLocalWithJsonFile -ArgumentsBeforeFile @("codepipeline", "update-pipeline") -Json $pipelineJson -FileArgument "pipeline"
+    } else { Write-Host '  Declaracao da pipeline ja corresponde; mantendo a revisao e o historico desta sessao.' -ForegroundColor DarkGray }
     $started = Invoke-AwsLocalJson @("codepipeline", "start-pipeline-execution", "--name", $PipelineName,
         "--source-revisions", "actionName=SourceSnapshot,revisionType=S3_OBJECT_VERSION_ID,revisionValue=$SourceVersionId")
     $executionId = [string]$started.pipelineExecutionId
@@ -674,8 +808,17 @@ $images = Invoke-AwsLocalJson @('ecr','describe-images','--repository-name',$Rep
 $imageDetail = @($images.imageDetails) | Select-Object -First 1
 $newImageDigest = [string]$imageDetail.imageDigest
 if ($newImageDigest -notmatch '^sha256:[a-f0-9]{64}$') { throw 'ECR nao retornou digest verificavel para a imagem deste build.' }
-& (Join-Path $PSScriptRoot "create-alb.ps1")
-& (Join-Path $PSScriptRoot "create-https.ps1")
+$deployArtifact = $null
+if ($DeploymentMode -eq 'BlueGreen') {
+    $deployAction = @(Get-PipelineActionDetails -ExecutionId $executionId) | Where-Object { [string]$_.actionName -eq 'DeployBlueGreen' } | Select-Object -First 1
+    $deployCodeBuildId = [string]$deployAction.output.executionResult.externalExecutionId
+    $deployBuild = Get-CodeBuildById -BuildId $deployCodeBuildId
+    $deployArtifact = Get-CloudTasksBlueGreenReceipt -DeployAction $deployAction -Build $deployBuild
+    Assert-CloudTasksBlueGreenReceipt -Receipt $deployArtifact.Receipt -ExecutionId $executionId -ImageBuildId $codeBuildId -ImageUri $newImage -ImageDigest $newImageDigest -TaskDefinitionArn $newTaskDefinition
+} else {
+    & (Join-Path $PSScriptRoot "create-alb.ps1")
+    & (Join-Path $PSScriptRoot "create-https.ps1")
+}
 
 Write-Host "[10/10] Gravando metadados locais para teste/rollback..." -ForegroundColor Cyan
 $stateDirectory = Join-Path $projectRoot ".localstack\cicd"
@@ -718,6 +861,14 @@ $state = [ordered]@{
     deployedImageDigest = $newImageDigest
     sourceBucket = $SourceBucket
     sourceObjectKey = $SourceObjectKey
+}
+if ($DeploymentMode -eq 'BlueGreen') {
+    $state.deploymentMode = 'LocalStackBlueGreenAdapter'
+    $state.nativeBlueGreenControllerCertified = $false
+    $state.deployCodeBuildId = $deployCodeBuildId
+    $state.deployArtifactSha256 = $deployArtifact.ArtifactSha256
+    $state.deployArtifactBucket = $deployArtifact.ArtifactBucket
+    $state.deployArtifactKey = $deployArtifact.ArtifactKey
 }
 $utf8NoBom = New-Object System.Text.UTF8Encoding($false)
 [System.IO.File]::WriteAllText($statePath, ($state | ConvertTo-Json -Depth 8), $utf8NoBom)

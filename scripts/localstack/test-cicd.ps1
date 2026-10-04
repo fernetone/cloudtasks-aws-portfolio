@@ -75,7 +75,9 @@ if ($null -eq $sourceAction -or [string]$sourceAction.status -ne "Succeeded") {
 }
 Write-Host "  Source/SourceSnapshot -> Succeeded" -ForegroundColor Green
 
-foreach ($expected in @('BuildAndPush','DeployECS')) {
+$isBlueGreen = ([string]$state.deploymentMode -ceq 'LocalStackBlueGreenAdapter')
+$deployName = if ($isBlueGreen) { 'DeployBlueGreen' } else { 'DeployECS' }
+foreach ($expected in @('BuildAndPush',$deployName)) {
     $action = $executionActions | Where-Object { [string]$_.actionName -eq $expected } | Select-Object -First 1
     if ($null -eq $action -or [string]$action.status -ne 'Succeeded') { throw "Acao $expected nao esta Succeeded." }
     Write-Host "  $($action.stageName)/$expected -> Succeeded"
@@ -132,6 +134,17 @@ if ($null -eq $imageDetail) { throw "Imagem $imageTag nao encontrada no ECR." }
 $digest = [string]$imageDetail.imageDigest
 if ($digest -notmatch '^sha256:[a-f0-9]{64}$' -or $digest -ne [string]$state.deployedImageDigest) { throw 'Digest ECR diverge do deploy registrado.' }
 Write-Host "  ECR ${RepositoryName}:$imageTag / $digest" -ForegroundColor Green
+if ($isBlueGreen) {
+    $deployAction = $executionActions | Where-Object { [string]$_.actionName -ceq 'DeployBlueGreen' } | Select-Object -First 1
+    $deployId = [string]$deployAction.output.executionResult.externalExecutionId
+    if ([string]::IsNullOrWhiteSpace($deployId) -or $deployId -cne [string]$state.deployCodeBuildId) { throw 'CodeBuild de deploy nao corresponde ao registro Blue/Green.' }
+    $deployBuild = @((Invoke-AwsLocalJson @('codebuild','batch-get-builds','--ids',$deployId)).builds) | Select-Object -First 1
+    $deployArtifact = Get-CloudTasksBlueGreenReceipt -DeployAction $deployAction -Build $deployBuild
+    if ($deployArtifact.ArtifactSha256 -cne [string]$state.deployArtifactSha256 -or
+        $deployArtifact.ArtifactBucket -cne [string]$state.deployArtifactBucket -or $deployArtifact.ArtifactKey -cne [string]$state.deployArtifactKey) { throw 'DeployOutput Blue/Green diverge do registro.' }
+    Assert-CloudTasksBlueGreenReceipt -Receipt $deployArtifact.Receipt -ExecutionId ([string]$state.executionId) -ImageBuildId $nativeBuildId -ImageUri $deployedImage -ImageDigest $digest -TaskDefinitionArn ([string]$state.deployedTaskDefinition)
+    Write-Host '  Blue/Green: CodeBuild vinculado, isolamento, CRUD, HTTPS, bake e limpeza comprovados; adaptacao LocalStack.' -ForegroundColor Green
+}
 
 Write-Host "[5/6] Validando ECS 2/2 na nova task definition..." -ForegroundColor Cyan
 $services = Invoke-AwsLocalJson @("ecs", "describe-services", "--cluster", $ClusterName, "--services", $ServiceName)

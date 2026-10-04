@@ -1,202 +1,151 @@
-# Etapa 9 — Blue/Green: desenho e viabilidade
+# Etapa 9 — Blue/Green no laboratório
 
-**Estado em 04/10/2026, versão 1.7.8:** etapa 8 homologada e entrega positiva novamente validada após reconstrução em LocalStack 2026.9.0. Blue/Green nativo permanece reprovado. A prova anterior de tráfego manual e o ensaio nativo de 2026.8.3 são históricos abaixo; dois controles negativos em 2026.9.0 também perderam blue saudável diante da candidata inválida, em bridge/IP e awsvpc/IP. O service principal permanece em bridge, revisão 3 desta nova sessão, duas réplicas, banco, ALB e HTTPS.
+Estado da versão 1.8.0: **BLUE/GREEN LOCAL POR ADAPTADOR VALIDADO**. O modo executável é `LocalStackBlueGreenAdapter`; a homologação do controlador Blue/Green nativo da AWS continua separada e não é reivindicada. Evidências anteriores de tráfego e de reprovação do emulador são históricas, não aprovações desta implementação.
 
-## O que precisa ser demonstrado
+## Decisão e arquitetura
 
-Blue/Green mantém a versão atual atendendo produção enquanto uma nova revisão é criada e testada separadamente. Depois transfere o tráfego, conserva a versão anterior durante uma janela de observação e permite rollback de tráfego. Um update comum do service, dois registros de task set ou uma API que retorna Succeeded não bastam.
+O laboratório usa a CodePipeline V1 e dois projetos CodeBuild: um executa qualidade, Docker build e push ECR; o outro executa o controlador de implantação sobre as APIs ECS/ELB. A pipeline recebe Source S3 versionado, transporta os artifacts e registra as ações. Nenhum build ou deploy externo é iniciado como fallback para transformar uma ação nativa falha em sucesso.
 
-O critério vale para duas versões realmente executáveis, com identidade de imagem/digest verificável e requisições que comprovem qual versão respondeu.
-
-## AWS alvo
-
-Preferir o Blue/Green nativo do ECS para uma implementação AWS nova, conforme a recomendação atual da AWS. O service usa controlador ECS e estratégia BLUE_GREEN; os dois Target Groups, regras/listeners de produção e teste, role de infraestrutura, verificações e bake time precisam estar configurados.
-
-Manter ECS sobre EC2, portas dinâmicas, RDS compartilhado, Secrets Manager, ECR imutável e CodePipeline/CodeBuild. Não trocar a rede para Fargate ou awsvpc apenas por conveniência de um exemplo. A AWS documenta que a action ECS padrão da CodePipeline pode entregar mudanças de imagem a um service com a estratégia nativa; outras alterações da configuração do service são provisionadas separadamente. A combinação exata EC2/bridge/TG instance ainda precisa de validação em execução AWS; esta entrega não a certifica.
-
-Quando for necessário reproduzir o modelo CodeDeploy, a AWS possui uma integração CodePipeline CodeDeployToECS oficialmente documentada. Ela exige controlador CODE_DEPLOY, aplicação/deployment group CodeDeploy, dois Target Groups, listener de produção, listener de teste opcional, roles e artifacts task definition/AppSpec/imagem. É uma alternativa arquitetural distinta, não uma alteração aplicada nesta entrega.
-
-O desenho recomendado é:
+O modo padrão de `create-cicd.ps1` continua `Rolling`, com a ação ECS padrão da etapa 8. `-DeploymentMode BlueGreen` seleciona explicitamente o adaptador local. Na AWS alvo, usar o controlador ECS Blue/Green ou a integração CodeDeploy oficialmente suportada; o adaptador não deve ser transportado como substituto de um controlador AWS.
 
 ```mermaid
 flowchart TD
-  build["CodeBuild e imagem ECR imutável"] --> controller["Controlador Blue/Green AWS"]
-  controller --> blue["Revisão atual e TG blue"]
-  controller --> green["Revisão candidata e TG green"]
-  test["Entrada de teste"] --> green
-  production["Regra ALB de produção"] --> blue
-  production --> green
+  pipeline["CodePipeline V1"] --> build["CodeBuild: qualidade, Docker e ECR"]
+  build --> artifact["BuildOutput: imagem e controlador"]
+  artifact --> deploy["CodeBuild: implantação local"]
+  deploy --> blue["Service principal: blue, 2 tasks"]
+  deploy --> green["Service temporário: green, 2 tasks"]
   blue --> database["RDS compartilhado"]
   green --> database
 ```
 
-As duas ligações da regra de produção representam os destinos antes/depois da promoção. O desenho não afirma que ambos atendem produção permanentemente. Na arquitetura alvo os TGs são instance; no laboratório seriam ip, preservando a diferença já documentada.
+Os dois serviços coexistem durante validação, promoção e observação. Após a janela aprovada, o adaptador atualiza o serviço/TG principal para a imagem aceita por uma transição verificada de 0 para 2 réplicas enquanto green atende produção, valida suas duas novas tasks e restaura os destinos padrão originais. Só então remove o serviço/TG/regras green e os containers blue aposentados. Essa convergência final preserva os nomes e os scripts existentes do projeto; não é o mecanismo interno do Blue/Green AWS.
 
-Migrações precisam ser compatíveis com ambas as revisões durante a coexistência. Rollback da aplicação não restaura automaticamente dados escritos no RDS. O ALB/TLS, health com banco e segredos em runtime permanecem; CloudFront continua na etapa 10.
+ECS/EC2 com `bridge`, portas dinâmicas e TG `instance` permanecem a arquitetura alvo. No laboratório as tasks são containers Docker, os TGs são `ip` e o gateway LocalStack termina TLS em `:4566`; `launchType=EC2` não comprova hosts EC2 reais. VPC, RDS, Secrets, ALB, listener/ACM, UI e CRUD existentes são preservados.
 
-## Limites documentados do LocalStack
+## Tráfego e ordem das operações
 
-| Componente | Documentação oficial atual | Consequência para o aceite |
+Cada listener HTTP/HTTPS mantém duas regras temporárias por cabeçalho:
+
+| Destino | Prioridade | Cabeçalho `X-CloudTasks-Candidate` |
 | --- | --- | --- |
-| CodeDeploy | Operações atualmente mockadas | Status da API não prova implantação ou rollback reais. |
-| CodePipeline CodeDeployToECS | Atualiza o service e aguarda estabilidade; não emula corretamente Blue/Green | Não usar a action para declarar troca real de tráfego. |
-| ECS service deployments | ListServiceDeployments, DescribeServiceDeployments, DescribeServiceRevisions, ContinueServiceDeployment e StopServiceDeployment não implementadas na cobertura publicada | Não há paridade comprovada para observar/controlar o Blue/Green nativo. |
-| Manual Approval na pipeline local | Action funciona como no-op | Não apresentar esse estágio como uma aprovação humana que bloqueia a promoção. |
+| TG green temporário | 49310 | UUID da execução CodePipeline |
+| TG principal blue | 49311 | `blue-` seguido do mesmo UUID |
 
-Documentação consultada em 03/10/2026; cobertura e licenciamento podem mudar. Não é uma limitação da AWS real.
+São rotas de teste em um laboratório privado, não autenticação ou controle de acesso. Prioridades ocupadas são recusadas antes de criar a candidata. Sem o cabeçalho, a ação padrão encaminha a produção.
 
-## Investigação inicial de leitura na máquina
+1. Conferir serviço principal 2/2/0, task definition, digest ECR/Docker, containers físicos healthy, aplicação/banco e identidade HTTP/HTTPS.
+2. Criar definição, serviço e TG exclusivos da execução; exigir duas candidatas healthy e sua imagem/digest/release exatos. Preservar Secrets Manager por referência; resetar `hostPort=0` ao copiar a definição observada do emulador.
+3. Comprovar produção em blue e rota de teste em green por HTTP e HTTPS. Criar uma tarefa em blue, lê-la em green, atualizá-la em green e conferir em blue; apagar somente essa tarefa de teste.
+4. Promover a ação padrão dos dois listeners a green. Manter **ambos os TGs associados ao ALB**, incluindo as regras de blue.
+5. Observar por pelo menos 60 segundos, com duas réplicas de cada versão. Cada amostra exige os mesmos containers blue originais, green saudável, resposta blue pela rota retida HTTP/HTTPS e release green na produção. O certificado TLS é verificado pelo SHA256 da sessão, sem desativar globalmente a validação.
+6. Após o bake, verificar as duas tasks green, encaminhar explicitamente os dois destinos padrão à candidata e conferir as ações pela API, além das identidades HTTP/HTTPS. A identidade da imagem sozinha não distingue uma candidata de um principal que já convergiu. Escalar o serviço principal para zero, recapturar tasks em encerramento e exigir duas amostras vazias nas APIs e no Docker; só então iniciar duas tasks da nova revisão. Verificar green novamente durante essa transição. Registrar os novos IPs no TG principal, exigir 2/2 healthy e devolver os destinos padrão ao TG principal. Verificar HTTP/HTTPS da imagem aceita antes da limpeza.
+7. Inventariar regras por listener, prioridade, cabeçalho exclusivo da execução e TG esperado para recuperar uma criação cuja resposta se perdeu. Remover somente recursos temporários pertencentes à execução e verificar sua ausência por API e Docker. Recapturar tasks após desiredCount=0 evita omitir uma startup que termine durante a retirada do serviço.
 
-LocalStack Pro 2026.8.3:02342ae2e, Windows PowerShell 5.1 e executor ECS Docker:
+Uma requisição HTTP 200 isolada não aprova health: `status=ok`, `database=ok`, CRUD e identidade são exigidos. `/release.json` é um artifact público da imagem com UUID do build, sem segredo ou mudança visual na UI; o bundle servido também é conferido. A imagem anterior sem esse artifact só pode ser reconhecida pela identidade legacy estritamente verificada; novas candidatas sempre precisam do release correto.
 
-- DescribeServices: Desired 2, Running 2, Pending 0; task definition cloudtasks:5.
-- DescribeTaskSets: exit 0 e cinco registros. Esses registros não demonstram Blue/Green.
-- ListServiceDeployments: exit 255, InternalFailure, com nomes e com ARNs completos.
-- A CLI reconheceu a operação. Não foi observada mensagem explícita de API não implementada nem HTTP 501.
-- Nessa investigação inicial de leitura, nenhuma criação/update de service, task set, Target Group ou listener foi realizada. A prova manual posterior criou somente fixtures isoladas, descritas abaixo.
+## Causa-raiz de `Target.NotInUse`
 
-Evidência sanitizada: [EVIDENCE-BLUE-GREEN.json](EVIDENCE-BLUE-GREEN.json). O exit 0 do script de inspeção significa apenas que coletou o diagnóstico; a consulta que falhou continua registrada como falha.
+A tentativa `f098d443-00dc-4753-a474-201558996a56` passou validação, CRUD, promoção e 61,117 segundos de bake, mas falhou na convergência. O código retirava a última referência ao TG principal ao promover a ação padrão para green. Depois esperava esse TG ficar healthy antes de reassociá-lo. A API mostrou `unused / Target.NotInUse`; as tasks Docker estavam saudáveis. O rollback repetia a mesma ordem incorreta.
 
-**Inferência:** a cobertura publicada e a investigação local não permitem homologar o controlador Blue/Green nativo neste ambiente. Não se concluiu que o service saudável está quebrado, nem que todas as operações de tráfego do ALB são inutilizáveis.
+A AWS documenta `Target.NotInUse` quando o grupo não está associado a um load balancer ou sua AZ não está habilitada. Na execução investigada, reassociar o TG principal primeiro o tornou 2/2 healthy e permitiu restaurar HTTP/HTTPS. A correção mantém a rota retida blue nos dois listeners até a convergência ou rollback terminar. Não alterou o deregistration delay do TG principal.
 
-## Prova temporária de tráfego executada
+A recuperação administrativa restaurou a imagem anterior em duas tasks saudáveis e removeu somente os recursos registrados. A tentativa e seu recibo continuam falhos; a recuperação não os aprova. Os containers blue originais já tinham sido aposentados após o bake e **não** são apresentados como preservados nessa tentativa. Identidades atuais foram preservadas durante a recuperação.
 
-O teste usou dois targets blue do service saudável e **uma task ECS independente** como candidata green. Criou um ALB e dois TGs temporários, com nomes exclusivos `ct-bg-probe-*`; não criou outro service nem atualizou o service/listeners/TG de produção. Reutilizou duas imagens previamente entregues pela pipeline nativa. A candidata usou a imagem da revisão 3; essa revisão antiga representa uma segunda versão para a prova, não uma nova release a promover em produção.
+## Convergência sem rolling adicional no emulador
 
-| Identidade observada | Blue atual | Green candidata |
-| --- | --- | --- |
-| Imagem ECR | `pipeline-e4effff0-544f-4070-bc01-0c4239db7fe8` | `pipeline-6628a386-8091-408b-a9d6-3a06164a0a27` |
-| Digest ECR/Docker | `sha256:54c00b84…` | `sha256:229cf310…` |
-| Bundle servido | `/assets/index-BjgdmimE.js` | `/assets/index-Cvukn_hy.js` |
-| SHA256 do bundle | `351a4c89…` | `fb70df53…` |
+A tentativa posterior `971787fb-1a4d-41d8-9564-4cb2ed19a537` passou o isolamento e 70,581 segundos de bake. O UpdateService da convergência e depois do rollback deixaram **três containers físicos saudáveis da mesma revisão** para desiredCount=2. A validação recusou o estado, reteve green e o lock e não escreveu sucesso. Esse comportamento foi observado no executor testado; sua causa interna não foi atribuída sem acesso ao código proprietário.
 
-Valores completos, ARNs, task/container IDs e checks: [EVIDENCE-BLUE-GREEN-TRAFFIC.json](EVIDENCE-BLUE-GREEN-TRAFFIC.json). O digest foi verificado no conteúdo físico da imagem Docker, não apenas na URI configurada. O hash do bundle servido comprova qual frontend respondeu; não foi adicionado endpoint ou texto operacional à aplicação.
+O adaptador deixa de sobrepor outro rolling update ao Blue/Green. Depois do bake, green atende produção independentemente. O serviço principal é esvaziado, com ownership das tasks, recaptura de startups, contadores e Docker conferidos em duas amostras, e volta com exatamente duas tasks da imagem aceita. Os nomes do serviço, TG, cluster e configuração permanecem. O rollback depois de iniciar convergência primeiro restabelece e confere os dois destinos padrão em green, mesmo se o principal já responde à mesma imagem. Só então usa a mesma fronteira antes de restaurar a imagem anterior. A flag de alteração do principal é definida imediatamente antes da primeira requisição mutante, cobrindo uma resposta perdida; falha anterior restaura blue sem depender da candidata. Falhar nessa fronteira mantém o candidato que atende e exige recuperação; não remove uma task arbitrária para fazer o contador parecer aprovado.
 
-Procedimento e resultado observados:
+A recuperação administrativa dessa tentativa foi registrada separadamente; a pipeline e o recibo falhos permanecem sem aprovação. Não é um reset do LocalStack, RDS, ECS ou pipeline.
 
-1. Conferir produção 2/2, sem pending, mesmos task ARNs, Docker healthy, digest, listeners, TG e HTTPS com `status=ok`/`database=ok`.
-2. Registrar uma definição **temporária** da imagem green, preservando bridge, Secrets Manager por referência e configuração da aplicação; usar `hostPort=0` para a nova task. Criar ALB/TGs isolados e registrar os targets.
-3. Usar um único listener HTTP: a ação padrão encaminha a blue; uma regra `http-header`, `X-CloudTasks-Probe: green`, alcança green. Evita o limite documentado de múltiplos listeners do mesmo esquema na porta compartilhada do gateway, sem mudar portas ou reiniciar LocalStack. Essa regra é uma rota de teste do laboratório, não controle de acesso.
-4. Conferir `/health`, banco, `GET /api/tasks` e identidade do bundle em acesso direto à candidata e nas duas rotas. Três repetições confirmaram isolamento.
-5. Retirar o target green. A API mostrou zero targets. O HTTP retornou 200, mas o payload não confirmou `status=ok` e `database=ok`; a mesma verificação de aplicação usada antes da promoção rejeitou a rota com `APP_DATABASE_HEALTH`. A ação padrão ficou em blue, que seguiu saudável. A candidata inválida **não foi promovida**.
-6. Registrar novamente green e exigir target healthy, health de aplicação/banco e bundle correto. Alterar somente a ação padrão do listener temporário para green: três verificações confirmaram seu bundle. A produção real do laboratório continuou em blue.
-7. Retornar a ação padrão temporária a blue: três verificações confirmaram o bundle original. Green ainda estava disponível pela rota de teste. Apagar o ALB/TGs temporários, parar a task candidata e desregistrar sua definição. Conferir novamente produção: mesmas tasks, containers, revisão, listeners, dois targets healthy e HTTPS; nenhuma falha de cleanup.
+## Identidade, bloqueio e recibo
 
-As primeiras tentativas reprovadas também estão resumidas na evidência; não foram convertidas em sucesso. O resultado final `TRAFFIC_PROBE_PASSED` cobre a prova manual descrita. **A paridade HTTP 503 para TG vazio não passou**, e o controlador nativo não foi usado.
+`BuildOutput` contém `imagedefinitions.json`, os dois módulos do controlador e `buildspec.bluegreen.localstack.yml`. O deploy consome esse artifact exato, sem segundo Source ambíguo. O Source permanece selecionado por allowlist, com VersionId retornado pelo upload e SHA256.
 
-### Dois achados de emulação
+O adaptador verifica a execução nativa ativa, a ação de imagem/build vinculada e sua localização S3 antes de adquirir o lock. O UUID zerado de `CODEBUILD_BUILD_ID` injetado pelo agente local é apenas informativo. O aceite consulta o **CodeBuild de deploy vinculado à ação**, `SUCCEEDED`, e exige a mesma localização do `DeployOutput` na ação e na API, além do hash do artifact. Não seleciona o último build para certificar uma execução.
 
-**Porta na definição:** `RunTask` da revisão 3 retornou zero tasks e seis falhas `RESOURCE:PORTS`. `DescribeTaskDefinition` mostrava `hostPort=19025`. Na prova isolada foi possível registrar uma definição com `hostPort=0`, iniciar sua task sem falhas e depois observar a própria API devolver `hostPort=46538` nessa definição. Essa mudança foi observada antes/depois; não é uma característica da AWS real. A AWS documenta alocação dinâmica em bridge e os bindings efetivos em `DescribeTasks`. Não modificar as definições de produção nem copiar cegamente portas resolvidas do emulador para um ambiente paralelo.
+O lock S3 `cloudtasks/blue-green/deploy.lock` usa `If-None-Match: *`. O proprietário é o UUID exato da execução; não há desbloqueio por idade. Ele complementa o lock de processo e a recusa de pipeline ativa, pois o LocalStack não emula todos os stage locks. Uma segunda aquisição foi efetivamente recusada com `PreconditionFailed`, sem alterar o proprietário.
 
-**TG vazio:** a documentação AWS associa ausência de targets a HTTP 503. No teste local, a rota com TG vazio retornou 200 com health de aplicação inválido. A origem exata desse payload no provider não foi determinada; não afirmar que veio da aplicação ou que esse comportamento é da AWS. A validação semântica e de identidade recusou a candidata. Não enfraquecer checks para aceitar o status HTTP sozinho.
+O recibo possui fases, identidades físicas, isolamento, CRUD, promoção, amostras, imagem/revisão final e cleanup. O aceite também exige `final.canonicalRetirement`: pelo menos duas amostras vazias, zero containers canônicos em execução e produção HTTP/HTTPS na candidata durante a fronteira. O `DeployOutput` nativo transporta `deployment-receipt.json`; também há journal S3 por execução para diagnóstico. `SUCCEEDED` só é aceito com todas as ações nativas, os dois CodeBuilds corretos e as verificações completas de `test-cicd.ps1`.
 
-Registros de container instances encontrados no control plane do emulador também não comprovam hosts EC2 reais. A identidade executável foi verificada nos containers Docker.
+## Falhas e rollback
 
-### Limites dessa prova
-
-Não houve novo CodeBuild/CodePipeline, promoção de produção, duas novas réplicas green, teste de escrita CRUD entre revisões, migração de schema, bake time automático, alarme ou rollback por controlador AWS. A observação foi breve, por requisições, e não substitui uma janela configurada. Tasks paradas e definições desregistradas podem continuar como registros históricos na API; os fixtures ativos foram limpos. HTTPS foi conferido no caminho de produção existente; o ALB temporário usou HTTP dentro do laboratório.
-
-O operador descartável ficou fora do projeto, Source S3, contexto Docker e ZIP. A entrega incorpora documentação e evidências sanitizadas, não esse operador como infraestrutura de CI/CD. O teste demonstra viabilidade do tráfego, mas ainda não oferece um comando de deploy Blue/Green repetível no repositório.
-
-## Ensaio do ECS Blue/Green nativo executado
-
-A versão 1.7.7 investigou um caminho diferente de CodeDeploy: controlador `ECS`, `deploymentConfiguration.strategy=BLUE_GREEN` e `bakeTimeInMinutes=1`. A action ECS padrão pode continuar entregando imagens a esse service na AWS, conforme a [orientação oficial de integração](https://aws.amazon.com/blogs/containers/migrating-from-aws-codedeploy-to-amazon-ecs-for-blue-green-deployments/). Assim, a ausência de APIs de histórico, sozinha, não foi tratada como prova de que UpdateService jamais executaria Blue/Green.
-
-O ensaio local criou exclusivamente um service de uma réplica, duas definições bridge com hostPort=0, ALB/TGs `ip`, listener com regras distintas de produção/teste e role IAM exclusivos. As imagens eram as mesmas blue/green previamente aceitas pela pipeline. A role possuía todas as ações da policy AWS `AmazonECSInfrastructureRolePolicyForLoadBalancers` v6, com mutações limitadas aos recursos do ensaio. O modelo da AWS CLI validou a entrada antes de CreateService. Nenhum RegisterTargets, ModifyRule ou ModifyListener manual foi usado após iniciar o service.
-
-| Verificação | Resultado observado |
+| Situação | Resultado obrigatório |
 | --- | --- |
-| CreateService/DescribeServices | Preservaram strategy, bake time e advancedConfiguration, incluindo os dois TGs e regras. |
-| Estado inicial blue | ECS e Docker saudáveis; registro automático no TG blue; health/banco e bundle blue corretos. |
-| UpdateService para green | Criou container da imagem/digest green; a rota de produção temporária passou a servir seu bundle pelo TG blue. |
-| TG green e rota de teste | Zero targets nas onze amostras; health sem `status=ok`/`database=ok`, rejeitado por APP_DATABASE_HEALTH. |
-| Regras de tráfego | Pesos de produção blue=1/green=0 permaneceram iguais em todas as amostras. |
-| Coexistência/bake | Uma única task foi observada após o update, sempre da candidata; ambas as revisões não foram observadas juntas. |
-| Janela de observação | Onze amostras, do segundo 50,2 ao 183,3 do ensaio, cobrindo 133,1 segundos; bake solicitado de 60 segundos. |
-| Aceite | NATIVE_BLUE_GREEN_BEHAVIOR_FAILED; código interno do ensaio 2, sem aprovação ou fallback. |
-| Produção/limpeza | Mesmas tasks, containers, revisão, listeners, targets e HTTPS de produção antes/depois; recursos temporários removidos ou inativos, sem containers temporários executando. |
+| Candidata não saudável ou identidade errada | Não promover; blue continua nas mesmas tasks; recibo `REJECTED`, deploy/pipeline falhos. |
+| Falha após iniciar troca de listener ou durante bake | Restaurar ambos os destinos e validar blue antes de limpar; recibo `ROLLED_BACK`, deploy/pipeline continuam falhos. |
+| Falha durante convergência final | Manter green atendendo até restaurar e validar a imagem anterior no serviço principal; tarefas originais podem já ter sido aposentadas. |
+| Rollback, journal ou limpeza incompletos | `RECOVERY_REQUIRED`, lock e recursos que atendem preservados; nenhuma metadata de sucesso nova. |
 
-O executor registrou targets com IP do host Docker e porta publicada dinâmica, diferentemente da sincronização IP/container:3000 usada pelo service principal. O health e o bundle confirmaram que essa rota inicial funcionava. Essa observação pertence ao executor do laboratório, não a hosts EC2 reais.
+O rollback do adaptador é uma operação real de tráfego/revisão dentro do CodeBuild de deploy. Não é rollback nativo da CodePipeline ou CodeDeploy mockado. Migrações de banco precisam ser compatíveis entre versões; rollback de imagem não reverte dados RDS. Esta entrega não altera schema, não testa migrações destrutivas e não adiciona alarmes da etapa 11.
 
-Evidência sanitizada com configuração, identidades, onze amostras resumidas e fechamento de leitura: [EVIDENCE-BLUE-GREEN-NATIVE.json](EVIDENCE-BLUE-GREEN-NATIVE.json). Tentativas anteriores reprovadas estão descritas separadamente: problema no interpretador do operador, verificação de cleanup que inicialmente confundiu service INACTIVE com ativo, e inspeção de tasks cujos registros já haviam sido removidos por DeleteService. A limpeza dessas tentativas foi conferida depois por leitura e Docker. Não se converteu o aceite nativo em sucesso.
+As restaurações HTTP e HTTPS são tentadas independentemente e conferidas pela API. Uma restauração incompleta mantém o erro e a proteção dos recursos. Cada probe HTTP tem limite total de oito segundos, rejeita body interrompido/erro/close incompleto e libera seu timer ao terminar; uma conexão interrompida não pode travar a implantação sem journal/rollback.
 
-**Observado:** os parâmetros foram armazenados, mas o TG alternativo, isolamento de teste, troca de pesos e retenção esperados não aconteceram. **Inferência limitada a LocalStack Pro 2026.8.3, executor Docker e bridge/TG ip:** o caminho UpdateService testado se comportou como substituição no TG primário, sem o mecanismo Blue/Green requerido. A configuração refletida pela API não é evidência de implementação desse mecanismo. Não se concluiu que toda combinação de rede ou versão futura do emulador tenha o mesmo comportamento.
+Um lock `RECOVERY_REQUIRED` exige diagnóstico e recuperação direcionada dos recursos registrados, com nova conferência física/HTTP/HTTPS antes de liberar o proprietário exato. Não apagar o lock às cegas nem resetar a sessão saudável. Operadores administrativos descartáveis da investigação não integram o projeto, Source, imagem ou ZIP.
 
-Este ensaio não iniciou outra CodePipeline/CodeBuild, não testou hooks/alarme/rollback automático, não promoveu produção e não fez escrita CRUD entre versões. O operador foi descartável e ficou fora do repositório, Source S3 e ZIP. Sua finalidade foi testar o fornecedor, não substituir o controlador.
+## Executar na sessão saudável
 
-## Confirmação em LocalStack 2026.9.0 — candidata inválida
+```powershell
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+& {
+    $ErrorActionPreference = 'Stop'
+    .\scripts\localstack\create-cicd.ps1 -DeploymentMode BlueGreen
+    .\scripts\localstack\test-cicd.ps1
+}
+```
 
-Após a limpeza autorizada de todo o Docker Desktop, o laboratório foi reconstruído com `PERSISTENCE=0`, bind mount novo e imagens oficiais do CodeBuild verificadas. A CodePipeline nativa da etapa 8 entregou uma imagem imutável e `test-cicd.ps1` passou. A sessão saudável foi mantida para investigar Blue/Green.
+Esperado: `SourceSnapshot`, `BuildAndPush` e `DeployBlueGreen` Succeeded; os dois CodeBuilds SUCCEEDED; novas imagens/revisão; bake mínimo de 60 segundos e limpeza; serviço principal 2/2/0, TG 2/2 healthy, HTTPS e CRUD/RDS. O segundo comando não é executado pelo bloco se o primeiro falhar.
 
-O primeiro controle negativo criou um service **temporário** bridge/TG ip. A candidata reutilizou a mesma imagem de blue e mudou somente `DATABASE_HOST_OVERRIDE` para um domínio `.invalid`, provocando falha de conexão ao banco e saída do processo. Isso testa retenção de blue perante uma candidata inválida; não certifica duas versões, promoção, bake ou rollback.
+Controles negativos, executados separadamente:
 
-A hipótese seguinte foi específica: a falha dependeria da adaptação bridge/TG ip do executor? O controle comparativo usou um service temporário `awsvpc`, TGs `ip`, porta 3000, subnets privadas da aplicação, security group da VPC e `assignPublicIp=DISABLED`. AWS documenta essa combinação de rede/target e a configuração `networkConfiguration`. Não houve alteração da rede do service principal. O executor continuou Docker, sem EC2 ou ENIs físicas AWS.
+```powershell
+.\scripts\localstack\create-cicd.ps1 -DeploymentMode BlueGreen -BlueGreenScenario RejectCandidate
+.\scripts\localstack\create-cicd.ps1 -DeploymentMode BlueGreen -BlueGreenScenario Rollback
+```
 
-O runtime dos dois controles manteve `ECS_SERVICE_RECONCILE_INTERVAL=3`, conforme a sessão do projeto; não foi comparado outro intervalo do reconciliador.
+Esses comandos **devem falhar** na pipeline/deploy. `RejectCandidate` força saída 42 na candidata; `Rollback` injeta falha controlada depois da promoção verificada. A evidência precisa comprovar, respectivamente, ausência de promoção e retorno real a blue com as mesmas identidades, cleanup e lock ausente. Falha de Source/download/build não comprova o cenário. Não usar metadata de um deploy anterior para aprovar a tentativa negativa.
 
-Em ambos, a configuração nativa usou controlador ECS, `strategy=BLUE_GREEN`, bake de um minuto, TG alternativo, ARNs de **regras** distintas de produção/teste e a role de infraestrutura com as oito ações requeridas. A regra de produção tinha apenas blue com peso não zero; a regra de teste por cabeçalho encaminhava a green. Esses requisitos foram comparados com os exemplos e troubleshooting oficiais AWS. Após CreateService, não houve registro manual de targets nem alteração manual de regras/listeners.
+Para a etapa 8 padrão, omitir `-DeploymentMode BlueGreen` mantém Rolling; isso pode alterar a declaração da pipeline. O emulador já perdeu consulta de execução histórica após mudança de versão: registrar evidências antes de alternar o modo. Declarações idênticas não são atualizadas desnecessariamente.
 
-| Observação em execução | Bridge/IP | Awsvpc/IP |
+## Resultado executado em 04/10/2026
+
+| Prova | Execução CodePipeline | Resultado |
 | --- | --- | --- |
-| Blue inicial com Docker healthy, aplicação/banco e bundle corretos | Passou | Passou; TG automático 172.18.0.5:3000 healthy |
-| Candidata inválida observada | Sim | Sim |
-| Blue mantida durante a falha da candidata | **Não: STOPPED, Docker exit 0** | **Não: STOPPED, Docker exit 0** |
-| TG green populado nas amostras | Não | Não |
-| Produção do ensaio com health de aplicação/banco válido após update | Não | Não; também houve HTTP 500 |
-| Regras de produção | Blue=1, green=0, sem promoção observada | Blue=1, green=0, sem promoção observada |
-| Amostras, desde o início do ensaio | 4; 66,2–122,4 segundos | 6; 53,0–141,1 segundos |
-| Resultado do aceite | NATIVE_CANDIDATE_ISOLATION_FAILED | NATIVE_CANDIDATE_ISOLATION_FAILED |
-| Exit code do operador nativo | 2 | 2 |
-| Produção principal antes/depois | Mesmas tasks, containers, revisão, imagem, targets, listeners e HTTPS | Mesmas identidades e checks |
+| Positiva 1, convergência 0→2 | `3da7a16d-8987-4cbf-949e-99719808b810` | Todas as ações e os dois CodeBuilds aprovados; bake 72,529 s; test-cicd HTTPS/CRUD/digest aprovado. |
+| Positiva 2 consecutiva | `7a77b36e-d308-437f-9bdf-72844efd4bc1` | Todas as ações e os dois CodeBuilds aprovados; bake 76,115 s; nova imagem/revisão e test-cicd aprovado. |
+| RejectCandidate | `658bbdc4-b19f-4f55-8e5a-13eb64bfb2dd` | Pipeline/deploy falhos; candidata rejeitada antes da promoção; blue original e metadata saudável preservadas. |
+| Rollback após promoção | `de4b471a-f7e9-4289-b524-3a4a6ff1013a` | Green recebeu HTTP/HTTPS; falha controlada restaurou blue com os mesmos containers; pipeline/deploy continuam falhos. |
 
-Os tempos são amostras após consultas sequenciais, não polling contínuo. A ausência de green saudável é intencional. O defeito observado é encerrar a blue saudável antes de uma candidata válida, perdendo o atendimento no ALB **temporário**. O banco e ALB principais não foram quebrados. O processo Windows que envolveu o ensaio bridge terminou com exit 1; o awsvpc terminou com exit 2. Ambos são falhas, não bypasses aprovados.
+As positivas usaram Source SHA256 `d506efc6ccd84768e066e7ca2a85c69787e645de1215eba5f7b9ca1229fc4288`, VersionIds distintos e imagens/digests/revisões distintos, sem intervenção administrativa entre elas. O processo Windows terminou exit 0; cada entrega executou `test-cicd.ps1`. Ambos os recibos comprovam zero runtime canônico em duas amostras enquanto green atende, final 2/2 e cleanup completo/lock ausente.
 
-**Comportamento documentado:** a action CodeDeployToECS do LocalStack só atualiza o service e aguarda estabilidade; não reproduz Blue/Green corretamente. A cobertura ECS publicada continua sem as APIs de service deployments/revisions/continue/stop. A documentação AWS exige isolamento, registro no TG alternativo e retenção de ambas as revisões no bake.
+Os controles negativos foram executados **antes do refinamento da convergência 0→2**, com Source SHA distinto. Seus caminhos de validação, promoção/bake e cleanup anterior à convergência foram conferidos idênticos; os cenários não entram na convergência. A evidência distingue essa ordem e não os apresenta como novas execuções do Source refinado. Essas provas anteriores à revisão final permanecem históricas. A suite após as correções da revisão tem 31 testes Node e 56 regressões PowerShell aprovados; os novos ciclos nativos são registrados separadamente no JSON de evidências. As tentativas falhas e suas recuperações permanecem separadas.
 
-**Comportamento observado:** a configuração BLUE_GREEN foi aceita, blue inicialmente funcionou por registro automático, mas UpdateService a encerrou e não produziu o isolamento requerido diante da candidata inválida nas duas configurações testadas.
+## Critério de conclusão local
 
-**Inferência:** o problema desse caminho do emulador não é resolvido mudando bridge para awsvpc. A evidência é compatível com ausência/defeito do mecanismo nativo de retenção e roteamento, não com um erro da aplicação principal ou de seus filtros PowerShell. Não foi identificada a rotina interna proprietária responsável; não se afirma que toda versão, executor ou combinação AWS tenha esse comportamento.
+- Duas execuções positivas distintas, com Source, build da imagem, deploy CodeBuild, artifacts e recibos correlacionados pelas APIs nativas.
+- Coexistência física 2 blue + 2 green, isolamento, CRUD entre revisões, promoção HTTP/HTTPS e bake de pelo menos 60 segundos.
+- Rejeição de candidata inválida sem tocar blue e rollback controlado após promoção, ambos com execução nativa falha e recuperação comprovada.
+- Convergência para o serviço/TG principal 2/2 healthy, digest aceito e remoção de recursos temporários/lock.
+- Código e evidências sanitizadas, sem token/senha no Git, Source, imagem, logs exibidos ou pacote.
 
-Os services temporários ficaram INACTIVE/0 tasks; ALBs/TGs/roles foram removidos e definições desregistradas. Também foram removidos os containers, logs e ENIs emuladas disponíveis deixados pelo controle awsvpc. Registros históricos INACTIVE podem continuar aparecendo em ListServices; isso não representa containers ou serviços ativos. O operador descartável ficou fora do repositório, Source S3, contexto Docker e ZIP.
+Cumprir esses critérios conclui o **Blue/Green do laboratório por adaptador**, sem certificar um controlador AWS que não foi executado. CloudFront (10), observabilidade ampliada (11) e Amazon Q/MCP (12) continuam posteriores.
 
-[Evidência comparativa sanitizada](EVIDENCE-BLUE-GREEN-NATIVE.json), com hashes dos relatórios, configuração, identidades preservadas e amostras. Essa confirmação não executou outra pipeline Blue/Green, duas versões distintas, hooks, promoção válida ou rollback automático. Não houve deploy AWS real.
+## Limites do fornecedor e testes anteriores
 
-## Decisão para este laboratório
+**Documentado:** CodeDeploy é mockado; a action CodeDeployToECS local só atualiza o service/aguarda estabilidade e não emula corretamente Blue/Green. V2, stage locks/retry/rollback e manual approval possuem limitações. `StopBuild` não está implementado; abandonar uma pipeline não preempta a thread do emulador.
 
-Preservar a pipeline ECS padrão da etapa 8. Não trocar para CodeDeployToECS só para obter um status Succeeded, não adicionar um controlador PowerShell próprio e não antecipar CloudFront.
+**Observado:** em 2026.8.3 e 2026.9.0, o ECS nativo aceitou a configuração BLUE_GREEN, mas não manteve a blue/revisão candidata isoladas como exigido. Os controles bridge/IP e awsvpc/IP perderam blue diante de candidata inválida. Um ensaio EXTERNAL aceitou o task set `STEADY_STATE`, mas criou zero tasks executáveis durante 65 segundos. Nenhuma dessas APIs foi aprovada pelo status de metadata.
 
-A alternativa manual foi verificada como prova temporária, usando uma task independente para reduzir escopo e risco. A decisão desta entrega é preservar esse resultado como evidência de tráfego e manter a pipeline padrão da etapa 8. Não incorporar um controlador próprio para simular uma certificação que o fornecedor não oferece. Uma implementação permanente exige resolver o suporte nativo e seus critérios abaixo; a prova temporária não o substitui.
+**Inferência:** duas instâncias independentes do serviço isolam o ciclo de vida das revisões no executor testado e permitem demonstrar o comportamento real de tráfego. Isso não prova defeito de toda versão futura, nem limitação AWS. A combinação AWS alvo ECS/EC2 + bridge + TG instance ainda requer implantação AWS autorizada; não houve conta paga ou deploy AWS nesta entrega.
 
-A validação nativa permanece pendente até haver suporte verificável do emulador ou um ambiente AWS autorizado. Os controles em 2026.9.0 acrescentaram uma versão nova e uma hipótese de rede distinta. Com ambas reprovadas, não repetir a mesma configuração na sessão saudável nem trocar a action para obter um status Succeeded. Quando houver uma versão com suporte comprovado, validar primeiro em recursos isolados e depois a cadeia completa da pipeline. Nenhuma conta paga foi criada nem houve deploy AWS real.
+Evidências históricas: [investigação de leitura](EVIDENCE-BLUE-GREEN.json), [tráfego manual](EVIDENCE-BLUE-GREEN-TRAFFIC.json), [controlador nativo reprovado](EVIDENCE-BLUE-GREEN-NATIVE.json). Os resultados atuais estão em [EVIDENCE-BLUE-GREEN-ADAPTER.json](EVIDENCE-BLUE-GREEN-ADAPTER.json).
 
-## Critério objetivo de conclusão da etapa 9 nativa
+## Referências oficiais consultadas em 04/10/2026
 
-1. A versão blue atende produção e a green executa uma imagem/digest diferente, sem remover blue.
-2. A entrada de teste alcança green; produção continua em blue durante o teste.
-3. Health/CRUD/RDS e identity check de green passam; candidata inválida não recebe produção.
-4. O controlador nativo promove green; requisições comprovam a troca, além das APIs.
-5. A versão anterior permanece disponível pelo bake time; rollback retorna efetivamente a produção a blue.
-6. CodePipeline/CodeBuild, artifact, controlador e imagem são correlacionados à execução correta; sem fallback que transforme falha em aprovação.
-
-Registrar separadamente falha de candidata, promoção, janela de observação e rollback. A etapa 9 não recebe marcação concluída apenas pelo desenho ou por uma demonstração manual parcial.
-
-## Fontes oficiais
-
-- [AWS ECS Blue/Green nativo](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/deployment-type-blue-green.html).
-- [AWS CodeDeploy Blue/Green e recomendação de ECS nativo](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/deployment-type-bluegreen.html).
-- [AWS action CodeDeployToECS](https://docs.aws.amazon.com/codepipeline/latest/userguide/action-reference-ECSbluegreen.html).
-- [AWS — ECS nativo, regras, bake e integração com a action ECS padrão](https://aws.amazon.com/blogs/containers/migrating-from-aws-codedeploy-to-amazon-ecs-for-blue-green-deployments/).
-- [AWS — role de infraestrutura para load balancers](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/AmazonECSInfrastructureRolePolicyForLoadBalancers.html).
-- [AWS — ações da policy gerenciada, versão v6](https://docs.aws.amazon.com/aws-managed-policy/latest/reference/AmazonECSInfrastructureRolePolicyForLoadBalancers.html).
-- [LocalStack CodeDeploy — limitações](https://docs.localstack.cloud/aws/services/codedeploy/#limitations).
-- [LocalStack CodePipeline — actions e limitações](https://docs.localstack.cloud/aws/services/codepipeline/#actions).
-- [LocalStack ECS — cobertura](https://docs.localstack.cloud/aws/services/ecs/#api-coverage).
-
-- [LocalStack ELB — porta compartilhada e cobertura](https://docs.localstack.cloud/aws/services/elb/).
-- [AWS PortMapping — bridge, hostPort dinâmico e bindings](https://docs.aws.amazon.com/AmazonECS/latest/APIReference/API_PortMapping.html).
-- [AWS ALB — ausência de targets e HTTP 503](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-troubleshooting.html#http-503-issues).
-
-- [AWS — recursos ALB, regras por cabeçalho e configuração Blue/Green](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/alb-resources-for-blue-green.html).
-- [AWS — diagnóstico de Blue/Green e requisitos de regras/roles](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/troubleshooting-blue-green.html).
-- [AWS — awsvpc e networkConfiguration](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/task-networking-awsvpc.html).
-- [LocalStack — release 2026.09.0](https://blog.localstack.cloud/localstack-for-aws-release-2026-09-0/).
+- [AWS ECS Blue/Green](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/deployment-type-blue-green.html) e [recursos ALB](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/alb-resources-for-blue-green.html).
+- [AWS target health e Target.NotInUse](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/check-target-health.html).
+- [AWS CodePipeline CodeDeployToECS](https://docs.aws.amazon.com/codepipeline/latest/userguide/action-reference-ECSbluegreen.html).
+- [AWS external controller](https://docs.aws.amazon.com/AmazonECS/latest/developerguide/deployment-type-external.html).
+- [LocalStack CodePipeline](https://docs.localstack.cloud/aws/services/codepipeline/), [CodeBuild](https://docs.localstack.cloud/aws/services/codebuild/), [CodeDeploy](https://docs.localstack.cloud/aws/services/codedeploy/) e [ECS](https://docs.localstack.cloud/aws/services/ecs/).

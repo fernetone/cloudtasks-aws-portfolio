@@ -8,6 +8,8 @@ RUN npm ci --no-audit --no-fund
 FROM deps AS builder
 COPY . .
 RUN npm run build
+ARG APP_RELEASE=local
+RUN node -e "const r=process.env.APP_RELEASE;if(!/^(local|pipeline-[a-f0-9-]{36})$/.test(r))process.exit(1);require('fs').writeFileSync('apps/web/dist/release.json',JSON.stringify({releaseId:r,version:require('./package.json').version}))"
 
 FROM node:24-alpine AS prod-deps
 WORKDIR /app
@@ -18,6 +20,8 @@ RUN npm ci --omit=dev --no-audit --no-fund
 
 FROM node:24-alpine AS runner
 WORKDIR /app
+ARG APP_RELEASE=local
+LABEL org.opencontainers.image.version=$APP_RELEASE
 ENV NODE_ENV=production
 ENV PORT=3000
 COPY --from=prod-deps /app/node_modules node_modules
