@@ -837,7 +837,8 @@
       "os": "Windows",
       "executor": "Docker",
       "realEc2Hosts": false,
-      "persistence": 0
+      "persistence": 0,
+      "ecsServiceReconcileIntervalSeconds": 3
     },
     "method": "Native UpdateService on unique temporary services; same image, candidate invalid database host; no manual targets or traffic changes after create",
     "hypothesis": "Bridge/IP emulation mapping is the specific cause of losing healthy blue",

@@ -132,6 +132,8 @@ O primeiro controle negativo criou um service **temporário** bridge/TG ip. A ca
 
 A hipótese seguinte foi específica: a falha dependeria da adaptação bridge/TG ip do executor? O controle comparativo usou um service temporário `awsvpc`, TGs `ip`, porta 3000, subnets privadas da aplicação, security group da VPC e `assignPublicIp=DISABLED`. AWS documenta essa combinação de rede/target e a configuração `networkConfiguration`. Não houve alteração da rede do service principal. O executor continuou Docker, sem EC2 ou ENIs físicas AWS.
 
+O runtime dos dois controles manteve `ECS_SERVICE_RECONCILE_INTERVAL=3`, conforme a sessão do projeto; não foi comparado outro intervalo do reconciliador.
+
 Em ambos, a configuração nativa usou controlador ECS, `strategy=BLUE_GREEN`, bake de um minuto, TG alternativo, ARNs de **regras** distintas de produção/teste e a role de infraestrutura com as oito ações requeridas. A regra de produção tinha apenas blue com peso não zero; a regra de teste por cabeçalho encaminhava a green. Esses requisitos foram comparados com os exemplos e troubleshooting oficiais AWS. Após CreateService, não houve registro manual de targets nem alteração manual de regras/listeners.
 
 | Observação em execução | Bridge/IP | Awsvpc/IP |

@@ -104,7 +104,8 @@
       "os": "Windows",
       "executor": "Docker",
       "realEc2Hosts": false,
-      "persistence": 0
+      "persistence": 0,
+      "ecsServiceReconcileIntervalSeconds": 3
     },
     "coldReconstructionRepeated": true,
     "dockerDesktopEmptiedBeforeBootstrap": true,
