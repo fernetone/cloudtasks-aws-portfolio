@@ -16,5 +16,6 @@ describe('formatDate', () => {
     expect(formatDate('invalida')).toBe('invalida');
     expect(formatDate('2026-10-08 após as 18h')).toBe('2026-10-08 após as 18h');
     expect(formatDate('2026-02-31')).toBe('2026-02-31');
+    expect(formatDate('2026-10-08T18:30:00Z')).toBe('2026-10-08T18:30:00Z');
   });
 });

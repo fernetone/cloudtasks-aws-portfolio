@@ -84,4 +84,22 @@ integration('migração de prazo em PostgreSQL real isolado', () => {
     await database.ensureSchema();
     expect((await repository.list()).find((task) => task.title === 'Tarefa anterior à migração')?.dueDate).toBe('2026-09-25');
   });
+
+  it('retorna a nova data quando um cliente anterior edita um registro que tinha prazo textual', async () => {
+    const created = await repository.create({ title: 'Edição pelo cliente anterior', dueDate: 'Amanhã às 18h', important: false });
+    await database.pool.query('UPDATE tasks SET due_date = $1 WHERE id = $2', ['2026-11-01', created.id]);
+    expect((await repository.findById(created.id))?.dueDate).toBe('2026-11-01');
+    expect((await repository.update(created.id, { important: true }))?.dueDate).toBe('2026-11-01');
+    await repository.remove(created.id);
+  });
+
+  it('preserva prioridade e conclusão atualizadas simultaneamente por duas réplicas', async () => {
+    const created = await repository.create({ title: 'Edições concorrentes', dueDate: 'Após a reunião', important: false });
+    await Promise.all([
+      repository.update(created.id, { important: true }),
+      repository.update(created.id, { completed: true }),
+    ]);
+    expect(await repository.findById(created.id)).toMatchObject({ important: true, completed: true, dueDate: 'Após a reunião' });
+    await repository.remove(created.id);
+  });
 });

@@ -59,7 +59,7 @@ function mapTask(row: TaskRow): Task {
   return {
     id: row.id,
     title: row.title,
-    dueDate: row.due_text ?? normalizeDate(row.due_date),
+    dueDate: normalizeDate(row.due_date) ?? row.due_text ?? null,
     important: row.important,
     completed: row.completed,
     createdAt: normalizeTimestamp(row.created_at),
@@ -95,29 +95,29 @@ export class PgTaskRepository implements TaskRepository {
   }
 
   async update(id: string, input: UpdateTaskInput): Promise<Task | null> {
-    const current = await this.findById(id);
-    if (!current) return null;
-    const deadline = input.dueDate === undefined ? current.dueDate : input.dueDate;
-    const dueDate = legacyDate(deadline);
+    const values: (string | boolean | null)[] = [];
+    const fields: string[] = [];
+    const assign = (column: string, value: string | boolean | null) => {
+      values.push(value);
+      fields.push(`${column} = $${values.length}`);
+    };
+    if (input.title !== undefined) assign('title', input.title);
+    if (input.dueDate !== undefined) {
+      const dueDate = legacyDate(input.dueDate);
+      assign('due_date', dueDate);
+      assign('due_text', dueDate === null ? input.dueDate : null);
+    }
+    if (input.important !== undefined) assign('important', input.important);
+    if (input.completed !== undefined) assign('completed', input.completed);
+    fields.push('updated_at = NOW()');
+    values.push(id);
 
     const result = await this.db.query<TaskRow>(
       `UPDATE tasks
-       SET title = $1,
-           due_date = $2,
-           due_text = $3,
-           important = $4,
-           completed = $5,
-           updated_at = NOW()
-       WHERE id = $6
+       SET ${fields.join(', ')}
+       WHERE id = $${values.length}
        RETURNING *`,
-      [
-        input.title ?? current.title,
-        dueDate,
-        dueDate === null ? deadline : null,
-        input.important ?? current.important,
-        input.completed ?? current.completed,
-        id,
-      ],
+      values,
     );
 
     return result.rows[0] ? mapTask(result.rows[0]) : null;

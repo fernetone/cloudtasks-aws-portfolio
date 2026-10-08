@@ -14,7 +14,9 @@ export default function App() {
   const [error, setError] = useState('');
   const [health, setHealth] = useState<'checking' | 'online' | 'offline'>('checking');
   const healthRequest = useRef<AbortController | null>(null);
-  const [priorityPending, setPriorityPending] = useState<string[]>([]);
+  const [pendingTasks, setPendingTasks] = useState<string[]>([]);
+  const taskMutations = useRef(new Set<string>());
+  const listRequest = useRef(0);
   const [theme, setTheme] = useState<'dark' | 'light'>(() => {
     try { return localStorage.getItem('theme') === 'light' ? 'light' : 'dark'; }
     catch { return 'dark'; }
@@ -53,13 +55,15 @@ export default function App() {
   }, [refreshHealth]);
 
   async function loadTasks() {
+    const request = ++listRequest.current;
     try {
       setError('');
-      setTasks(await taskApi.list());
+      const listed = await taskApi.list();
+      if (request === listRequest.current) setTasks(listed);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Não foi possível carregar as tarefas.');
+      if (request === listRequest.current) setError(err instanceof Error ? err.message : 'Não foi possível carregar as tarefas.');
     } finally {
-      setLoading(false);
+      if (request === listRequest.current) setLoading(false);
     }
   }
 
@@ -69,6 +73,7 @@ export default function App() {
 
   async function submit(event: FormEvent) {
     event.preventDefault();
+    if (loading || saving) return;
     if (!title.trim()) {
       setError('Por favor, adicione uma descrição para a tarefa.');
       return;
@@ -88,50 +93,49 @@ export default function App() {
     }
   }
 
-  async function toggle(task: Task) {
+  async function mutateTask(id: string, operation: () => Promise<void>, fallback: string) {
+    if (taskMutations.current.has(id)) return;
+    taskMutations.current.add(id);
+    setPendingTasks((current) => [...current, id]);
     try {
       setError('');
-      const updated = await taskApi.update(task.id, { completed: !task.completed });
-      setTasks((current) => current.map((item) => (item.id === task.id ? updated : item)));
+      await operation();
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Não foi possível atualizar a tarefa.');
+      setError(err instanceof Error ? err.message : fallback);
+    } finally {
+      taskMutations.current.delete(id);
+      setPendingTasks((current) => current.filter((pending) => pending !== id));
     }
   }
 
+  async function toggle(task: Task) {
+    await mutateTask(task.id, async () => {
+      const updated = await taskApi.update(task.id, { completed: !task.completed });
+      setTasks((current) => current.map((item) => (item.id === task.id ? updated : item)));
+    }, 'Não foi possível atualizar a tarefa.');
+  }
+
   async function remove(id: string) {
-    try {
-      setError('');
+    await mutateTask(id, async () => {
       await taskApi.remove(id);
       setTasks((current) => current.filter((item) => item.id !== id));
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Não foi possível excluir a tarefa.');
-    }
+    }, 'Não foi possível excluir a tarefa.');
   }
 
   async function rename(task: Task) {
     const nextTitle = window.prompt('Novo nome da tarefa:', task.title)?.trim();
     if (!nextTitle || nextTitle === task.title) return;
-    try {
-      setError('');
+    await mutateTask(task.id, async () => {
       const updated = await taskApi.update(task.id, { title: nextTitle });
       setTasks((current) => current.map((item) => (item.id === task.id ? updated : item)));
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Não foi possível editar a tarefa.');
-    }
+    }, 'Não foi possível editar a tarefa.');
   }
 
   async function changePriority(task: Task) {
-    if (priorityPending.includes(task.id)) return;
-    setPriorityPending((current) => [...current, task.id]);
-    try {
-      setError('');
+    await mutateTask(task.id, async () => {
       const updated = await taskApi.update(task.id, { important: !task.important });
       setTasks((current) => current.map((item) => (item.id === task.id ? updated : item)));
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Não foi possível alterar a prioridade.');
-    } finally {
-      setPriorityPending((current) => current.filter((id) => id !== task.id));
-    }
+    }, 'Não foi possível alterar a prioridade.');
   }
 
   const statusText = health === 'online' ? 'Online' : health === 'offline' ? 'Offline' : 'Verificando...';
@@ -174,7 +178,7 @@ export default function App() {
                 <input id="important" type="checkbox" checked={important} onChange={(e) => setImportant(e.target.checked)} />
                 <label htmlFor="important">Importante</label>
               </div>
-              <button className="btn btn-block success" type="submit" disabled={saving}>{saving ? 'Adicionando...' : 'Adicionar Nova Tarefa'}</button>
+              <button className="btn btn-block success" type="submit" disabled={saving || loading}>{saving ? 'Adicionando...' : 'Adicionar Nova Tarefa'}</button>
             </form>
 
             {error && <div className="error-banner" role="alert">{error}</div>}
@@ -192,15 +196,15 @@ export default function App() {
                     if ((event.target as Element).closest('button')) return;
                     void changePriority(task);
                   }}>
-                    <button className="complete-button" aria-label={task.completed ? 'Reabrir tarefa' : 'Concluir tarefa'} onClick={() => void toggle(task)}>{task.completed ? '✓' : ''}</button>
+                    <button className="complete-button" disabled={pendingTasks.includes(task.id)} aria-label={task.completed ? 'Reabrir tarefa' : 'Concluir tarefa'} onClick={() => void toggle(task)}>{task.completed ? '✓' : ''}</button>
                     <div className="task-content">
                       <h3>{task.title}</h3>
                       <p>📅 {formatDate(task.dueDate)}</p>
                     </div>
                     <div className="task-actions">
-                      <button className="task-priority" aria-label={task.important ? 'Remover importante' : 'Marcar importante'} title={task.important ? 'Remover importante' : 'Marcar importante'} disabled={priorityPending.includes(task.id)} onClick={() => void changePriority(task)}>{task.important ? '★' : '☆'}</button>
-                      <button className="task-edit" onClick={() => void rename(task)}>Editar</button>
-                      <button className="task-delete" aria-label="Excluir tarefa" title="Excluir" onClick={() => void remove(task.id)}>×</button>
+                      <button className="task-priority" aria-label={task.important ? 'Remover importante' : 'Marcar importante'} title={task.important ? 'Remover importante' : 'Marcar importante'} disabled={pendingTasks.includes(task.id)} onClick={() => void changePriority(task)}>{task.important ? '★' : '☆'}</button>
+                      <button className="task-edit" disabled={pendingTasks.includes(task.id)} onClick={() => void rename(task)}>Editar</button>
+                      <button className="task-delete" disabled={pendingTasks.includes(task.id)} aria-label="Excluir tarefa" title="Excluir" onClick={() => void remove(task.id)}>×</button>
                     </div>
                   </article>
                 ))}
