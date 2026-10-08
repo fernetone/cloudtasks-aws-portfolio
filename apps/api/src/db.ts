@@ -29,6 +29,20 @@ export async function ensureSchema() {
       updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
     );
     ALTER TABLE tasks ADD COLUMN IF NOT EXISTS due_text TEXT;
+    CREATE OR REPLACE FUNCTION cloudtasks_sync_legacy_deadline()
+    RETURNS TRIGGER LANGUAGE plpgsql AS $$
+    BEGIN
+      IF NEW.due_date IS DISTINCT FROM OLD.due_date
+         AND NEW.due_text IS NOT DISTINCT FROM OLD.due_text THEN
+        NEW.due_text := NULL;
+      END IF;
+      RETURN NEW;
+    END;
+    $$;
+    DROP TRIGGER IF EXISTS cloudtasks_legacy_deadline ON tasks;
+    CREATE TRIGGER cloudtasks_legacy_deadline
+      BEFORE UPDATE OF due_date ON tasks
+      FOR EACH ROW EXECUTE FUNCTION cloudtasks_sync_legacy_deadline();
   `);
     await client.query('COMMIT');
   } catch (error) {

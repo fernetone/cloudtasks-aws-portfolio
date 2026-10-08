@@ -90,6 +90,13 @@ integration('migração de prazo em PostgreSQL real isolado', () => {
     await database.pool.query('UPDATE tasks SET due_date = $1 WHERE id = $2', ['2026-11-01', created.id]);
     expect((await repository.findById(created.id))?.dueDate).toBe('2026-11-01');
     expect((await repository.update(created.id, { important: true }))?.dueDate).toBe('2026-11-01');
+    await database.pool.query('UPDATE tasks SET due_date = NULL WHERE id = $1', [created.id]);
+    expect((await repository.findById(created.id))?.dueDate).toBeNull();
+    const raw = await database.pool.query('SELECT due_text FROM tasks WHERE id = $1', [created.id]);
+    expect(raw.rows[0].due_text).toBeNull();
+    expect((await repository.update(created.id, { dueDate: 'Após a reunião' }))?.dueDate).toBe('Após a reunião');
+    expect((await repository.update(created.id, { dueDate: '2026-12-01' }))?.dueDate).toBe('2026-12-01');
+    expect((await repository.update(created.id, { dueDate: 'Até o fim do expediente' }))?.dueDate).toBe('Até o fim do expediente');
     await repository.remove(created.id);
   });
 
