@@ -11,7 +11,10 @@ describe('formatDate', () => {
     expect(formatDate(null)).toBe('Sem prazo');
   });
 
-  it('não derruba a interface com uma data inválida', () => {
-    expect(formatDate('invalida')).toBe('Data inválida');
+  it('exibe prazos em texto sem tentar convertê-los em data', () => {
+    expect(formatDate('Amanhã às 18h, após a reunião')).toBe('Amanhã às 18h, após a reunião');
+    expect(formatDate('invalida')).toBe('invalida');
+    expect(formatDate('2026-10-08 após as 18h')).toBe('2026-10-08 após as 18h');
+    expect(formatDate('2026-02-31')).toBe('2026-02-31');
   });
 });

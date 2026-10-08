@@ -133,4 +133,43 @@ describe('CloudTasks API', () => {
 
     expect(response.body.message).toBe('Dados inválidos.');
   });
+
+  it('preserva prazo em texto na criação e na edição de prioridade', async () => {
+    const app = createApp({ repository, healthCheck: async () => undefined });
+    const dueDate = 'Amanhã às 18h, após a reunião';
+    const created = await request(app)
+      .post('/api/tasks')
+      .send({ title: 'Enviar relatório', dueDate })
+      .expect(201);
+
+    expect(created.body.dueDate).toBe(dueDate);
+    const updated = await request(app)
+      .put(`/api/tasks/${created.body.id}`)
+      .send({ important: true })
+      .expect(200);
+    expect(updated.body).toMatchObject({ dueDate, important: true });
+    const listed = await request(app).get('/api/tasks').expect(200);
+    expect(listed.body[0].dueDate).toBe(dueDate);
+  });
+
+  it('mantém datas ISO e prazo nulo compatíveis', async () => {
+    const app = createApp({ repository, healthCheck: async () => undefined });
+    for (const dueDate of ['2026-09-25', null]) {
+      const created = await request(app)
+        .post('/api/tasks')
+        .send({ title: 'Tarefa existente', dueDate })
+        .expect(201);
+      expect(created.body.dueDate).toBe(dueDate);
+    }
+  });
+
+  it('rejeita prazo com tipo incorreto ou mais de 255 caracteres', async () => {
+    const app = createApp({ repository, healthCheck: async () => undefined });
+    for (const dueDate of [123, 'x'.repeat(256)]) {
+      await request(app)
+        .post('/api/tasks')
+        .send({ title: 'Enviar relatório', dueDate })
+        .expect(400);
+    }
+  });
 });

@@ -1,4 +1,5 @@
 import type { Pool } from 'pg';
+import { z } from 'zod';
 import { pool } from './db.js';
 
 export type Task = {
@@ -33,6 +34,7 @@ type TaskRow = {
   id: string;
   title: string;
   due_date: Date | string | null;
+  due_text?: string | null;
   important: boolean;
   completed: boolean;
   created_at: Date | string;
@@ -49,11 +51,15 @@ function normalizeTimestamp(value: Date | string): string {
   return value instanceof Date ? value.toISOString() : value;
 }
 
+function legacyDate(value: string | null): string | null {
+  return z.string().date().safeParse(value).success ? value : null;
+}
+
 function mapTask(row: TaskRow): Task {
   return {
     id: row.id,
     title: row.title,
-    dueDate: normalizeDate(row.due_date),
+    dueDate: row.due_text ?? normalizeDate(row.due_date),
     important: row.important,
     completed: row.completed,
     createdAt: normalizeTimestamp(row.created_at),
@@ -73,11 +79,12 @@ export class PgTaskRepository implements TaskRepository {
   }
 
   async create(input: CreateTaskInput): Promise<Task> {
+    const dueDate = legacyDate(input.dueDate);
     const result = await this.db.query<TaskRow>(
-      `INSERT INTO tasks (title, due_date, important)
-       VALUES ($1, $2, $3)
+      `INSERT INTO tasks (title, due_date, due_text, important)
+       VALUES ($1, $2, $3, $4)
        RETURNING *`,
-      [input.title, input.dueDate, input.important],
+      [input.title, dueDate, dueDate === null ? input.dueDate : null, input.important],
     );
     return mapTask(result.rows[0]);
   }
@@ -90,19 +97,23 @@ export class PgTaskRepository implements TaskRepository {
   async update(id: string, input: UpdateTaskInput): Promise<Task | null> {
     const current = await this.findById(id);
     if (!current) return null;
+    const deadline = input.dueDate === undefined ? current.dueDate : input.dueDate;
+    const dueDate = legacyDate(deadline);
 
     const result = await this.db.query<TaskRow>(
       `UPDATE tasks
        SET title = $1,
            due_date = $2,
-           important = $3,
-           completed = $4,
+           due_text = $3,
+           important = $4,
+           completed = $5,
            updated_at = NOW()
-       WHERE id = $5
+       WHERE id = $6
        RETURNING *`,
       [
         input.title ?? current.title,
-        input.dueDate === undefined ? current.dueDate : input.dueDate,
+        dueDate,
+        dueDate === null ? deadline : null,
         input.important ?? current.important,
         input.completed ?? current.completed,
         id,

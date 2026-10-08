@@ -10,7 +10,7 @@ Revisão de 08/10/2026. Este documento define o escopo solicitado pela usuária 
 - Código comparado: `main` do projeto em `b17a31d3269f116f3f2531501b1e7ebf49fac43a` (1.8.0), e checkpoint local 1.8.1 da reconstrução fria ainda pendente.
 - O repositório público [henrylle/bia](https://github.com/henrylle/bia) foi consultado como fonte complementar, inclusive a revisão histórica `8799459fa1dcf67ac041f134c9b08aa8f5ac60c7`. Esse commit não foi identificado como a release da gravação: seus textos também diferem do vídeo. Não copiar a versão atual e declará-la idêntica à versão filmada.
 - O recorte não revela todos os arquivos, configurações, permissões, dados nem operações CRUD. Igualdade integral de código/configuração exige a identificação da revisão original e seus arquivos de infraestrutura. Configurações ocultas permanecem não verificadas.
-- O Desktop Commander confirmou o dispositivo `Monitor` offline nesta revisão. Não foi possível observar Docker, banco, bootstrap ou tarefas atuais no Windows, aplicar mudanças ali ou atribuir novo sucesso à reconstrução.
+- Na revisão documental inicial, o dispositivo `Monitor` estava offline. Após a reconexão em 08/10/2026, os resultados preservados de 04/10 foram lidos: a terceira reconstrução teve sete etapas com exit code 0. Na sessão de 08/10, a primeira inicialização ultrapassou o timeout; depois da recuperação do serviço, o bootstrap e os testes de banco/ECS/ALB/HTTPS passaram. Esses dois eventos e a falha inicial são registros distintos.
 
 ## Comparação vinculada à referência
 
@@ -36,7 +36,7 @@ Revisão de 08/10/2026. Este documento define o escopo solicitado pela usuária 
 3. As 13 etapas anteriores são um plano interno. A gravação não fornece uma sequência oficial de 13 etapas.
 4. O Deploy mostrado é ECS padrão. O adaptador Blue/Green não deve ser apresentado como mecanismo demonstrado no vídeo nem como homologação produtiva AWS.
 5. Histórico de testes locais aprovado permanece válido no seu contexto. Não é convertido em prova atual do Windows ou paridade AWS.
-6. O projeto não está concluído nem idêntico à referência. As alterações desta revisão corrigem documentação e critérios; não implementam nem aprovam silenciosamente os recursos faltantes.
+6. O projeto não está concluído nem idêntico à referência. A revisão documental corrigiu os critérios; a atualização 1.8.2 agora implementa a tela observável, tema, saúde real, prazo textual e edição de prioridade. Os testes de integração PostgreSQL e a verificação visual da nova tela são requisitos antes do aceite desta atualização. Recursos AWS e conteúdo de telas não exibidas seguem sem comprovação.
 
 ## Encaminhamento obrigatório
 
