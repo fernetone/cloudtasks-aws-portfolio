@@ -102,11 +102,11 @@ A [AWS documenta ECS/ALB](https://docs.aws.amazon.com/AmazonECS/latest/developer
 | 10–18 s         | ALB HTTP/HTTPS e dois targets por instância/porta dinâmica | Compatível com ECS/EC2, duas réplicas e TG `instance`                         |
 | 18–20 s         | Node/React e PostgreSQL                                    | Mesma categoria de aplicação                                                  |
 | 22–32 s         | Distribuição CloudFront em estado `Disabled`               | Configuração existe; tráfego funcional pela CDN não é provado                 |
-| 34–57 s         | Interface simples de tarefas BIA                           | CRUD é veículo da demonstração; CloudTasks não precisa copiar nome/interface  |
+| 34–57 s         | Interface simples de tarefas BIA                           | A revisão de 08/10 exige reproduzir nome, interface e comportamento observáveis; a dispensa anterior foi retirada |
 
-A fidelidade conceitual permanece. CloudTasks fornece evidência explícita de Zod, SQL parametrizado, testes, health com banco, não-root, graceful shutdown e documentação de paridade. Esses cuidados não são visíveis no vídeo; isso não prova que o projeto do autor não os tenha.
+A revisão de escopo de 08/10/2026 corrigiu a interpretação anterior: fidelidade conceitual não atende à reprodução literal solicitada. A [matriz V01-V12](REFERENCE-VIDEO.md) registra as diferenças de interface, comportamento, Source, compute, TLS, CDN e Q/MCP. CloudTasks fornece evidência explícita de Zod, SQL parametrizado, testes, health com banco, não-root e graceful shutdown; esses cuidados são preservados, sem substituir os requisitos do vídeo nem inferir que faltam ao projeto do autor.
 
-Desvios encontrados: recuperação acumulada no caminho de entrega, aprovação por fallback externo, seleção por tag mais recente e roadmap recebido com apenas 11 etapas/CI/CD na posição 7. A entrega remove a aprovação alternativa e restaura a sequência oficial de 13 etapas. A emulação continua sem provisionamento produtivo AWS completo: capacidade EC2/ASG, bootstrap, controles de rede/IAM e IaC precisariam ser concretizados para uma implantação real.
+Desvios técnicos históricos encontrados: recuperação acumulada no caminho de entrega, aprovação por fallback externo e seleção por tag mais recente. O fluxo local corrigido removeu a aprovação alternativa. A sequência de 13 etapas é um plano interno, não uma sequência oficial extraída do vídeo. Capacidade EC2, bootstrap, controles de rede/IAM e provisionamento AWS completo são pendências obrigatórias da entrega, e não apenas uma possível migração futura.
 
 ## 4. Organização e fluxo dos scripts
 

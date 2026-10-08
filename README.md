@@ -1,8 +1,10 @@
-# CloudTasks — portfólio AWS/DevOps
+# CloudTasks — projeto AWS/DevOps baseado na referência BIA
 
 Versão 1.8.0. React 19 + TypeScript + Vite, Node 24 + Express 5 e PostgreSQL.
 
-CloudTasks usa uma aplicação de tarefas para demonstrar entrega de software, containers, rede, dados e balanceamento. A arquitetura alvo é AWS; o laboratório executável usa LocalStack Pro/Student e Docker Desktop, sem provisionar recursos faturáveis em uma conta AWS.
+O objetivo solicitado é reproduzir o projeto BIA demonstrado no vídeo, incluindo aplicação, comportamento, interface e infraestrutura AWS efetiva. CloudTasks é o nome atual do repositório; a aplicação atual ainda apresenta diferenças e não está aprovada como idêntica. LocalStack Pro/Student e Docker Desktop são ambientes auxiliares de desenvolvimento e testes.
+
+**Referência obrigatória e estado:** [comparação V01-V12](docs/REFERENCE-VIDEO.md). AWS real, ECS sobre EC2, origem GitHub da CodePipeline, ALB/TG/TLS, CloudFront e Amazon Q/MCP fazem parte da entrega final. As homologações locais abaixo preservam seu valor histórico e não encerram esses requisitos. A conexão Windows estava offline na revisão de 08/10/2026; o bootstrap interrompido não recebeu novo aceite.
 
 ## Arquitetura e estado
 
@@ -104,7 +106,7 @@ O histórico e os controles negativos constam de [BLUE-GREEN.md](docs/BLUE-GREEN
 - Manutenção excepcional: `repair-*`, `update-localstack.ps1` e `change-token.ps1`.
 - Regressões isoladas: `.\scripts\localstack\validate-scripts.ps1` e `.\scripts\tests\test-regressions.ps1`. Não requerem AWS/LocalStack em execução; Node 24 é necessário para as fixtures.
 - `scripts/aws` e `aws`: arquivos existentes da etapa 3 para uma conta AWS real, preservados separadamente. Não fazem parte dos comandos do laboratório e não foram executados nesta entrega.
-- [Arquitetura](docs/ARCHITECTURE.md), [decisões](docs/DECISIONS.md), [roadmap oficial de 13 etapas](docs/ROADMAP.md), [CI/CD](docs/CI-CD.md), [LocalStack](docs/LOCALSTACK.md), [runtime](docs/RUNTIME-RECOVERY.md).
+- [Referência obrigatória](docs/REFERENCE-VIDEO.md), [arquitetura](docs/ARCHITECTURE.md), [decisões](docs/DECISIONS.md), [plano interno de etapas](docs/ROADMAP.md), [CI/CD](docs/CI-CD.md), [LocalStack](docs/LOCALSTACK.md), [runtime](docs/RUNTIME-RECOVERY.md).
 - [Rede](docs/NETWORK.md), [banco](docs/DATABASE.md), [ECS](docs/ECS.md), [ALB](docs/LOAD-BALANCING.md), [HTTPS](docs/HTTPS.md), [segurança](SECURITY.md).
 
 O desenho AWS é o alvo arquitetural, não uma declaração de que EC2, CloudFront ou toda a infraestrutura produtiva já foram implantados na AWS real.

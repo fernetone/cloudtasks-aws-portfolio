@@ -1,6 +1,16 @@
-# Roadmap oficial — 13 etapas
+# Plano interno de etapas — referência BIA obrigatória
 
-A ordem abaixo segue o escopo do portfólio. Marcações anteriores de infraestrutura representam execução relatada na máquina do laboratório, não um deploy produtivo AWS certificado pela auditoria.
+A sequência de 13 etapas abaixo foi organizada para o trabalho; não foi fornecida como sequência oficial no vídeo. A [matriz da referência](REFERENCE-VIDEO.md) define o aceite obrigatório: aplicação fiel, pipeline com GitHub/CodeBuild/ECS padrão, infraestrutura AWS, CloudFront e Amazon Q/MCP. Marcações locais anteriores não são aprovação do projeto final.
+
+## Pendências de paridade que impedem o encerramento
+
+- [ ] Reproduzir identidade, layout, textos, navegação e comportamentos da BIA demonstrada, com comparação visual e testes.
+- [ ] Corrigir o indicador de saúde fixo e confirmar o contrato de prazo/prioridade do original antes de migrar dados.
+- [ ] Provisionar infraestrutura AWS efetiva, capacidade ECS/EC2 registrada, ALB/TG por instância e TLS efetivo.
+- [ ] Integrar Source GitHub por conexão autorizada e provar commit -> CodeBuild -> ação ECS padrão -> aplicação atualizada.
+- [ ] Implantar e verificar CloudFront e Amazon Q com MCP ECS e PostgreSQL.
+- [ ] Identificar a revisão original e registrar as configurações não observáveis no recorte; não declarar igualdade integral sem essas fontes.
+- [ ] Restabelecer acesso ao Windows e conferir o bootstrap interrompido. O estado atual não foi validado na revisão de 08/10/2026.
 
 ## 1. Aplicação local
 
@@ -22,7 +32,7 @@ A ordem abaixo segue o escopo do portfólio. Marcações anteriores de infraestr
 ## 4. Infraestrutura AWS
 
 - [x] Laboratório: VPC, seis subnets, duas AZs, route tables e Internet Gateway.
-- [ ] Provisionamento produtivo AWS completo por IaC, se for incluído no escopo futuro; não é pré-requisito para refazer a etapa 8 local.
+- [ ] Provisionamento AWS completo e reproduzível, incluindo capacidade EC2, bootstrap e controles de rede/IAM. É requisito da entrega final solicitada.
 
 ## 5. RDS
 
@@ -83,4 +93,4 @@ As provas manuais e nativas anteriores são históricas. Não aprovam esta imple
 - [ ] Diagrama, evidências, vídeo curto e roteiro de entrevista.
 - [ ] Resolver limitações documentadas, revisar IAM/segurança e diferenciar AWS alvo de emulação.
 
-A etapa 8 foi concluída antes de iniciar a etapa 9. Não antecipar CloudFront, observabilidade ampliada ou Q/MCP para aprovar Blue/Green.
+A ordem histórica dos ensaios locais é preservada. CloudFront e Q/MCP são requisitos do vídeo e precisam ser concluídos para o aceite final. Blue/Green foi solicitado em etapa posterior pela usuária; sua homologação local não substitui o Deploy ECS padrão mostrado na referência. Métricas/dashboard e material de apresentação não devem ampliar silenciosamente o escopo demonstrado.

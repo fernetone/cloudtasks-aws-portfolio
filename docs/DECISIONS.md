@@ -1,5 +1,15 @@
 # Decisões arquiteturais
 
+## ADR-018 - Referência BIA como requisito da entrega final
+
+**Decisão em 08/10/2026:** a [matriz do vídeo V01-V12](REFERENCE-VIDEO.md) define o escopo obrigatório. Entregar aplicação, comportamento e apresentação fiéis à BIA demonstrada, com os serviços efetivos na AWS. LocalStack permanece um ambiente auxiliar; suas adaptações e homologações não representam equivalência integral.
+
+**Motivo:** a usuária reiterou reprodução literal. A documentação anterior dispensava nome/interface, classificava AWS real como expansão possível e chamava as 13 etapas de oficiais. Essas interpretações foram corrigidas. A gravação mostra Deploy Amazon ECS padrão; o Blue/Green solicitado depois é trabalho adicional autorizado, com aceite próprio.
+
+**Consequência:** GitHub integrado à CodePipeline, ECS/EC2 registrados, TG por instância, ALB/TLS efetivos, PostgreSQL durável, CloudFront, Amazon Q/MCP e paridade visual/funcional deixam de ser opcionais. Aprovar o adaptador local não encerra esses itens. Confirmar a revisão original e configurações não exibidas antes de alegar igualdade de código/configuração; credenciais e domínio do autor não são entradas autorizadas da usuária.
+
+**Preservação:** decisões e evidências locais históricas abaixo continuam contextualizadas. Esta revisão altera documentação e critérios, sem remover funções, migrar dados ou reiniciar infraestrutura. A conexão com o Windows estava offline, portanto não foi feita nova afirmação sobre seu runtime nem sobre o bootstrap interrompido.
+
 ## ADR-001 — Um único container de aplicação
 
 O build do React é servido pelo Express em produção. Isso mantém um único serviço ECS e um único Target Group, aproximando o projeto do modelo demonstrativo que originou o portfólio e reduzindo complexidade operacional.

@@ -1,6 +1,6 @@
 # Arquitetura AWS alvo e laboratório executável
 
-CloudTasks representa uma arquitetura AWS/DevOps com LocalStack como ambiente de emulação. O laboratório não declara que há capacidade EC2 real ou toda a infraestrutura de produção implementada.
+O projeto deve reproduzir a referência BIA com aplicação e infraestrutura AWS efetivas. LocalStack é o ambiente auxiliar de emulação. A arquitetura final ainda não está implementada nem homologada integralmente; a [matriz V01-V12](REFERENCE-VIDEO.md) registra as diferenças e as provas obrigatórias.
 
 ## Entrega
 
@@ -48,7 +48,7 @@ Alvo: duas AZs e subnets públicas, aplicação privada e dados privados; ECS so
 
 Laboratório: VPC/subnets/rotas no control plane emulado, tasks pelo executor Docker e conectividade na `cloudtasks-localstack-network`. Não existem container instances EC2 reais. `launchType=EC2` na API e `registeredContainerInstancesCount=0` não contradizem esse executor. O TG local é `ip`, com IP Docker/porta 3000 e sincronização após deploy.
 
-Docker network não equivale ao isolamento físico de VPC/subnets/security groups. A capacidade EC2/ASG/bootstrap e o provisionamento produtivo AWS completo ainda precisariam ser concretizados se o portfólio migrar para AWS real. Isso não exige refazer a base local já comprovada para concluir CI/CD.
+Docker network não equivale ao isolamento físico de VPC/subnets/security groups. Capacidade EC2, bootstrap e provisionamento AWS completo são requisitos pendentes da entrega final. A base local pode ser preservada e usada em testes; sua homologação de CI/CD não implementa esses requisitos.
 
 ## TLS e segredos
 
