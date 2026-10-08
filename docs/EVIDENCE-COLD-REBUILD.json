@@ -1,0 +1,183 @@
+{
+  "schemaVersion": 1,
+  "projectVersion": "1.8.1",
+  "recordedAt": "2026-10-05T00:02:10Z",
+  "result": "SCHEMA_FIX_BOOTSTRAP_AND_TWO_NATIVE_DELIVERIES_VERIFIED",
+  "nativeBlueGreenControllerCertified": false,
+  "rootCause": {
+    "file": "apps/api/src/db.ts",
+    "function": "ensureSchema",
+    "caller": "apps/api/src/server.ts before listen",
+    "failure": "PostgreSQL 23505 in pg_catalog.pg_type / pg_type_typname_nsp_index",
+    "reason": "concurrent first-start CREATE TABLE IF NOT EXISTS is not serialized across two replicas",
+    "fix": "same-client transaction, stable pg_advisory_xact_lock before unchanged DDL, commit/rollback; discard connection if rollback fails",
+    "schemaOrDataChanged": false
+  },
+  "regression": {
+    "unit": {
+      "redFailed": 7,
+      "greenPassed": 7
+    },
+    "realPostgres": {
+      "isolatedSchema": "ct_cold_schema_test_20261004",
+      "rounds": 8,
+      "parallelInitializationsPerRound": 2,
+      "before": {
+        "successes": 12,
+        "failures": 4,
+        "failureCode": "23505"
+      },
+      "after": {
+        "successes": 16,
+        "failures": 0
+      },
+      "productionTasksTableTouched": false,
+      "fixtureWasCompiledNewModuleNotReplacementProductionServer": true
+    }
+  },
+  "quality": {
+    "linux": {
+      "node": "24.19.0",
+      "npmVerifyExitCode": 0,
+      "apiTests": 14,
+      "frontendTests": 4,
+      "nodeControllerTests": 34,
+      "powershell7ParserScripts": 41,
+      "powershell7Regressions": 56
+    },
+    "windows": {
+      "powershell": "5.1.26100.9549",
+      "node": "24.21.0",
+      "processId": 17232,
+      "exitCode": 0,
+      "runtimeSeconds": 93.43,
+      "apiTests": 14,
+      "frontendTests": 4,
+      "nodeControllerTests": 34,
+      "parserScripts": 41,
+      "isolatedRegressions": 56,
+      "scope": "four-file application/test/root-version fix; later console-only correction and documentation not yet synced"
+    }
+  },
+  "coldAttempts": [
+    {
+      "name": "original-1.8.0",
+      "localStackContainerId": "16ee5ec40df46f528fbcc672eff9e513869a1cad8f6ecb0aa857a3ce31683d8d",
+      "runtimeSession": "session-20261004185108637",
+      "nineApisEmptyBeforeBootstrap": true,
+      "startExitCode": 0,
+      "bootstrapExitCode": 1,
+      "result": "FAILED",
+      "cause": "application schema race",
+      "ecsReportedRunningTasksAtFailure": 1,
+      "expected": 2,
+      "laterReplacementHealthDoesNotApproveAttempt": true
+    },
+    {
+      "name": "schema-fixed-1.8.1",
+      "localStackContainerId": "e8371dd5b0ce8215d8a041893de8bfcf8511984e4c530199585e2fca395d1604",
+      "runtimeSession": "session-20261004200942366",
+      "processId": 16780,
+      "exitCode": 1,
+      "runtimeSeconds": 862.54,
+      "nineApisEmptyBeforeBootstrap": true,
+      "startExitCode": 0,
+      "bootstrapExitCode": 1,
+      "result": "FAILED_BEFORE_ECS",
+      "cause": "LocalStack PostgreSQL17.11 package installer: apt exit100; dpkg cannot read archive into decompressor pipe (Cannot allocate memory), lzma error and subsequent EOF",
+      "applicationStarted": false,
+      "codeBuildOrPipelineStarted": false
+    },
+    {
+      "name": "unchanged-distinct-retry-1.8.1",
+      "localStackContainerId": "e76e91cd720e8c8c8b5072dfc5142dfde5f690a965030d118573be1856253ebc",
+      "runtimeSession": "session-20261004205540775",
+      "processId": 20344,
+      "nineApisEmptyBeforeBootstrap": true,
+      "startExitCode": 0,
+      "bootstrapExitCode": 0,
+      "result": "PASSED_BOOTSTRAP_AND_DATABASE_ECS_ALB_HTTPS",
+      "lastObservedStage": "official resume-environment.ps1 bootstrap",
+      "nativeTwoDeliveryOperatorStarted": false,
+      "previousObservation": "UNKNOWN_REMOTE_DEVICE_OFFLINE",
+      "resolvedByReadingPreservedStageFileOn": "2026-10-08",
+      "resolvedStageExitCodes": [0, 0, 0, 0, 0, 0, 0]
+    }
+  ],
+  "providerInvestigation": {
+    "dockerVmMemoryBytes": 4048142336,
+    "containerMemoryLimitBytes": 0,
+    "containerOomKilled": false,
+    "cgroupOom": 0,
+    "cgroupOomKill": 0,
+    "cgroupMemoryPeakBytes": 1380016128,
+    "linuxOvercommitMemory": 1,
+    "package": "postgresql-17",
+    "packageVersion": "17.11-1.pgdg13+2",
+    "packageBytes": 16667232,
+    "signedAptMetadataSha256Verified": true,
+    "isolatedDecompressionExitCodes": {
+      "default-first": 0,
+      "single-thread": 0,
+      "default-second": 0
+    },
+    "threadLimitHypothesisConfirmed": false,
+    "composeOrVmMemoryModified": false,
+    "permanentProviderRootCauseOrRepairProved": false
+  },
+  "preserved": {
+    "persistence": 0,
+    "newBindPerSession": true,
+    "paidAwsUsed": false,
+    "realEc2Instances": false,
+    "applicationUiAndEndpointsUnchanged": true,
+    "infraAndBlueGreenDeploymentLogicUnchanged": true,
+    "externalFallbackUsed": false
+  },
+  "security": {
+    "credentialsPrinted": false,
+    "privateRuntimeFilesIncluded": false,
+    "currentSessionActiveCredentialScanCompleted": false,
+    "reason": "The initial unavailable-session observation is retained. Current 1.8.2 production and final package checks are recorded separately in EVIDENCE-BIA-20261008.json; replacement-session passwords are not represented as historical passwords.",
+    "initialObservation": {
+      "credentialsPrinted": false,
+      "privateRuntimeFilesIncluded": false,
+      "currentSessionActiveCredentialScanCompleted": false,
+      "reason": "remote session unavailable; do not reuse historical image/Source scans as proof for this session"
+    },
+    "sourceAndArtifactsScannedBeforeCorsSessionReplacement": true,
+    "exactHistoricalImagesScannedAgainstCorsSessionCredentials": true,
+    "historicalDatabasePasswordImageScanRechecked": false
+  },
+  "historicalEvidence": "EVIDENCE-BLUE-GREEN-ADAPTER.json describes v1.8.0, not current cold-rebuild certification",
+  "references": [
+    "https://www.postgresql.org/docs/16/explicit-locking.html#ADVISORY-LOCKS",
+    "https://node-postgres.com/features/transactions",
+    "https://docs.localstack.cloud/aws/services/rds/#postgresql-engine"
+  ],
+  "initialResult": "SCHEMA_FIX_VERIFIED_FULL_COLD_REBUILD_PENDING",
+  "updatedAt": "2026-10-08",
+  "acceptancePendingAtOriginalRecord": [
+    "read the current remote bootstrap result without resetting the session",
+    "run database/ECS/ALB/HTTPS tests if not already completed by the guarded operator",
+    "first native BlueGreen pipeline from the default local image and test-cicd",
+    "second distinct native delivery with the same Source SHA, without reset or recovery",
+    "verify exact linked CodeBuilds, artifacts, receipts, bake2+2, retirement0â†’2 and cleanup/lock",
+    "scan final ZIP, exact Source versions and running image against active credentials in memory",
+    "publish reviewed changes with CI of the exact GitHub commit"
+  ],
+  "resolution": {
+    "scope": "LocalStack verification; not AWS parity",
+    "bootstrapHistoryRecovered": true,
+    "nativeDeliverySession": "328b719a69a80e3393edafb5dc4991c8a2f17342b93d8a086d74f3ead698187f",
+    "nativeExecutions": [
+      "14e79707-2736-42ff-98b9-9397ca6db20d",
+      "31070983-45e1-4cae-b378-eb0d54f0ce01"
+    ],
+    "identicalSourceSha256": "35a82a1671699a03e5bf52095884177de799f41fd8457392a3fce1e8a860de0e",
+    "firstAndSecondNativeTestsPassed": true,
+    "noResetBetweenTheseTwoDeliveries": true,
+    "finalApplicationVersion": "1.8.2",
+    "currentEvidence": "EVIDENCE-BIA-20261008.json"
+  }
+}

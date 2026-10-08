@@ -386,7 +386,7 @@ if ($null -eq $db) {
     }
 
     $null = Invoke-AwsLocalJson -Arguments $createArgs
-    Write-Host "RDS solicitado. O laboratorio usa o PostgreSQL padrao embarcado do LocalStack para evitar instalacao dinamica de pacotes." -ForegroundColor Green
+    Write-Host "RDS solicitado. RDS_PG_CUSTOM_VERSIONS=0 seleciona a versao padrao do provider; o LocalStack ainda pode instalar seus pacotes." -ForegroundColor Green
 }
 elseif ([string]$db.DBInstanceStatus -ne "available") {
     if ($RuntimeRecoveryAttempt -ge 2) {
