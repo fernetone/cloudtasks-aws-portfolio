@@ -1,0 +1,112 @@
+{
+  "schemaVersion": 1,
+  "status": "NATIVE_SUCCEEDED_ACCEPTANCE_PENDING",
+  "scope": "public GitHub → native CodeBuild → native ECS standard in Docker/LocalStack",
+  "repository": "fernetone/cloudtasks-aws-portfolio",
+  "branch": "docs/video-reference-20261008",
+  "pipelineName": "cloudtasks-github-pipeline",
+  "commit": "48e5924fdd83a29cc3e1b91c22f2e94e605fb74e",
+  "executionId": "d97f277d-b9c3-426f-86dc-afa8209b4874",
+  "nativeStatus": "Succeeded",
+  "codeBuildId": "cloudtasks-github-build:86c18273",
+  "actions": [
+    {
+      "stage": "Deploy",
+      "name": "DeployECS",
+      "status": "Succeeded",
+      "externalId": "cb72c204"
+    },
+    {
+      "stage": "Build",
+      "name": "BuildAndPush",
+      "status": "Succeeded",
+      "externalId": "cloudtasks-github-build:86c18273"
+    },
+    {
+      "stage": "Source",
+      "name": "SourceGitHub",
+      "status": "Succeeded",
+      "commit": "48e5924fdd83a29cc3e1b91c22f2e94e605fb74e",
+      "externalId": "48e5924fdd83a29cc3e1b91c22f2e94e605fb74e"
+    }
+  ],
+  "nativeArtifactRevisionsPresent": false,
+  "sourceTreeVerification": {
+    "status": "PASSED",
+    "commit": "48e5924fdd83a29cc3e1b91c22f2e94e605fb74e",
+    "expectedTree": "7ff2b8d325c989954b28c5883fa7450ecb63e55a",
+    "executionId": "d97f277d-b9c3-426f-86dc-afa8209b4874",
+    "bucket": "cloudtasks-pipeline-artifacts",
+    "key": "cloudtasks-github-pipeline/SourceOutput/tmpzd_r8mbl.zip",
+    "sha256": "a27a22068d50e36e844952102c6f72d86150e667bf8a8b01e21909511998c8e2",
+    "expectedFiles": 171,
+    "actualFiles": 171,
+    "missingOrDifferent": [],
+    "extra": [],
+    "recordedAt": "2026-10-10T18:37:55.877Z"
+  },
+  "acceptance": {
+    "status": "PENDING",
+    "originalTest": {
+      "status": "FAILED",
+      "phase": "native-execution",
+      "code": "GITHUB_NATIVE_REVISION_MISMATCH",
+      "recordedAt": "2026-10-10T18:38:53.245Z"
+    },
+    "correction": "require matching native Source CommitId/externalExecutionId and compare the entire Source ZIP with the public commit Git tree; validate artifactRevisions when supplied",
+    "correctionDeployedToWindows": false,
+    "physicalReplicasAfterDeployVerified": false,
+    "albTargetsAfterDeployVerified": false,
+    "httpsReleaseAfterDeployVerified": false,
+    "databaseFingerprintAfterDeployVerified": false,
+    "remoteInspection": "Desktop Commander request timed out; queued read-only inspection file write remains executing"
+  },
+  "failures": [
+    {
+      "executionId": "628c012e-f077-45c7-9596-6bd8f336fe7a",
+      "status": "FAILED",
+      "reason": "local agent reserved CodeBuild ID failed initial INSTALL guard",
+      "deployStarted": false
+    },
+    {
+      "executionId": "de81dbc8-35a9-4da8-a8c6-739792bfd93d",
+      "status": "FAILED",
+      "reason": "Docker build missing locked @rollup/rollup-linux-x64-musl",
+      "deployStarted": false
+    },
+    {
+      "executionId": "70ff9038-3f41-43b7-b2a9-90d8480cb19c",
+      "status": "FAILED",
+      "commit": "48e5924fdd83a29cc3e1b91c22f2e94e605fb74e",
+      "reason": "Docker npm ci aborted by ECONNRESET after quality gate passed",
+      "deployStarted": false
+    }
+  ],
+  "validation": {
+    "localVerify": {
+      "exitCode": 0,
+      "passed": 109,
+      "postgresqlSkipped": 5
+    },
+    "sourceValidationTests": 13,
+    "dockerGuardWindowsBuild": {
+      "exitCode": 0,
+      "imageId": "sha256:ec2f37a4f6dca68a10195c97399c4b579074cbc02eec9c6a602a18a4725ae5ad",
+      "appArtifactsPresent": true,
+      "nonRootUser": "node",
+      "healthcheckPresent": true
+    },
+    "deliveredCommitCI": {
+      "commit": "48e5924fdd83a29cc3e1b91c22f2e94e605fb74e",
+      "runId": 38074808739,
+      "conclusion": "success",
+      "ubuntuQualityPostgresqlDocker": "success",
+      "windowsPowerShellSyntaxAnd56Regressions": "success"
+    }
+  },
+  "automaticPushTriggerVerified": false,
+  "githubAppOAuthVerified": false,
+  "realAWSProvisioned": false,
+  "originalVideoCommitIdentified": false,
+  "evidenceThrough": "2026-10-10T18:38:53.245Z"
+}

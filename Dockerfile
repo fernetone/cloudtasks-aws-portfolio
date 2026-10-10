@@ -3,7 +3,7 @@ WORKDIR /app
 COPY package.json package-lock.json ./
 COPY apps/api/package*.json apps/api/
 COPY apps/web/package*.json apps/web/
-RUN npm ci --no-audit --no-fund
+RUN npm ci --no-audit --no-fund && node -e "require('rollup')"
 
 FROM deps AS builder
 COPY . .

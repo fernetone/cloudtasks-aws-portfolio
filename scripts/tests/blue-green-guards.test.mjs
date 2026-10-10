@@ -24,6 +24,58 @@ test('successful AWS operations with no payload do not become JSON failures', ()
   assert.throws(() => awsOutput('unexpected non-JSON text'));
 });
 
+test('a real failed child process preserves exit diagnostics without command text', async () => {
+  const io = new LocalStackDeployment(validateLocalConfig(env), '/unused-test-directory');
+  const canary = 'private-command-canary-20261010';
+  await assert.rejects(io.command(process.execPath, ['-e', "process.stderr.write('" + canary + "'); process.exit(7)"]), error => {
+    assert.equal(error.code, 'AWS_COMMAND_FAILED');
+    assert.equal(error.details?.tool, 'process');
+    assert.equal(error.details?.operation, 'unknown');
+    assert.equal(error.details?.reason, 'exit');
+    assert.equal(error.details?.exitCode, 7);
+    assert.ok(error.details?.elapsedMs >= 0);
+    assert.equal(JSON.stringify(error).includes(canary), false);
+    return true;
+  });
+});
+
+test('a missing AWS executable identifies the requested operation without payload or credentials', async () => {
+  const io = new LocalStackDeployment(validateLocalConfig(env), '/unused-test-directory');
+  io.env.PATH = '/cloudtasks-no-executable-20261010';
+  await assert.rejects(io.aws('ecs', 'register-task-definition', '--cli-input-json', '{"password":"private-payload-canary"}'), error => {
+    assert.equal(error.code, 'AWS_COMMAND_FAILED');
+    assert.equal(error.details?.tool, 'aws');
+    assert.equal(error.details?.operation, 'ecs/register-task-definition');
+    assert.equal(error.details?.reason, 'spawn');
+    assert.equal(error.details?.exitCode, 'ENOENT');
+    assert.equal(JSON.stringify(error).includes('private-payload-canary'), false);
+    return true;
+  });
+});
+
+test('a real child terminated by a POSIX signal is distinguished from a normal exit', { skip: process.platform === 'win32' }, async () => {
+  const io = new LocalStackDeployment(validateLocalConfig(env), '/unused-test-directory');
+  for (const signal of ['SIGTERM', 'SIGKILL']) {
+    await assert.rejects(io.command(process.execPath, ['-e', "process.kill(process.pid, '" + signal + "')"]), error => {
+      assert.equal(error.details?.reason, 'terminated');
+      assert.equal(error.details?.signal, signal);
+      assert.equal(error.details?.exitCode, null);
+      return true;
+    });
+  }
+});
+
+test('an oversized POSIX argument is a spawn failure without copying the argument', { skip: process.platform === 'win32' }, async () => {
+  const io = new LocalStackDeployment(validateLocalConfig(env), '/unused-test-directory');
+  const payload = 'private-oversized-canary'.repeat(20000);
+  await assert.rejects(io.command(process.execPath, ['-e', '', payload]), error => {
+    assert.equal(error.details?.reason, 'spawn');
+    assert.equal(error.details?.exitCode, 'E2BIG');
+    assert.equal(JSON.stringify(error).includes('private-oversized-canary'), false);
+    return true;
+  });
+});
+
 test('Docker task identity requires the exact cluster and task name prefix', () => {
   const id = 'a'.repeat(64);
   const name = 'ls-ecs-' + env.BG_CLUSTER + '-' + execution + '-0-cafebabe';

@@ -1,5 +1,7 @@
 # Qualidade e entrega contínua
 
+A pipeline específica da referência é GitHub → CodeBuild → ECS padrão; consulte [GITHUB-PIPELINE.md](GITHUB-PIPELINE.md). Este documento preserva o fluxo S3 e seu histórico de homologação.
+
 ## GitHub Actions
 
 `.github/workflows/ci.yml` roda em push/PR para `main`, com permissão `contents: read`:

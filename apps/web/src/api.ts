@@ -18,6 +18,12 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
 }
 
 export const taskApi = {
+  health: async (signal?: AbortSignal): Promise<boolean> => {
+    const root = API_URL.replace(/\/+$/, '').replace(/\/api$/, '');
+    const response = await fetch(`${root}/health`, { signal, cache: 'no-store' });
+    const payload = await response.json().catch(() => null) as Record<string, unknown> | null;
+    return response.ok && payload?.status === 'ok' && payload?.database === 'ok';
+  },
   list: () => request<Task[]>('/tasks'),
   create: (payload: { title: string; dueDate: string | null; important: boolean }) =>
     request<Task>('/tasks', { method: 'POST', body: JSON.stringify(payload) }),

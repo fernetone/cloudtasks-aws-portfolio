@@ -1,0 +1,12 @@
+{
+  "name": "cloudtasks-mcp-tools",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24 <25"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/server-postgres": "0.6.2"
+  }
+}

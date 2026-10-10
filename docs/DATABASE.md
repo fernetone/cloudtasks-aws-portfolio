@@ -22,7 +22,27 @@ A senha é gerada na primeira criação e armazenada no Secrets Manager. Os scri
 .\scripts\localstack\create-database.ps1
 ```
 
-O script é idempotente: reutiliza o secret e a instância quando já existem e estão saudáveis. O laboratório usa `RDS_PG_CUSTOM_VERSIONS=0`, evitando instalação dinâmica de pacotes PostgreSQL dentro do container LocalStack. A API RDS continua declarando `engine-version=16`, mas o PostgreSQL efetivamente executado localmente é a versão padrão embarcada do LocalStack. Em AWS real, o alvo permanece PostgreSQL 16.
+O script é idempotente: reutiliza o secret e a instância quando já existem e estão saudáveis. O laboratório usa `RDS_PG_CUSTOM_VERSIONS=0`, selecionando a versão padrão do provider, **não garantindo ausência de instalação de pacotes**. A documentação RDS atual informa PostgreSQL 17 como padrão; a página genérica de configuração ainda cita outro padrão. A API continua declarando `engine-version=16`; só uma consulta SQL comprova a versão efetiva. Em AWS real, o alvo permanece PostgreSQL 16. [Referência do provider](https://docs.localstack.cloud/aws/services/rds/#postgresql-engine).
+
+Uma tentativa fria de 04/10/2026 falhou antes do ECS: apt exit100 ao instalar PostgreSQL17.11, com `Cannot allocate memory` no descompactador dpkg e EOF subsequente. Não houve OOM no cgroup nem prova de pacote corrompido: o mesmo pacote, conferido pelo SHA256 do apt, descompactou normalmente nos ensaios isolados. Não se afirma correção permanente da causa interna; a tentativa permanece falha. Isso é comportamento observado do provider local, não do RDS AWS nem da aplicação.
+
+## Primeira criação concorrente — v1.8.1
+
+Cada réplica chama `ensureSchema()` antes de abrir a porta HTTP. `IF NOT EXISTS` não serializava as duas criações simultâneas: uma startup falhou com PostgreSQL23505 em `pg_type_typname_nsp_index`. O teste isolado no PostgreSQL real reproduziu quatro falhas em oito rodadas de duas inicializações; com a correção, as 16 passaram.
+
+`ensureSchema()` adquire um único client do pool, inicia transação, obtém `pg_advisory_xact_lock` com chave estável e só então executa o DDL original. Commit/rollback encerram o lock. Erros continuam propagados; se rollback falhar, a conexão é descartada. Não há retry de erro de catálogo, criação manual prévia da tabela nem alteração de schema/dados. Os sete testes de transação/erro são unitários com IO PostgreSQL simulado; a prova concorrente foi executada separadamente no banco real, em schema isolado, sem tocar a tabela da aplicação.
+
+Isso resolve a inicialização idempotente do schema atual, não substitui um sistema de migrações versionadas para alterações futuras incompatíveis. [Locks PostgreSQL](https://www.postgresql.org/docs/16/explicit-locking.html#ADVISORY-LOCKS); [transações node-postgres](https://node-postgres.com/features/transactions); [registro de execução](EVIDENCE-COLD-REBUILD.json).
+
+## Prazo textual e compatibilidade — v1.8.2
+
+O campo Data/Prazo aceita texto de até 255 caracteres. A migração adiciona `due_text TEXT` na mesma transação serializada; mantém `due_date DATE`, a tabela, os IDs e os demais dados. Datas ISO válidas ficam apenas em `due_date`, com `due_text` nulo. Textos livres ficam apenas em `due_text`, com `due_date` nulo. A leitura prioriza uma data não nula para reconhecer edições de clientes anteriores. A atualização altera somente os campos enviados, evitando que duas réplicas sobrescrevam mudanças independentes de prioridade e conclusão.
+
+O trigger `cloudtasks_legacy_deadline` limpa o texto anterior quando um cliente antigo muda a coluna DATE sem mudar o texto. Assim, uma edição texto → data → prazo nulo pelo cliente antigo não ressuscita o texto anterior. Atualizações que não mudam a data preservam o prazo; a nova API troca os dois campos juntos.
+
+A compatibilidade com releases anteriores cobre os contratos ISO/nulo e a preservação física dos novos textos. A API antiga não aceita prazo textual e o lê como nulo. Em uma linha textual cuja DATE já é nula, um comando antigo que grava novamente nulo é indistinguível de uma edição de outro campo; para limpar esse prazo, usar a API 1.8.2. Uma reversão de imagem não desfaz a migração nem apaga os textos, mas a interface antiga não os apresenta. Não tratar isso como paridade de leitura textual entre releases.
+
+Os testes de integração criam um schema isolado no PostgreSQL real, exercitam inicializações concorrentes, preservação de tarefas antigas, CRUD textual, datas/nulos, edições por cliente anterior e duas atualizações simultâneas. `TEST_DATABASE_URL` habilita esses testes; a CI fornece PostgreSQL 17. Sem essa variável eles ficam explicitamente ignorados, e não contam como prova de banco real.
 
 ## Recuperação automática de RDS preso
 

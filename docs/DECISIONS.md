@@ -1,5 +1,15 @@
 # Decisões arquiteturais
 
+## ADR-018 - Referência BIA como requisito da entrega final
+
+**Decisão em 08/10/2026:** a [matriz do vídeo V01-V12](REFERENCE-VIDEO.md) define o escopo obrigatório. Entregar aplicação, comportamento e apresentação fiéis à BIA demonstrada. A revisão de 10/10 recuperou a restrição anterior de execução exclusivamente local em Docker/LocalStack Student/Pro, sem implantação paga na AWS. Os componentes devem ser funcionais dentro desse ambiente; adaptações e homologações não representam paridade AWS integral.
+
+**Motivo:** a usuária reiterou reprodução literal. A documentação anterior dispensava nome/interface, classificava AWS real como expansão possível e chamava as 13 etapas de oficiais. Essas interpretações foram corrigidas. A gravação mostra Deploy Amazon ECS padrão; o Blue/Green solicitado depois é trabalho adicional autorizado, com aceite próprio.
+
+**Consequência:** os componentes da referência e a fidelidade visual/funcional permanecem no escopo. CloudFront e Q/MCP não são extras opcionais. GitHub Source, ECS/EC2/TG instance e terminação TLS mantêm suas diferenças do executor local documentadas, sem fabricar equivalência ou exigir conta AWS paga. Aprovar o adaptador não encerra os componentes restantes. Confirmar a revisão original e configurações não exibidas antes de alegar igualdade de código/configuração; credenciais e domínio do autor não são entradas autorizadas da usuária.
+
+**Preservação:** decisões e evidências locais históricas abaixo continuam contextualizadas. A revisão inicial alterou documentação e critérios durante a desconexão. Após a reconexão, a versão 1.8.2 implementou as correções de aplicação, com migração aditiva, e o acesso pelo ALB exigiu uma nova sessão LocalStack com banco restaurado. Esses resultados são registrados em [EVIDENCE-BIA-20261008.json](EVIDENCE-BIA-20261008.json).
+
 ## ADR-001 — Um único container de aplicação
 
 O build do React é servido pelo Express em produção. Isso mantém um único serviço ECS e um único Target Group, aproximando o projeto do modelo demonstrativo que originou o portfólio e reduzindo complexidade operacional.
@@ -133,3 +143,25 @@ Na AWS alvo, usar um controlador ECS Blue/Green ou CodeDeploy oficialmente supor
 **Motivo comprovado:** a aplicação local era saudável, mas a condição nova em `application` aceitava apenas pipeline UUID e rejeitava o bootstrap antes de criar candidata. Três regressões distinguem local válido, candidato local inválido e metadata arbitrária inválida; duas tasks isoladas executaram a imagem default e as provas de aplicação sem mutar produção.
 
 **Consequência:** a reconstrução do laboratório mantém seu bootstrap existente. Essa prova não é uma pipeline inicial ao vivo a partir de local, nem uma reconstrução fria completa da nova versão.
+
+## ADR-019 — Retomada sem perda de dados e autorização local preservada
+
+**Decisão em 10/10/2026:** preservar `PERSISTENCE=0` e a arquitetura aceita; não recriar o LocalStack como preflight. Antes de iniciar o container existente, copiar e verificar o armazenamento físico RDS. Extrair/restaurar o PostgreSQL anterior e comprovar o mesmo fingerprint antes das tasks. Dados de negócio não são substituídos por fixtures.
+
+**Escopo:** a instrução de tratar o trabalho como projeto completo não revogou a decisão anterior de não pagar AWS. A redação de 08/10 que exigia implantação faturável para encerramento foi corrigida. Continuar CloudFront, CloudWatch e Q/MCP no ambiente local, com limitações verificadas.
+
+**Aceite:** duas entregas nativas distintas do mesmo Source passaram sem reset, e a imagem final passou API/PostgreSQL/browser. Falhas de 08/10 permanecem falhas e sua causa não é afirmada. Os diagnósticos novos têm allowlist de campos e nunca incluem comando completo, stderr, ambiente ou valores secretos. [Evidência](EVIDENCE-REBOOT-20261010.json).
+
+## ADR-020 — Componentes adicionais funcionais e limites medidos
+
+CloudFront é verificado como proxy próprio com origin ALB, assets e CRUD reais, terminando Disabled. Não imitar cache/redirect/bloqueio que o provider não aplica. CloudWatch recebe apenas métricas customizadas derivadas de Docker, targets e health real; o alarme controlado usa HTTP isolado, sem forçar estado nem causar indisponibilidade na aplicação.
+
+## ADR-021 — Q legado, MCP oficial e leitura delimitada
+
+Preservar Amazon Q 1.19.7 e o agente bia; não substituir silenciosamente a interface da referência por Kiro. O cliente roda separado com DNS externo para login, enquanto ECS/PostgreSQL permanecem no runtime local. Dependências MCP usam filesystem Linux interno e versões centrais compatíveis fixadas. ECS nega escrita/sensitive data; PostgreSQL usa role SELECT-only conferida contra o RDS atual. Validar MCP, configuração Q e chat autenticado como três resultados distintos.
+
+## ADR — Origem GitHub nativa e prova integral do Source
+
+A pipeline da referência usa GitHub público/CodeConnections, CodeBuild e ECS padrão, conservando o fluxo S3 nos scripts/histórico anterior. A revisão completa deve coincidir com CommitId e externalExecutionId nativos; artifactRevisions, opcional na API e omitido pelo provider observado, é conferido quando fornecido. O aceite também compara todos os caminhos/hashes Git blob do ZIP Source com o tree público do commit, sem aceitar manifesto truncado, arquivos extras, ausentes ou duplicados. Nenhum campo nativo é sintetizado para produzir uma aprovação.
+
+Succeeded no plano de controle continua insuficiente: réplicas físicas, digest, targets, release HTTPS e banco têm critérios próprios. OAuth/trigger automático por push e infraestrutura AWS não foram certificados. Paradas com PERSISTENCE=0 produzem uma sessão nativa nova; histórico preservado em arquivos não é apresentado como estado vivo das APIs. [Critérios e estado](GITHUB-PIPELINE.md).

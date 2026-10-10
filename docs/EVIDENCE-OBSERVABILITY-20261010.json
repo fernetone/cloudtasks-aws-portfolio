@@ -1,0 +1,405 @@
+{
+  "schemaVersion": 1,
+  "recordDate": "2026-10-10",
+  "scope": "real Docker/ALB/PostgreSQL measurements and custom CloudWatch provider evaluation; no AWS-native ECS telemetry parity",
+  "functionalTest": {
+    "schemaVersion": 1,
+    "status": "PASSED",
+    "scope": "actual custom metrics/logs/dashboard and isolated evaluated alarm in LocalStack; not AWS native ECS telemetry",
+    "localStackContainerId": "87dbf59bfa793f1e8210be26d20b2d01bdae7010df54aa0922379b2ff3f16e5e",
+    "cluster": "cloudtasks-cluster-r20261008153148448",
+    "service": "cloudtasks-service",
+    "sample": {
+      "scope": "observed Docker tasks, ALB targets and real database-aware HTTP health",
+      "sampleId": "e0b5334d-8047-4d91-a0f2-190bfbaf7b42",
+      "localStackContainerId": "87dbf59bfa793f1e8210be26d20b2d01bdae7010df54aa0922379b2ff3f16e5e",
+      "cluster": "cloudtasks-cluster-r20261008153148448",
+      "service": "cloudtasks-service",
+      "physicalRunning": 2,
+      "verifiedHealthy": 2,
+      "probeUp": 1,
+      "probeLatencyMs": 953.5920000000006,
+      "tasks": [
+        {
+          "taskArn": "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261008153148448/5238f5f4-e9db-47ed-b68d-484cd31c5b66",
+          "containerId": "d054ceb64d1eea109c85a55f950f2122e0c10ef95e995f0cd360938388972b45",
+          "ip": "172.18.0.3",
+          "running": true,
+          "healthy": true
+        },
+        {
+          "taskArn": "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261008153148448/9654804f-c27d-4551-b852-b96db9c84045",
+          "containerId": "8bf76fd10b39548d91359702edd5f5cea930abd52bdb85206cb77f7cfdc0450f",
+          "ip": "172.18.0.4",
+          "running": true,
+          "healthy": true
+        }
+      ],
+      "time": "2026-10-10T09:53:40.099Z"
+    },
+    "dashboardName": "cloudtasks-87dbf59bfa79",
+    "dashboardWidgetsReadBack": 4,
+    "metricsReadBack": true,
+    "logSampleReadBack": true,
+    "monitorPid": 13440,
+    "continuousMonitoringVerified": true,
+    "heartbeat": {
+      "pid": 13440,
+      "sample": {
+        "scope": "observed Docker tasks, ALB targets and real database-aware HTTP health",
+        "sampleId": "ce0ad701-9330-4a48-9666-06908331f8f8",
+        "localStackContainerId": "87dbf59bfa793f1e8210be26d20b2d01bdae7010df54aa0922379b2ff3f16e5e",
+        "cluster": "cloudtasks-cluster-r20261008153148448",
+        "service": "cloudtasks-service",
+        "physicalRunning": 2,
+        "verifiedHealthy": 2,
+        "probeUp": 1,
+        "probeLatencyMs": 856.2474000000002,
+        "tasks": [
+          {
+            "taskArn": "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261008153148448/5238f5f4-e9db-47ed-b68d-484cd31c5b66",
+            "containerId": "d054ceb64d1eea109c85a55f950f2122e0c10ef95e995f0cd360938388972b45",
+            "ip": "172.18.0.3",
+            "running": true,
+            "healthy": true
+          },
+          {
+            "taskArn": "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261008153148448/9654804f-c27d-4551-b852-b96db9c84045",
+            "containerId": "8bf76fd10b39548d91359702edd5f5cea930abd52bdb85206cb77f7cfdc0450f",
+            "ip": "172.18.0.4",
+            "running": true,
+            "healthy": true
+          }
+        ],
+        "time": "2026-10-10T09:54:08.447Z"
+      },
+      "recordedAt": "2026-10-10T09:54:19.348Z"
+    },
+    "isolatedAlarm": {
+      "scope": "real isolated HTTP 200/503/200; provider evaluates published measurements, no SetAlarmState; production was kept available",
+      "alarmName": "cloudtasks-isolated-probe-87dbf59bfa79-ec483670",
+      "transitions": [
+        {
+          "phase": "healthy",
+          "state": "INSUFFICIENT_DATA",
+          "time": "2026-10-10T09:54:08.162Z"
+        },
+        {
+          "phase": "healthy",
+          "state": "OK",
+          "time": "2026-10-10T09:54:20.853Z"
+        },
+        {
+          "phase": "failed-http-probe",
+          "state": "ALARM",
+          "time": "2026-10-10T09:54:35.290Z"
+        },
+        {
+          "phase": "recovered-http-probe",
+          "state": "OK",
+          "time": "2026-10-10T09:55:12.949Z"
+        }
+      ],
+      "samples": [
+        {
+          "up": 1,
+          "time": "2026-10-10T09:54:03.011Z"
+        },
+        {
+          "up": 1,
+          "time": "2026-10-10T09:54:13.182Z"
+        },
+        {
+          "up": 0,
+          "time": "2026-10-10T09:54:20.874Z"
+        },
+        {
+          "up": 0,
+          "time": "2026-10-10T09:54:30.091Z"
+        },
+        {
+          "up": 1,
+          "time": "2026-10-10T09:54:35.298Z"
+        },
+        {
+          "up": 1,
+          "time": "2026-10-10T09:54:46.644Z"
+        },
+        {
+          "up": 1,
+          "time": "2026-10-10T09:55:03.045Z"
+        },
+        {
+          "up": 1,
+          "time": "2026-10-10T09:55:12.959Z"
+        }
+      ],
+      "setAlarmStateUsed": false,
+      "productionOutageInduced": false,
+      "serverClosed": true
+    },
+    "externalNotificationsConfigured": false,
+    "recordedAt": "2026-10-10T09:55:19.741Z"
+  },
+  "stages": [
+    {
+      "name": "unit",
+      "exitCode": 0,
+      "signal": null,
+      "durationMs": 471
+    },
+    {
+      "name": "parser",
+      "exitCode": 0,
+      "signal": null,
+      "durationMs": 852
+    },
+    {
+      "name": "create",
+      "exitCode": 0,
+      "signal": null,
+      "durationMs": 60730
+    },
+    {
+      "name": "status",
+      "exitCode": 0,
+      "signal": null,
+      "durationMs": 5525
+    },
+    {
+      "name": "test",
+      "exitCode": 0,
+      "signal": null,
+      "durationMs": 111248
+    },
+    {
+      "name": "final-status",
+      "exitCode": 0,
+      "signal": null,
+      "durationMs": 6148
+    }
+  ],
+  "targetReconciliation": {
+    "status": "PASSED",
+    "previousAttempt": "FAILED",
+    "previousError": "SAFE_OPERATION_FAILED",
+    "before": {
+      "runtime": {
+        "localStackContainerId": "87dbf59bfa793f1e8210be26d20b2d01bdae7010df54aa0922379b2ff3f16e5e",
+        "cluster": "cloudtasks-cluster-r20261008153148448",
+        "service": "cloudtasks-service"
+      },
+      "service": {
+        "running": 2,
+        "desired": 2,
+        "pending": 0,
+        "taskDefinition": "arn:aws:ecs:us-east-1:000000000000:task-definition/cloudtasks:3"
+      },
+      "definition": {
+        "family": "cloudtasks",
+        "revision": 3,
+        "images": [
+          "000000000000.dkr.ecr.us-east-1.localhost.localstack.cloud:4566/cloudtasks:pipeline-59d0bd08-487f-46a6-94ed-88884ec052d2"
+        ]
+      },
+      "containers": [
+        {
+          "taskArn": "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261008153148448/fdf252f3-b3e9-4cfa-884a-c807456b48d0",
+          "id": "cec60b356af8bcb0bda19f4d589ae0081df310545468d34a04331f1ff9371d5a",
+          "created": "2026-10-10T11:00:26.08360621Z",
+          "startedAt": "2026-10-10T11:00:28.186435438Z",
+          "running": true,
+          "health": "healthy",
+          "image": "000000000000.dkr.ecr.us-east-1.localhost.localstack.cloud:4566/cloudtasks:pipeline-59d0bd08-487f-46a6-94ed-88884ec052d2",
+          "digest": "sha256:88608a832aa41d7e24d04bfd0a96952f350ce22af4db9388528c07eb0c915985",
+          "ip": "172.18.0.5"
+        },
+        {
+          "taskArn": "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261008153148448/33c519e9-a88d-4b50-9e01-28d09501acac",
+          "id": "1b3181bbe5f31c3b3775240bcd5bfb148dc71bc7e4adce092759de042d5dbfde",
+          "created": "2026-10-10T11:00:37.474642246Z",
+          "startedAt": "2026-10-10T11:00:44.714394905Z",
+          "running": true,
+          "health": "healthy",
+          "image": "000000000000.dkr.ecr.us-east-1.localhost.localstack.cloud:4566/cloudtasks:pipeline-59d0bd08-487f-46a6-94ed-88884ec052d2",
+          "digest": "sha256:88608a832aa41d7e24d04bfd0a96952f350ce22af4db9388528c07eb0c915985",
+          "ip": "172.18.0.6"
+        }
+      ],
+      "targets": [
+        {
+          "Target": {
+            "Id": "172.18.0.3",
+            "Port": 3000,
+            "AvailabilityZone": "all"
+          },
+          "HealthCheckPort": "3000",
+          "TargetHealth": {
+            "State": "healthy"
+          }
+        },
+        {
+          "Target": {
+            "Id": "172.18.0.4",
+            "Port": 3000,
+            "AvailabilityZone": "all"
+          },
+          "HealthCheckPort": "3000",
+          "TargetHealth": {
+            "State": "healthy"
+          }
+        }
+      ],
+      "localStack": {
+        "id": "87dbf59bfa793f1e8210be26d20b2d01bdae7010df54aa0922379b2ff3f16e5e",
+        "startedAt": "2026-10-10T07:46:26.284115415Z",
+        "restarts": 0
+      },
+      "recordedAt": "2026-10-10T13:58:29.708Z"
+    },
+    "oldTasks": [
+      {
+        "taskArn": "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261008153148448/5238f5f4-e9db-47ed-b68d-484cd31c5b66",
+        "lastStatus": "STOPPED",
+        "desiredStatus": "STOPPED",
+        "stoppedAt": 1791629989.895945
+      },
+      {
+        "taskArn": "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261008153148448/9654804f-c27d-4551-b852-b96db9c84045",
+        "lastStatus": "STOPPED",
+        "desiredStatus": "STOPPED",
+        "stoppedAt": 1791629989.814953
+      }
+    ],
+    "oldContainers": [
+      {
+        "id": "d054ceb64d1eea109c85a55f950f2122e0c10ef95e995f0cd360938388972b45",
+        "taskArn": "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261008153148448/5238f5f4-e9db-47ed-b68d-484cd31c5b66",
+        "name": "/ls-ecs-cloudtasks-cluster-r20261008153148448-5238f5f4-e9db-47ed-b68d-484cd31c5b66-0-024f6a08",
+        "ip": "172.18.0.3"
+      },
+      {
+        "id": "8bf76fd10b39548d91359702edd5f5cea930abd52bdb85206cb77f7cfdc0450f",
+        "taskArn": "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261008153148448/9654804f-c27d-4551-b852-b96db9c84045",
+        "name": "/ls-ecs-cloudtasks-cluster-r20261008153148448-9654804f-c27d-4551-b852-b96db9c84045-0-85b77524",
+        "ip": "172.18.0.4"
+      }
+    ],
+    "steps": [
+      {
+        "action": "newTargetsAndDatabaseAwareTLSHealthVerified",
+        "completed": true
+      },
+      {
+        "action": "stoppedOnlyTwoNonCanonicalOwnedContainers",
+        "completed": true
+      }
+    ],
+    "after": {
+      "targets": [
+        {
+          "Target": {
+            "Id": "172.18.0.5",
+            "Port": 3000,
+            "AvailabilityZone": "all"
+          },
+          "HealthCheckPort": "3000",
+          "TargetHealth": {
+            "State": "healthy"
+          }
+        },
+        {
+          "Target": {
+            "Id": "172.18.0.6",
+            "Port": 3000,
+            "AvailabilityZone": "all"
+          },
+          "HealthCheckPort": "3000",
+          "TargetHealth": {
+            "State": "healthy"
+          }
+        }
+      ],
+      "physicalRunning": 2,
+      "canonicalContainers": [
+        {
+          "taskArn": "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261008153148448/fdf252f3-b3e9-4cfa-884a-c807456b48d0",
+          "id": "cec60b356af8bcb0bda19f4d589ae0081df310545468d34a04331f1ff9371d5a",
+          "created": "2026-10-10T11:00:26.08360621Z",
+          "startedAt": "2026-10-10T11:00:28.186435438Z",
+          "running": true,
+          "health": "healthy",
+          "image": "000000000000.dkr.ecr.us-east-1.localhost.localstack.cloud:4566/cloudtasks:pipeline-59d0bd08-487f-46a6-94ed-88884ec052d2",
+          "digest": "sha256:88608a832aa41d7e24d04bfd0a96952f350ce22af4db9388528c07eb0c915985",
+          "ip": "172.18.0.5"
+        },
+        {
+          "taskArn": "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261008153148448/33c519e9-a88d-4b50-9e01-28d09501acac",
+          "id": "1b3181bbe5f31c3b3775240bcd5bfb148dc71bc7e4adce092759de042d5dbfde",
+          "created": "2026-10-10T11:00:37.474642246Z",
+          "startedAt": "2026-10-10T11:00:44.714394905Z",
+          "running": true,
+          "health": "healthy",
+          "image": "000000000000.dkr.ecr.us-east-1.localhost.localstack.cloud:4566/cloudtasks:pipeline-59d0bd08-487f-46a6-94ed-88884ec052d2",
+          "digest": "sha256:88608a832aa41d7e24d04bfd0a96952f350ce22af4db9388528c07eb0c915985",
+          "ip": "172.18.0.6"
+        }
+      ],
+      "albDatabaseAwareHealth200": true
+    },
+    "recordedAt": "2026-10-10T14:05:17.509Z"
+  },
+  "postReconciliation": {
+    "heartbeat": {
+      "pid": 13440,
+      "sample": {
+        "scope": "observed Docker tasks, ALB targets and real database-aware HTTP health",
+        "sampleId": "ba5c225e-0c5f-4653-a0bc-b952b417b77d",
+        "localStackContainerId": "87dbf59bfa793f1e8210be26d20b2d01bdae7010df54aa0922379b2ff3f16e5e",
+        "cluster": "cloudtasks-cluster-r20261008153148448",
+        "service": "cloudtasks-service",
+        "physicalRunning": 2,
+        "verifiedHealthy": 2,
+        "probeUp": 1,
+        "probeLatencyMs": 1576.6245999988168,
+        "tasks": [
+          {
+            "taskArn": "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261008153148448/fdf252f3-b3e9-4cfa-884a-c807456b48d0",
+            "containerId": "cec60b356af8bcb0bda19f4d589ae0081df310545468d34a04331f1ff9371d5a",
+            "ip": "172.18.0.5",
+            "running": true,
+            "healthy": true
+          },
+          {
+            "taskArn": "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261008153148448/33c519e9-a88d-4b50-9e01-28d09501acac",
+            "containerId": "1b3181bbe5f31c3b3775240bcd5bfb148dc71bc7e4adce092759de042d5dbfde",
+            "ip": "172.18.0.6",
+            "running": true,
+            "healthy": true
+          }
+        ],
+        "time": "2026-10-10T14:13:55.800Z"
+      },
+      "recordedAt": "2026-10-10T14:14:23.118Z"
+    },
+    "productionAlarmCheckpoint": {
+      "alarms": [
+        {
+          "name": "cloudtasks-healthy-replicas",
+          "state": "OK"
+        },
+        {
+          "name": "cloudtasks-health-probe",
+          "state": "OK"
+        }
+      ],
+      "observedIn": "status-observability native process 12484, exit code 0",
+      "sourceSampleTime": "2026-10-10T14:11:41.254Z"
+    },
+    "causeOfTaskReplacementProven": false
+  },
+  "limits": {
+    "notificationsConfigured": false,
+    "monitorRequiresCreateAfterWindowsRestart": true
+  }
+}

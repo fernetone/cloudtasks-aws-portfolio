@@ -26,6 +26,11 @@ foreach ($relative in @('package.json','package-lock.json','Dockerfile','.docker
     'buildspec.yml','buildspec.localstack.yml','buildspec.bluegreen.localstack.yml',
     'scripts/localstack/blue-green-controller.mjs','scripts/localstack/blue-green-localstack.mjs',
     'scripts/tests/blue-green.test.mjs','scripts/tests/blue-green-guards.test.mjs',
+    'scripts/localstack/cloudfront-config.mjs','scripts/localstack/localstack-tools.mjs',
+    'scripts/localstack/observability-config.mjs','scripts/mcp/mcp-config.mjs','scripts/mcp/mcp-session-lifecycle.mjs',
+    'scripts/mcp/mcp-aws-input.mjs',
+    'scripts/tests/cloudfront.test.mjs','scripts/tests/observability.test.mjs','scripts/tests/mcp.test.mjs',
+    'scripts/localstack/github-pipeline-config.mjs','scripts/tests/github-pipeline.test.mjs',
     'apps/api/package.json','apps/api/tsconfig.json',
     'apps/web/package.json','apps/web/tsconfig.json','apps/web/vite.config.ts','apps/web/index.html')) {
     if (-not (Test-Path -LiteralPath (Join-Path $projectRoot $relative) -PathType Leaf)) { throw "Source requerido ausente: $relative" }

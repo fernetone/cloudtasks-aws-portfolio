@@ -1,6 +1,18 @@
-# Roadmap oficial — 13 etapas
+# Plano interno de etapas — referência BIA obrigatória
 
-A ordem abaixo segue o escopo do portfólio. Marcações anteriores de infraestrutura representam execução relatada na máquina do laboratório, não um deploy produtivo AWS certificado pela auditoria.
+A sequência de 13 etapas abaixo foi organizada para o trabalho; não foi fornecida como sequência oficial no vídeo. A [matriz da referência](REFERENCE-VIDEO.md) define o aceite obrigatório: aplicação fiel, pipeline com GitHub/CodeBuild/ECS padrão, infraestrutura AWS, CloudFront e Amazon Q/MCP. A execução autorizada é local, em Docker/LocalStack Student/Pro. Cada componente requer prova funcional atual; limitações do emulador não podem ser apresentadas como paridade AWS.
+
+## Pendências de paridade que impedem o encerramento
+
+- [x] Implementar os elementos de interface observáveis no vídeo e verificar desktop/celular. A revisão filmada e os fluxos não exibidos ainda impedem afirmar igualdade integral.
+- [x] Substituir o indicador fixo por saúde real; aceitar prazo textual com migração compatível e permitir editar prioridade. Contratos ocultos do original continuam não verificados.
+- [x] Preservar e verificar rede, banco, duas réplicas ECS, ALB/TG e transporte TLS no LocalStack. ECS/EC2 e TG instance permanecem diferenças arquiteturais explícitas do executor Docker, sem provisionamento pago.
+- [x] Implementar GitHub público/CodeConnections e comprovar commit completo, ZIP/Git tree, CodeBuild e ação ECS padrão nativos. OAuth de GitHub App real e trigger automático por push não foram certificados.
+- [ ] Concluir o aceite físico da execução GitHub aprovada pelas APIs: duas réplicas/digest, targets atuais, release HTTPS e banco preservado. [Estado e falhas](EVIDENCE-GITHUB-PIPELINE-20261010.json).
+- [x] Configurar e testar o proxy CloudFront; preservar Disabled e documentar limites de cache/redirect/alias/bloqueio.
+- [ ] Concluir a validação e demonstração do agente Amazon Q após login Builder ID; testar os dois MCPs independentemente.
+- [ ] Identificar a revisão original e registrar as configurações não observáveis no recorte; não declarar igualdade integral sem essas fontes.
+- [x] Reconectar o Windows, ler as sete etapas aprovadas da tentativa de 04/10 e verificar as sessões de 08/10 separadamente. [Evidências atuais](EVIDENCE-BIA-20261008.json).
 
 ## 1. Aplicação local
 
@@ -22,13 +34,13 @@ A ordem abaixo segue o escopo do portfólio. Marcações anteriores de infraestr
 ## 4. Infraestrutura AWS
 
 - [x] Laboratório: VPC, seis subnets, duas AZs, route tables e Internet Gateway.
-- [ ] Provisionamento produtivo AWS completo por IaC, se for incluído no escopo futuro; não é pré-requisito para refazer a etapa 8 local.
+- [x] Infraestrutura local reproduzível por scripts. Provisionamento faturável na AWS está fora da autorização atual; não bloqueia a entrega local.
 
 ## 5. RDS
 
 - [x] PostgreSQL executável, Secrets Manager e `SELECT 1`.
 - [x] Banco compartilhado pelas duas réplicas.
-- [ ] Registrar versão PostgreSQL efetiva via SQL; `EngineVersion` da API não prova o engine do emulador.
+- [x] Registrar via SQL PostgreSQL 17.11 (Debian 17.11-1.pgdg13+2). A API solicita engine 16; o emulador usa seu provider padrão.
 
 ## 6. ECS
 
@@ -59,28 +71,38 @@ A ordem abaixo segue o escopo do portfólio. Marcações anteriores de infraestr
 - [x] Implementar controlador/adaptador dentro de um segundo CodeBuild da CodePipeline V1; Source S3/artifacts/imagem/recibo correlacionados, sem fallback externo.
 - [x] Testar estado/guards, health semântica, identidade, troca parcial, rollback, cleanup, retenção do lock e fronteira de convergência.
 - [x] No Source final bb052, aprovar duas entregas consecutivas, rejeição e rollback após promoção; uma normal final distinta passou após erro npm INSTALL registrado. Convergência0→2, bake2+2, HTTPS/CRUD, digest, limpeza e lock foram comprovados na [evidência atual](EVIDENCE-BLUE-GREEN-ADAPTER.json).
-- [ ] Certificar o controlador AWS nativo em uma implantação AWS autorizada. O emulador testado não demonstrou os requisitos; isso é separado do aceite do adaptador local.
+- [x] Após o reinício de 10/10, aprovar duas execuções distintas do mesmo Source sem reset: bake 74,229 s e 96,229 s, duas réplicas finais saudáveis, seis flags de cleanup e lock ausente. [Evidência](EVIDENCE-REBOOT-20261010.json).
+- [ ] Certificação do controlador AWS nativo permanece não demonstrada pelo emulador; não autoriza provisionamento pago nem é tratada como conclusão da arquitetura AWS.
 
 O adaptador é `LocalStackBlueGreenAdapter`, selecionado com `-DeploymentMode BlueGreen`. Coexistem duas tasks blue e duas green; HTTP/HTTPS, CRUD entre revisões e bake ≥60 s precedem a convergência canônica 0→2 enquanto green atende. O serviço/TG principal, UI e banco são preservados. Candidata inválida não promove; falha após promoção restaura blue e mantém a pipeline falha. [Desenho e limites](BLUE-GREEN.md).
 
-As provas manuais e nativas anteriores são históricas. Não aprovam esta implementação ou CodeDeploy mockado. A certificação AWS nativa não foi executada e não bloqueia o uso honesto do laboratório por adaptador.
+As duas entregas nativas 1.8.1 e a entrega 1.8.2 anteriores à troca CORS passaram no respectivo runtime. Na sessão nova, duas tentativas Blue/Green falharam: houve recuperação manual de cleanup na primeira e rollback/cleanup automático na segunda. Essas falhas de 08/10 permanecem reprovadas; a execução ECS padrão aprovada é uma prova separada. Em 10/10, duas novas execuções Blue/Green passaram no runtime retomado, sem reset entre elas; não foi comprovada a causa das falhas antigas. A certificação do controlador AWS não foi executada. [Registro atual](EVIDENCE-BIA-20261008.json).
 
 ## 10. CloudFront
 
-- [ ] Configurar distribuição/origin ALB e regras para `/api/*`.
-- [ ] Validar tráfego efetivo, cache e TLS da CDN.
+- [x] Configurar distribuição/origin ALB, métodos CRUD e TTL zero para rotas dinâmicas; assets com política separada.
+- [x] Verificar proxy HTTPS, bytes dos assets, CRUD/banco e restauração de Disabled por ETag.
+- [ ] Cache de edge, redirect, alias alternativo e bloqueio de tráfego Disabled não são aplicados como na AWS pelo provider. [Resultado verificado](CLOUDFRONT.md).
 
 ## 11. Observabilidade / CloudWatch
 
-- [ ] Métricas, alarmes, dashboard e falha controlada; ampliar logs já existentes.
+- [x] Métricas reais Docker/ALB/health, logs sanitizados, dashboard lido de volta e monitor contínuo.
+- [x] Alarme avaliado por HTTP isolado 200/503/200, sem SetAlarmState nem indisponibilidade induzida na BIA. [Operação e evidência](OBSERVABILITY.md).
 
 ## 12. Amazon Q + MCP
 
-- [ ] Integração, permissões, prompts e demonstração segura.
+- [x] Instalar Amazon Q 1.19.7 com integridade conferida, perfil privado e configuração do agente bia limitada a duas ferramentas de leitura.
+- [x] Criar role PostgreSQL somente leitura, preservar tarefas e provar negação real de escrita pelo banco.
+- [x] Inicializar os dois servidores pelo protocolo MCP e consultar ECS/schema/banco reais, negar escrita e preservar tarefas.
+- [ ] Validar o agente e demonstrar o chat autenticado após login Builder ID. [Operação](AMAZON-Q-MCP.md).
 
-## 13. Polimento final do portfólio
+## 13. Apresentação e encerramento do projeto
 
 - [ ] Diagrama, evidências, vídeo curto e roteiro de entrevista.
 - [ ] Resolver limitações documentadas, revisar IAM/segurança e diferenciar AWS alvo de emulação.
 
-A etapa 8 foi concluída antes de iniciar a etapa 9. Não antecipar CloudFront, observabilidade ampliada ou Q/MCP para aprovar Blue/Green.
+A ordem histórica dos ensaios locais é preservada. CloudFront e Q/MCP são requisitos do vídeo e precisam ser concluídos para o aceite final. Blue/Green foi solicitado em etapa posterior pela usuária; sua homologação local não substitui o Deploy ECS padrão mostrado na referência. Métricas/dashboard e material de apresentação não devem ampliar silenciosamente o escopo demonstrado.
+
+## Recuperação adicional e pipeline GitHub — 10/10, após 17:27 UTC
+
+O mesmo LocalStack parou com PERSISTENCE=0. Antes de iniciar, foi preservado o RDS físico; o banco foi restaurado com fingerprint igual antes do ECS. CloudFront, observabilidade e MCP passaram novamente na nova sessão. Source/Build/Deploy GitHub terminaram Succeeded, mas o aceite físico aguarda a conexão remota. Os históricos Blue/Green acima pertencem à sessão anterior e não comprovam recursos ainda existentes nas APIs. [Registro separado](EVIDENCE-SESSION-RESTART-20261010.json).
