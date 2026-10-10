@@ -254,6 +254,7 @@ public static class DockerFixtureLauncher {
         'scripts/localstack/observability-config.mjs','scripts/mcp/mcp-config.mjs','scripts/mcp/mcp-session-lifecycle.mjs',
         'scripts/mcp/mcp-aws-input.mjs',
         'scripts/tests/cloudfront.test.mjs','scripts/tests/observability.test.mjs','scripts/tests/mcp.test.mjs',
+        'scripts/localstack/github-pipeline-config.mjs','scripts/tests/github-pipeline.test.mjs',
         'apps/api/package.json', 'apps/api/tsconfig.json',
         'apps/api/src/server.ts', 'apps/web/package.json', 'apps/web/tsconfig.json',
         'apps/web/vite.config.ts', 'apps/web/index.html', 'apps/web/src/main.tsx',
