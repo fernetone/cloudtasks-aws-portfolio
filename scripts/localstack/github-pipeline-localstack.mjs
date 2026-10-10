@@ -217,6 +217,23 @@ async function configure(runtime, expectedCommit, previous) {
     });
     meta.connectionArn = c.ConnectionArn;
     await saved(metadataFile, meta);
+    // This provider drops CreateConnection.Tags; TagResource persists them.
+    await aws(["codeconnections", "tag-resource"], {
+      ResourceArn: meta.connectionArn,
+      Tags: tags(runtime),
+    });
+    const persistedTags = (
+      await aws([
+        "codeconnections",
+        "list-tags-for-resource",
+        "--resource-arn",
+        meta.connectionArn,
+      ])
+    ).Tags;
+    requireValue(
+      ownedTags(persistedTags, runtime),
+      "GITHUB_CONNECTION_TAGS_NOT_PERSISTED",
+    );
   }
   const connection = (
     await aws([
