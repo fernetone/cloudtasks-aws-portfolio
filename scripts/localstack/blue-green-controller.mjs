@@ -1,8 +1,32 @@
+const diagnosticOperations = new Set([
+  'sts/get-caller-identity', 'codepipeline/get-pipeline-execution', 'codepipeline/list-action-executions', 'codebuild/batch-get-builds',
+  's3api/put-object', 's3api/get-object', 's3api/delete-object', 'ecr/describe-images', 'ecr/describe-repositories',
+  'ecs/describe-services', 'ecs/list-tasks', 'ecs/describe-tasks', 'ecs/register-task-definition', 'ecs/describe-task-definition',
+  'ecs/create-service', 'ecs/update-service', 'ecs/delete-service', 'ecs/deregister-task-definition',
+  'elbv2/describe-target-health', 'elbv2/register-targets', 'elbv2/deregister-targets', 'elbv2/describe-load-balancers',
+  'elbv2/describe-target-groups', 'elbv2/describe-listeners', 'elbv2/describe-rules', 'elbv2/create-target-group',
+  'elbv2/modify-target-group-attributes', 'elbv2/create-rule', 'elbv2/modify-listener', 'elbv2/delete-rule', 'elbv2/delete-target-group',
+  'logs/describe-log-streams', 'logs/delete-log-stream', 'docker/ps', 'docker/inspect', 'docker/image', 'docker/rm',
+]);
+
 export class DeploymentError extends Error {
-  constructor(code) {
+  constructor(code, details) {
     const safe = /^[A-Z][A-Z0-9_]{0,99}$/.test(code) ? code : 'UNEXPECTED_ERROR';
     super(safe);
     this.code = safe;
+    if (details) {
+      const tools = ['aws', 'docker', 'process'];
+      const reasons = ['exit', 'spawn', 'timeout', 'output-limit', 'transport', 'terminated', 'unknown'];
+      const signals = ['SIGTERM', 'SIGKILL', 'SIGINT', 'SIGABRT'];
+      this.details = Object.freeze({
+        tool: tools.includes(details.tool) ? details.tool : 'process',
+        operation: diagnosticOperations.has(details.operation) ? details.operation : 'unknown',
+        reason: reasons.includes(details.reason) ? details.reason : 'unknown',
+        elapsedMs: Number.isSafeInteger(details.elapsedMs) && details.elapsedMs >= 0 ? details.elapsedMs : 0,
+        exitCode: Number.isInteger(details.exitCode) && details.exitCode >= 0 && details.exitCode <= 255 ? details.exitCode : ['ENOENT', 'EACCES', 'E2BIG'].includes(details.exitCode) ? details.exitCode : null,
+        signal: signals.includes(details.signal) ? details.signal : null,
+      });
+    }
   }
 }
 
@@ -52,6 +76,7 @@ export async function deployBlueGreen(io, identity) {
     receipt.status = 'SUCCEEDED';
   } catch (error) {
     receipt.errorCode = errorCode(error);
+    if (error instanceof DeploymentError && error.details) receipt.errorDetails = error.details;
     receipt.status = 'REJECTED';
     if (locked && committed) {
       receipt.status = 'RECOVERY_REQUIRED';
@@ -65,6 +90,7 @@ export async function deployBlueGreen(io, identity) {
         receipt.cleanup = await io.cleanup();
       } catch (recoveryError) {
         receipt.recoveryErrorCode = errorCode(recoveryError);
+        if (recoveryError instanceof DeploymentError && recoveryError.details) receipt.recoveryErrorDetails = recoveryError.details;
         receipt.status = 'RECOVERY_REQUIRED';
       }
     }
@@ -74,6 +100,8 @@ export async function deployBlueGreen(io, identity) {
     if (locked && receipt.status !== 'RECOVERY_REQUIRED') await io.unlock();
   } catch (error) {
     receipt.recoveryErrorCode = errorCode(error);
+    if (error instanceof DeploymentError && error.details) receipt.recoveryErrorDetails = error.details;
+    else delete receipt.recoveryErrorDetails;
     receipt.status = 'RECOVERY_REQUIRED';
     // A local receipt may still be writable when S3 is unavailable.
     try { await io.save(receipt); } catch { /* Preserve resources and lock. */ }

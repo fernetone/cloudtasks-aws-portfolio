@@ -94,11 +94,20 @@ export class LocalStackDeployment {
   }
 
   async command(program, args) {
+    const started = performance.now();
     try { return (await execute(program, args, { env: this.env, timeout: 40000, maxBuffer: 2 * 1024 * 1024 })).stdout; }
     catch (error) {
+      const elapsedMs = Math.round(performance.now() - started);
       const match = String(error.stderr || '').match(/An error occurred \(([A-Za-z0-9_.-]+)\)/);
       // Never include CLI arguments, provider errors or docker inspect environment.
-      throw new DeploymentError(match ? 'AWS_' + match[1].replace(/[^a-zA-Z0-9]/g, '_').toUpperCase() : program === 'docker' ? 'DOCKER_COMMAND_FAILED' : 'AWS_COMMAND_FAILED');
+      const tool = program === 'aws' || program === 'docker' ? program : 'process';
+      const operation = tool === 'aws' ? args[4] + '/' + args[5] : tool === 'docker' ? 'docker/' + args[0] : 'unknown';
+      const reason = error.code === 'ERR_CHILD_PROCESS_STDIO_MAXBUFFER' ? 'output-limit'
+        : error.killed && elapsedMs >= 39995 ? 'timeout'
+        : error.killed || error.signal ? 'terminated'
+        : ['ENOENT', 'EACCES', 'E2BIG'].includes(error.code) ? 'spawn'
+        : /Could not connect to the endpoint URL|Read timeout on endpoint URL|Connection was closed before/i.test(String(error.stderr || '')) ? 'transport' : 'exit';
+      throw new DeploymentError(match ? 'AWS_' + match[1].replace(/[^a-zA-Z0-9]/g, '_').toUpperCase() : program === 'docker' ? 'DOCKER_COMMAND_FAILED' : 'AWS_COMMAND_FAILED', { tool, operation, reason, elapsedMs, exitCode: error.code, signal: error.signal });
     }
   }
   async aws(service, action, ...args) {
@@ -609,6 +618,8 @@ async function main() {
   try {
     const io = new LocalStackDeployment(config, directory);
     const receipt = await deployBlueGreen(io, { executionId: config.executionId, agentBuildId: config.agentBuildId, scenario: config.scenario, bakeSeconds: config.bakeSeconds });
+    if (receipt.errorDetails) console.log('[Blue/Green] COMMAND_FAILURE=' + JSON.stringify(receipt.errorDetails));
+    if (receipt.recoveryErrorDetails) console.log('[Blue/Green] RECOVERY_COMMAND_FAILURE=' + JSON.stringify(receipt.recoveryErrorDetails));
     console.log('[Blue/Green] RESULT=' + receipt.status + ' CODE=' + (receipt.errorCode || 'OK'));
     process.exitCode = receipt.status === 'SUCCEEDED' ? 0 : 1;
   } finally { await rm(directory, { recursive: true, force: true }); }
