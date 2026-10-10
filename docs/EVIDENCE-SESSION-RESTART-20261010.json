@@ -1,0 +1,207 @@
+{
+  "schemaVersion": 1,
+  "scope": "same-container LocalStack restart and data recovery; distinct from earlier Blue/Green session",
+  "localStackContainerId": "87dbf59bfa793f1e8210be26d20b2d01bdae7010df54aa0922379b2ff3f16e5e",
+  "stoppedAt": "2026-10-10T17:27:52.130049785Z",
+  "persistence": 0,
+  "preservation": {
+    "beforeContainerStart": true,
+    "sourceStillStopped": true,
+    "rdsFiles": 1276,
+    "bytes": 48282689,
+    "allSHA256Matches": true,
+    "verifiedAt": "2026-10-10T18:02:19Z"
+  },
+  "recovery": {
+    "sameContainerStarted": true,
+    "containerNotRecreated": true,
+    "imageNotUpdated": true,
+    "apiStateSurvived": false,
+    "oldAPIHistoryRetainedAsLive": false,
+    "fullDatabaseDumpFromVerifiedClone": true,
+    "transactionalRestoreBeforeECS": true,
+    "tasksBefore": 0,
+    "tasksAfterRestore": 0,
+    "fingerprintBefore": "d751713988987e9331980363e24189ce",
+    "fingerprintAfter": "d751713988987e9331980363e24189ce",
+    "cluster": "cloudtasks-cluster-r20261010181324886",
+    "database": "cloudtasks-postgres-r20261010180725383",
+    "previousAcceptedImageDigest": "sha256:88608a832aa41d7e24d04bfd0a96952f350ce22af4db9388528c07eb0c915985",
+    "applicationRecoveryStages": 8,
+    "applicationRecoveryStagesExitCode": 0
+  },
+  "componentChecksBeforeGitHubDeploy": {
+    "cloudFront": {
+      "distributionId": "abeab347",
+      "checks": 5,
+      "passed": true,
+      "finalEnabled": false,
+      "cacheHitsCertified": false,
+      "alternateAliasTrafficVerified": false
+    },
+    "mcp": {
+      "status": "PASSED",
+      "protocolAcceptanceAt": "2026-10-10T18:27:14Z",
+      "earlierAttempt": "MCP_AWS_TIMEOUT",
+      "ecsServer": "awslabs.ecs-mcp-server==0.1.36",
+      "postgresServer": "@modelcontextprotocol/server-postgres@0.6.2",
+      "readOnlyUser": "cloudtasks_mcp_readonly",
+      "realQueries": true,
+      "databaseDeniedWrite": true,
+      "sqlState": "42501",
+      "fingerprintUnchanged": true,
+      "allSDKTransportsClosed": true,
+      "qChatVerified": false
+    },
+    "observability": {
+      "schemaVersion": 1,
+      "status": "PASSED",
+      "scope": "actual custom metrics/logs/dashboard and isolated evaluated alarm in LocalStack; not AWS native ECS telemetry",
+      "localStackContainerId": "87dbf59bfa793f1e8210be26d20b2d01bdae7010df54aa0922379b2ff3f16e5e",
+      "cluster": "cloudtasks-cluster-r20261010181324886",
+      "service": "cloudtasks-service",
+      "sample": {
+        "scope": "observed Docker tasks, ALB targets and real database-aware HTTP health",
+        "sampleId": "a564c56d-1436-4968-bb49-fa7414e910fc",
+        "localStackContainerId": "87dbf59bfa793f1e8210be26d20b2d01bdae7010df54aa0922379b2ff3f16e5e",
+        "cluster": "cloudtasks-cluster-r20261010181324886",
+        "service": "cloudtasks-service",
+        "physicalRunning": 2,
+        "verifiedHealthy": 2,
+        "probeUp": 1,
+        "probeLatencyMs": 231.7411000000002,
+        "tasks": [
+          {
+            "taskArn": "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261010181324886/71f4e04c-b56a-412a-8309-cfb9b769cc2c",
+            "containerId": "6d0670f73cb32577e9e9c5db289f7eb23e603e4be649bc864e47d028f1728a7b",
+            "ip": "172.18.0.3",
+            "running": true,
+            "healthy": true
+          },
+          {
+            "taskArn": "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261010181324886/7c43ad0a-0677-42ae-95b3-777ce213703a",
+            "containerId": "57743eb7fa158157ef32e5a5d7ebaeacfd00a48f4d10b0cf62989d7658db80ca",
+            "ip": "172.18.0.4",
+            "running": true,
+            "healthy": true
+          }
+        ],
+        "time": "2026-10-10T18:27:46.889Z"
+      },
+      "dashboardName": "cloudtasks-87dbf59bfa79",
+      "dashboardWidgetsReadBack": 4,
+      "metricsReadBack": true,
+      "logSampleReadBack": true,
+      "monitorPid": 1304,
+      "continuousMonitoringVerified": true,
+      "heartbeat": {
+        "pid": 1304,
+        "sample": {
+          "scope": "observed Docker tasks, ALB targets and real database-aware HTTP health",
+          "sampleId": "40081983-bc15-43fe-b25b-7333ac5dbf1a",
+          "localStackContainerId": "87dbf59bfa793f1e8210be26d20b2d01bdae7010df54aa0922379b2ff3f16e5e",
+          "cluster": "cloudtasks-cluster-r20261010181324886",
+          "service": "cloudtasks-service",
+          "physicalRunning": 2,
+          "verifiedHealthy": 2,
+          "probeUp": 1,
+          "probeLatencyMs": 355.4291999998968,
+          "tasks": [
+            {
+              "taskArn": "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261010181324886/71f4e04c-b56a-412a-8309-cfb9b769cc2c",
+              "containerId": "6d0670f73cb32577e9e9c5db289f7eb23e603e4be649bc864e47d028f1728a7b",
+              "ip": "172.18.0.3",
+              "running": true,
+              "healthy": true
+            },
+            {
+              "taskArn": "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261010181324886/7c43ad0a-0677-42ae-95b3-777ce213703a",
+              "containerId": "57743eb7fa158157ef32e5a5d7ebaeacfd00a48f4d10b0cf62989d7658db80ca",
+              "ip": "172.18.0.4",
+              "running": true,
+              "healthy": true
+            }
+          ],
+          "time": "2026-10-10T18:28:16.873Z"
+        },
+        "recordedAt": "2026-10-10T18:28:23.611Z"
+      },
+      "isolatedAlarm": {
+        "scope": "real isolated HTTP 200/503/200; provider evaluates published measurements, no SetAlarmState; production was kept available",
+        "alarmName": "cloudtasks-isolated-probe-87dbf59bfa79-806f6e03",
+        "transitions": [
+          {
+            "phase": "healthy",
+            "state": "INSUFFICIENT_DATA",
+            "time": "2026-10-10T18:28:01.870Z"
+          },
+          {
+            "phase": "healthy",
+            "state": "OK",
+            "time": "2026-10-10T18:28:12.737Z"
+          },
+          {
+            "phase": "failed-http-probe",
+            "state": "ALARM",
+            "time": "2026-10-10T18:28:25.830Z"
+          },
+          {
+            "phase": "recovered-http-probe",
+            "state": "OK",
+            "time": "2026-10-10T18:29:02.554Z"
+          }
+        ],
+        "samples": [
+          {
+            "up": 1,
+            "time": "2026-10-10T18:27:58.844Z"
+          },
+          {
+            "up": 1,
+            "time": "2026-10-10T18:28:06.909Z"
+          },
+          {
+            "up": 0,
+            "time": "2026-10-10T18:28:12.751Z"
+          },
+          {
+            "up": 0,
+            "time": "2026-10-10T18:28:21.937Z"
+          },
+          {
+            "up": 1,
+            "time": "2026-10-10T18:28:25.836Z"
+          },
+          {
+            "up": 1,
+            "time": "2026-10-10T18:28:33.778Z"
+          },
+          {
+            "up": 1,
+            "time": "2026-10-10T18:28:41.696Z"
+          },
+          {
+            "up": 1,
+            "time": "2026-10-10T18:28:49.421Z"
+          },
+          {
+            "up": 1,
+            "time": "2026-10-10T18:28:57.049Z"
+          },
+          {
+            "up": 1,
+            "time": "2026-10-10T18:29:02.564Z"
+          }
+        ],
+        "setAlarmStateUsed": false,
+        "productionOutageInduced": false,
+        "serverClosed": true
+      },
+      "externalNotificationsConfigured": false,
+      "recordedAt": "2026-10-10T18:29:07.921Z"
+    }
+  },
+  "githubPipelineEvidence": "EVIDENCE-GITHUB-PIPELINE-20261010.json",
+  "latestNativeDeployAccepted": false,
+  "postDeployPhysicalAndHTTPSChecksPending": true
+}

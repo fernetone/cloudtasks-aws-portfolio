@@ -159,3 +159,9 @@ CloudFront é verificado como proxy próprio com origin ALB, assets e CRUD reais
 ## ADR-021 — Q legado, MCP oficial e leitura delimitada
 
 Preservar Amazon Q 1.19.7 e o agente bia; não substituir silenciosamente a interface da referência por Kiro. O cliente roda separado com DNS externo para login, enquanto ECS/PostgreSQL permanecem no runtime local. Dependências MCP usam filesystem Linux interno e versões centrais compatíveis fixadas. ECS nega escrita/sensitive data; PostgreSQL usa role SELECT-only conferida contra o RDS atual. Validar MCP, configuração Q e chat autenticado como três resultados distintos.
+
+## ADR — Origem GitHub nativa e prova integral do Source
+
+A pipeline da referência usa GitHub público/CodeConnections, CodeBuild e ECS padrão, conservando o fluxo S3 nos scripts/histórico anterior. A revisão completa deve coincidir com CommitId e externalExecutionId nativos; artifactRevisions, opcional na API e omitido pelo provider observado, é conferido quando fornecido. O aceite também compara todos os caminhos/hashes Git blob do ZIP Source com o tree público do commit, sem aceitar manifesto truncado, arquivos extras, ausentes ou duplicados. Nenhum campo nativo é sintetizado para produzir uma aprovação.
+
+Succeeded no plano de controle continua insuficiente: réplicas físicas, digest, targets, release HTTPS e banco têm critérios próprios. OAuth/trigger automático por push e infraestrutura AWS não foram certificados. Paradas com PERSISTENCE=0 produzem uma sessão nativa nova; histórico preservado em arquivos não é apresentado como estado vivo das APIs. [Critérios e estado](GITHUB-PIPELINE.md).

@@ -2,25 +2,27 @@
 
 Versão 1.8.2. React 19 + TypeScript + Vite, Node 24 + Express 5 e PostgreSQL.
 
-O objetivo solicitado é reproduzir o projeto BIA demonstrado no vídeo, incluindo aplicação, comportamento, interface e infraestrutura AWS efetiva. CloudTasks é o nome do repositório; a interface agora apresenta BIA. A igualdade integral com a versão filmada continua sem comprovação. LocalStack Pro/Student e Docker Desktop são ambientes auxiliares de desenvolvimento e testes.
+O objetivo solicitado é reproduzir o projeto BIA demonstrado no vídeo, incluindo aplicação, comportamento, interface e componentes de infraestrutura funcionais. CloudTasks é o nome do repositório; a interface apresenta BIA. O ambiente executável autorizado usa Docker/LocalStack Student/Pro. A igualdade integral com a revisão filmada continua sem comprovação.
 
 **Referência obrigatória e execução:** [comparação V01-V12](docs/REFERENCE-VIDEO.md). A aplicação e os componentes do vídeo são requisitos do projeto funcional. A execução autorizada é Docker/LocalStack Student/Pro, sem provisionamento pago na AWS. As diferenças do emulador permanecem documentadas; aprovação local não certifica paridade AWS.
 
 ## Entrega atual — 10/10/2026
 
-A BIA 1.8.2 está servida pelo [ALB local](http://cloudtasks-alb.elb.localhost.localstack.cloud:4566). Após o reinício do computador, o PostgreSQL existente foi preservado por cópia física verificada e restaurado antes da aplicação. Dois deployments distintos passaram Source, Build, Deploy e o teste oficial na CodePipeline emulada, sem fallback ou reset entre eles: `ff17f9a8-ce91-4929-bd22-228fc2656c53` e `c8430b70-1240-4fa0-a514-1220cf5aa9b5`. Ambos usaram o mesmo Source SHA256 e o adaptador Blue/Green explícito; bake, duas réplicas físicas saudáveis, limpeza e liberação do lock foram verificados.
+A pipeline da referência agora executa Source GitHub público/CodeConnections, CodeBuild e Deploy ECS padrão. A execução `d97f277d-b9c3-426f-86dc-afa8209b4874` concluiu as três ações nativas no commit `48e5924fdd83a29cc3e1b91c22f2e94e605fb74e`; os 171 arquivos do ZIP Source coincidiram com o Git tree. O aceite físico após esse deploy está pendente: a inspeção remota sofreu timeout antes de conferir réplicas, targets, release HTTPS e fingerprint do banco. O status nativo Succeeded não foi convertido em aprovação final. [Resultado e falhas preservadas](docs/EVIDENCE-GITHUB-PIPELINE-20261010.json).
 
-A segunda imagem foi novamente verificada no PostgreSQL real e no navegador desktop/celular: CRUD, prazo textual, prioridade, conclusão, edição e recarga passaram; as tarefas criadas pelos testes foram excluídas. Source, Build, Deploy e todas as camadas das duas imagens foram examinados para a senha atual do banco e a licença LocalStack, sem ocorrências. [Evidências desta retomada](docs/EVIDENCE-REBOOT-20261010.json).
+Após a parada do LocalStack às 17:27:52 UTC, 1.276 arquivos RDS tiveram cópia/hashes conferidos antes de iniciar o mesmo container. O dump completo foi extraído de uma cópia e restaurado em transação antes do ECS, com contagem/fingerprint iguais. PERSISTENCE=0 descartou os estados das APIs; os históricos anteriores permanecem evidências da sessão anterior. O serviço foi recuperado com a imagem já aprovada e oito etapas passaram. CloudFront, observabilidade e os dois MCPs foram testados novamente antes do novo deploy GitHub. [Registro desta recuperação](docs/EVIDENCE-SESSION-RESTART-20261010.json).
 
-As duas tentativas Blue/Green falhas de 08/10 continuam reprovadas no [histórico](docs/EVIDENCE-BIA-20261008.json). As falhas antigas não foram reproduzidas nas duas entregas atuais e sua causa continua sem comprovação. Os novos diagnósticos registram somente operação, duração e motivo permitido, sem argumentos, stderr ou credenciais. CloudFront e observabilidade ampliada têm configuração e execução verificadas no ambiente local. O Amazon Q 1.19.7 está instalado; sua validação e o chat dependem do login Builder ID. Os dois MCPs passaram na inicialização, consultas reais e negação de escrita, preservando tarefas. A operação está descrita em [AMAZON-Q-MCP.md](docs/AMAZON-Q-MCP.md). A igualdade integral com a revisão filmada continua sem certificação.
+As duas entregas Blue/Green `ff17f9a8-ce91-4929-bd22-228fc2656c53` e `c8430b70-1240-4fa0-a514-1220cf5aa9b5` foram aprovadas antes dessa parada, sem reset entre elas. CRUD/PostgreSQL e navegador desktop/celular passaram nesse contexto. [Histórico preservado](docs/EVIDENCE-REBOOT-20261010.json). As tentativas falhas continuam reprovadas; sua causa não foi considerada corrigida pelo sucesso posterior.
+
+O Amazon Q 1.19.7 está instalado e os dois MCPs passaram no protocolo, leitura real e negação de escrita. A validação e o chat exigem login Builder ID. [Operação](docs/AMAZON-Q-MCP.md). A igualdade integral com a revisão filmada continua sem comprovação.
 
 ## Arquitetura e estado
 
 Alvo: GitHub/CodeConnections → CodePipeline → CodeBuild → Docker/ECR → ECS sobre EC2 → Target Group/ALB → CloudFront → usuário. RDS, Secrets Manager, IAM, CloudWatch e ACM complementam o desenho.
 
-| Fronteira    | AWS alvo                             | Laboratório                                                              |
+| Fronteira    | AWS alvo                             | Execução local                                                           |
 | ------------ | ------------------------------------ | ------------------------------------------------------------------------ |
-| Source       | GitHub por CodeConnections           | Snapshot autorizado do working tree, em S3 versionado                    |
+| Source       | GitHub por CodeConnections           | GitHub público via CodeConnections, com commit completo conferido        |
 | Pipeline     | Source, CodeBuild, deploy ECS padrão | CodePipeline V1 com os mesmos provedores executáveis                     |
 | Compute      | ECS/EC2, `bridge`, hostPort dinâmico | Executor Docker; não existem hosts EC2 reais                             |
 | Target Group | `instance`                           | `ip`, sincronizado com as tasks locais                                   |
@@ -58,7 +60,7 @@ npm ci
 npm run verify
 ```
 
-`verify` executa lint, 22 testes API, 8 frontend, 42 testes Node do controlador/adaptador, 24 testes CloudFront/observabilidade/MCP e build dos dois componentes. Há mais 5 testes de integração PostgreSQL, executados no CI com banco real; sem `TEST_DATABASE_URL` eles ficam explicitamente skipped. A formatação possui comando próprio; consulte [DEPENDENCY-POLICY.md](docs/DEPENDENCY-POLICY.md).
+`verify` executa lint, 22 testes API, 8 frontend, 42 testes Node do controlador/adaptador, 37 testes CloudFront/observabilidade/MCP/GitHub e build dos dois componentes. Há mais 5 testes de integração PostgreSQL, executados no CI com banco real; sem `TEST_DATABASE_URL` eles ficam explicitamente skipped. A formatação possui comando próprio; consulte [DEPENDENCY-POLICY.md](docs/DEPENDENCY-POLICY.md).
 
 ## Execução do projeto no LocalStack
 
@@ -73,7 +75,11 @@ Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
 
 `resume-environment.ps1` prepara a infraestrutura, ECS 2/2 e ALB/HTTPS. Uma nova sessão é descartável: **reconstruir recursos não restaura as tarefas de negócio do banco**. Não execute `start-localstack.ps1` ou uma atualização do emulador durante a homologação de uma sessão saudável.
 
-## CI/CD da sessão já saudável
+## Pipeline da referência: GitHub → CodeBuild → ECS
+
+A pipeline `cloudtasks-github-pipeline` usa Source `CodeStarSourceConnection`, Build `CodeBuild` e Deploy ECS padrão. O commit esperado é conferido antes das dependências; o recibo registra a mesma execução CodePipeline. A origem GitHub foi verificada também pelos hashes dos 171 arquivos do ZIP. Criação, status, aceite e limites do provider estão em [GITHUB-PIPELINE.md](docs/GITHUB-PIPELINE.md). `STARTED` confirma início; o aceite exige imagem, réplicas físicas, HTTPS e banco.
+
+## CI/CD S3 da sessão já saudável
 
 Na raiz do projeto:
 

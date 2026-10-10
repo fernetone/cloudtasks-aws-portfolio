@@ -51,7 +51,7 @@ Revisão de 10/10/2026. Reproduzir aplicação, comportamento, apresentação e 
 
 O bloqueio de Origin do LocalStack foi diagnosticado no navegador real. A correção permite somente HTTP/HTTPS do ALB do projeto, mantendo uma origem externa rejeitada. O banco foi copiado e restaurado antes do ECS na nova sessão; a preservação incluiu nove artifacts das três entregas anteriores. O relatório mantém as duas tentativas Blue/Green falhas, a recuperação manual da primeira e o rollback automático da segunda separados da execução ECS padrão aprovada. Nesta última, o navegador exercitou CRUD real com recarga/persistência, e sete checks repetiram a verificação no PostgreSQL compartilhado pelas duas réplicas. A origem local continua S3; isso não comprova commit disparando Source GitHub. A integração específica permanece diferença do ambiente autorizado.
 
-## Estado confirmado em 10/10/2026
+## Histórico confirmado antes da parada de 10/10 às 17:27 UTC
 
 | Item                 | Resultado atual                                                                                                                                                                                                              | Limite                                                                                                                                  |
 | -------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
@@ -82,3 +82,11 @@ CloudFront V07 possui prova funcional por domínio gerado: HTML/assets e CRUD pe
 A observabilidade ampliada mede recursos físicos e tráfego com banco. O alarme isolado percorreu INSUFFICIENT_DATA → OK → ALARM → OK sem estado forçado. A leitura posterior detectou targets antigos diante de tasks ECS novas; a reconciliação conferiu imagem/digest e registrou as tasks atuais antes de retirar as antigas. A causa da substituição não foi comprovada. [Evidências](EVIDENCE-OBSERVABILITY-20261010.json).
 
 Para V03, Amazon Q CLI 1.19.7 foi instalado a partir da distribuição oficial, com q/qchat e SHA256 conferidos. O Q exige autenticação até para validar o agente. A instalação do MCP ECS encontrou atraso de filesystem Windows e uma incompatibilidade upstream FastMCP 4; as correções e a prova pelo protocolo estão registradas separadamente do chat. PostgreSQL usa usuário SELECT-only e os testes não substituem dados por fixtures. [Guia](AMAZON-Q-MCP.md).
+
+## Atualização V01/V02 e nova sessão — 10/10, após 17:27 UTC
+
+A origem S3 encontrada em 08/10 foi complementada por uma pipeline específica GitHub público/CodeConnections → CodeBuild → ECS padrão. A execução `d97f277d-b9c3-426f-86dc-afa8209b4874` concluiu as três ações no commit `48e5924fdd83a29cc3e1b91c22f2e94e605fb74e`; todos os 171 arquivos do Source têm os hashes do Git tree desse commit. As três falhas anteriores e a rejeição inicial do teste por artifactRevisions ausente ficam preservadas. O aceite físico pós-deploy está pendente; status verde das APIs não o substitui. [Pipeline e critérios](GITHUB-PIPELINE.md).
+
+O emulador não certifica OAuth/instalação de GitHub App nem disparo automático por push. V01 tem execução nativa comprovada e essa diferença continua explícita. V02 usa o provedor ECS padrão mostrado no vídeo; não se apresenta o adaptador Blue/Green como mecanismo filmado. V04/V05 mantêm diferenças de EC2, TG instance e terminação TLS.
+
+Depois da parada do mesmo LocalStack com PERSISTENCE=0, banco e arquivos físicos foram preservados e restaurados antes da aplicação. CloudFront (V07), observabilidade e os dois MCPs (V03) foram testados novamente antes do novo deploy. Login/chat Q e a revisão original 8089357 continuam pendentes. [Evidência da nova sessão](EVIDENCE-SESSION-RESTART-20261010.json).

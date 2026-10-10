@@ -1,8 +1,10 @@
 # Etapa 8 — CodePipeline, CodeBuild, ECR e ECS
 
+A pipeline específica da referência é GitHub → CodeBuild → ECS padrão; consulte [GITHUB-PIPELINE.md](GITHUB-PIPELINE.md). Este documento preserva o fluxo S3 e seu histórico de homologação.
+
 ## Decisão
 
-A aprovação local exige execução da CodePipeline V1 emulada: Source S3 → CodeBuild → ECR → ação Deploy ECS. A referência obrigatória mostra Source GitHub via GitHub App, AWS CodeBuild e Deploy Amazon ECS padrão. Implementar e comprovar essa integração na AWS faz parte da entrega final; não é uma expansão opcional. O Source S3 é uma adaptação local e não comprova a origem GitHub. Consulte a [matriz V01-V12](REFERENCE-VIDEO.md).
+A aprovação exige execução nativa da CodePipeline V1: Source S3 → CodeBuild → ECR → ação Deploy ECS. Na AWS alvo, a ação Source será GitHub por CodeConnections. O Source S3 local é uma adaptação do laboratório para usar os inputs autorizados do working tree; não substitui CodeBuild ou CodePipeline por PowerShell.
 
 Não existe aprovação por runner Docker, tag ECR mais recente, build iniciado diretamente ou deploy externo quando a pipeline não completa suas ações. Uma execução futura sem Build ou Deploy nativos é recusada e a sessão é preservada para diagnóstico.
 

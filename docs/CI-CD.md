@@ -1,5 +1,7 @@
 # Qualidade e entrega contínua
 
+A pipeline específica da referência é GitHub → CodeBuild → ECS padrão; consulte [GITHUB-PIPELINE.md](GITHUB-PIPELINE.md). Este documento preserva o fluxo S3 e seu histórico de homologação.
+
 ## GitHub Actions
 
 `.github/workflows/ci.yml` roda em push/PR para `main`, com permissão `contents: read`:
@@ -13,7 +15,7 @@ Esse workflow é CI do repositório. A entrega da aplicação continua sendo res
 
 ## CodePipeline/CodeBuild
 
-Entrega AWS obrigatória: GitHub/CodeConnections → CodePipeline → CodeBuild → ECR → ação ECS padrão, conforme o vídeo. A integração efetiva ainda precisa ser implementada e comprovada; [referência e critérios](REFERENCE-VIDEO.md).
+Alvo AWS: GitHub/CodeConnections → CodePipeline → CodeBuild → ECR → ECS.
 Laboratório: Source S3 versionado → CodePipeline V1 → CodeBuild → ECR → ECS.
 
 A ação ECS padrão consome `imagedefinitions.json` no modo Rolling. BlueGreen seleciona um CodeBuild de implantação que consome o mesmo BuildOutput, executa o adaptador local e retorna o recibo no DeployOutput. Os 34 testes Node de estado/guards integram `npm run verify`, além dos 7 testes API e 4 frontend. Quality gate bloqueia publicação/deploy em caso de erro. `npm ci` e `package-lock.json` são obrigatórios em CI, buildspecs e Dockerfile.

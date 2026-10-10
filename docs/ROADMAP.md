@@ -7,7 +7,8 @@ A sequência de 13 etapas abaixo foi organizada para o trabalho; não foi fornec
 - [x] Implementar os elementos de interface observáveis no vídeo e verificar desktop/celular. A revisão filmada e os fluxos não exibidos ainda impedem afirmar igualdade integral.
 - [x] Substituir o indicador fixo por saúde real; aceitar prazo textual com migração compatível e permitir editar prioridade. Contratos ocultos do original continuam não verificados.
 - [x] Preservar e verificar rede, banco, duas réplicas ECS, ALB/TG e transporte TLS no LocalStack. ECS/EC2 e TG instance permanecem diferenças arquiteturais explícitas do executor Docker, sem provisionamento pago.
-- [ ] Integrar Source GitHub por conexão autorizada e provar commit -> CodeBuild -> ação ECS padrão -> aplicação atualizada.
+- [x] Implementar GitHub público/CodeConnections e comprovar commit completo, ZIP/Git tree, CodeBuild e ação ECS padrão nativos. OAuth de GitHub App real e trigger automático por push não foram certificados.
+- [ ] Concluir o aceite físico da execução GitHub aprovada pelas APIs: duas réplicas/digest, targets atuais, release HTTPS e banco preservado. [Estado e falhas](EVIDENCE-GITHUB-PIPELINE-20261010.json).
 - [x] Configurar e testar o proxy CloudFront; preservar Disabled e documentar limites de cache/redirect/alias/bloqueio.
 - [ ] Concluir a validação e demonstração do agente Amazon Q após login Builder ID; testar os dois MCPs independentemente.
 - [ ] Identificar a revisão original e registrar as configurações não observáveis no recorte; não declarar igualdade integral sem essas fontes.
@@ -101,3 +102,7 @@ As duas entregas nativas 1.8.1 e a entrega 1.8.2 anteriores à troca CORS passar
 - [ ] Resolver limitações documentadas, revisar IAM/segurança e diferenciar AWS alvo de emulação.
 
 A ordem histórica dos ensaios locais é preservada. CloudFront e Q/MCP são requisitos do vídeo e precisam ser concluídos para o aceite final. Blue/Green foi solicitado em etapa posterior pela usuária; sua homologação local não substitui o Deploy ECS padrão mostrado na referência. Métricas/dashboard e material de apresentação não devem ampliar silenciosamente o escopo demonstrado.
+
+## Recuperação adicional e pipeline GitHub — 10/10, após 17:27 UTC
+
+O mesmo LocalStack parou com PERSISTENCE=0. Antes de iniciar, foi preservado o RDS físico; o banco foi restaurado com fingerprint igual antes do ECS. CloudFront, observabilidade e MCP passaram novamente na nova sessão. Source/Build/Deploy GitHub terminaram Succeeded, mas o aceite físico aguarda a conexão remota. Os históricos Blue/Green acima pertencem à sessão anterior e não comprovam recursos ainda existentes nas APIs. [Registro separado](EVIDENCE-SESSION-RESTART-20261010.json).

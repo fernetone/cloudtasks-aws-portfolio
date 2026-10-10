@@ -1,0 +1,19 @@
+{
+  "schemaVersion": 1,
+  "status": "FAILED",
+  "scope": "native GitHub source succeeded; CodeBuild install guard failed before npm ci/build/push/deploy",
+  "commit": "bad8add37210cc332586f9a1d7115106248cada3",
+  "executionId": "628c012e-f077-45c7-9596-6bd8f336fe7a",
+  "codeBuildId": "cloudtasks-github-build:d5280d6d",
+  "sourceProvider": "CodeStarSourceConnection",
+  "sourceStatus": "Succeeded",
+  "sourceCommitVerified": true,
+  "buildStatus": "FAILED",
+  "nativeFailureCode": "GITHUB_BUILD_ID_INVALID",
+  "deployStarted": false,
+  "previousTaskDefinition": "arn:aws:ecs:us-east-1:000000000000:task-definition/cloudtasks:3",
+  "physicalRunningAfterFailure": 2,
+  "physicalHealthyAfterFailure": 2,
+  "activeCredentialValuesIncluded": false,
+  "recordedAt": "2026-10-10T15:11:32.229Z"
+}

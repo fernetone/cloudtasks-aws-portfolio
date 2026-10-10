@@ -162,12 +162,15 @@ export function linkedExecution(execution, actions, expectedCommit) {
   const source = pick("Source", "SourceGitHub"),
     build = pick("Build", "BuildAndPush"),
     deploy = pick("Deploy", "DeployECS");
-  const revision =
-    execution.artifactRevisions?.filter((x) => x.name === "SourceOutput") ?? [];
+  const revisions = execution.artifactRevisions;
+  const revision = Array.isArray(revisions)
+    ? revisions.filter((x) => x.name === "SourceOutput")
+    : [];
   requireValue(
     source.output?.outputVariables?.CommitId === expectedCommit &&
-      revision.length === 1 &&
-      revision[0].revisionId === expectedCommit,
+      source.output?.executionResult?.externalExecutionId === expectedCommit &&
+      (revisions === undefined ||
+        (revision.length === 1 && revision[0].revisionId === expectedCommit)),
     "GITHUB_NATIVE_REVISION_MISMATCH",
   );
   requireValue(
@@ -177,6 +180,51 @@ export function linkedExecution(execution, actions, expectedCommit) {
     "GITHUB_NATIVE_BUILD_ID_MISSING",
   );
   return { source, build, deploy };
+}
+export function checkedSourceTree(manifest, artifact, expectedCommit) {
+  checkedCommit(expectedCommit);
+  const safePath = (value) =>
+    typeof value === "string" &&
+    !value.startsWith("/") &&
+    !value.includes("\\") &&
+    value.split("/").every((part) => part && part !== "." && part !== "..");
+  const validFile = (file) =>
+    safePath(file.path) && /^[a-f0-9]{40}$/.test(file.sha ?? "");
+  requireValue(
+    manifest.commit === expectedCommit &&
+      /^[a-f0-9]{40}$/.test(manifest.tree?.sha ?? "") &&
+      manifest.tree.truncated === false &&
+      Array.isArray(manifest.tree.tree) &&
+      manifest.tree.tree.every(
+        (file) => ["blob", "tree"].includes(file.type) && validFile(file),
+      ),
+    "GITHUB_SOURCE_TREE_INVALID",
+  );
+  const expected = manifest.tree.tree.filter((file) => file.type === "blob");
+  requireValue(
+    expected.length > 0 &&
+      expected.length < 2048 &&
+      new Set(expected.map((file) => file.path)).size === expected.length,
+    "GITHUB_SOURCE_TREE_INVALID",
+  );
+  requireValue(
+    Array.isArray(artifact.files) &&
+      artifact.files.length === expected.length &&
+      artifact.files.every(validFile) &&
+      new Set(artifact.files.map((file) => file.path)).size ===
+        expected.length &&
+      expected.every((file) =>
+        artifact.files.some(
+          (actual) => actual.path === file.path && actual.sha === file.sha,
+        ),
+      ),
+    "GITHUB_SOURCE_TREE_MISMATCH",
+  );
+  return {
+    tree: manifest.tree.sha,
+    files: expected.length,
+    allBlobHashesMatch: true,
+  };
 }
 export function checkedDeclaration(actual, expected) {
   const stages = (pipeline) =>

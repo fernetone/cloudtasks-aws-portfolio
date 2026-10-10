@@ -18,6 +18,7 @@ import {
   linkedExecution,
   checkedBuildArtifact,
   checkedDeclaration,
+  checkedSourceTree,
   githubRepository,
   githubBranch,
   pipelineName,
@@ -509,7 +510,7 @@ async function artifact(action, name, receipt = false) {
       location.key,
       remote,
     ]);
-    const script = `import sys,json,hashlib,zipfile,os\np=sys.argv[1]\nassert os.path.getsize(p)<33554432\nz=zipfile.ZipFile(p)\nassert len(z.infolist())<2048\nresult={'sha256':hashlib.sha256(open(p,'rb').read()).hexdigest(),'entries':len(z.infolist())}\nif sys.argv[2]=='receipt':\n for f,k in [('imagedefinitions.json','images'),('source-receipt.json','receipt')]:\n  e=[i for i in z.infolist() if i.filename==f]\n  assert len(e)==1 and e[0].file_size<16384\n  result[k]=json.loads(z.read(e[0]))\nprint(json.dumps(result))`;
+    const script = `import sys,json,hashlib,zipfile,os\np=sys.argv[1]\nassert os.path.getsize(p)<33554432\nz=zipfile.ZipFile(p)\nassert len(z.infolist())<2048\nassert sum(e.file_size for e in z.infolist())<67108864\nresult={'sha256':hashlib.sha256(open(p,'rb').read()).hexdigest(),'entries':len(z.infolist())}\nif sys.argv[2]=='receipt':\n for f,k in [('imagedefinitions.json','images'),('source-receipt.json','receipt')]:\n  e=[i for i in z.infolist() if i.filename==f]\n  assert len(e)==1 and e[0].file_size<16384\n  result[k]=json.loads(z.read(e[0]))\nelse:\n result['files']=[]\n for e in z.infolist():\n  if e.is_dir(): continue\n  assert e.file_size<4194304\n  b=z.read(e)\n  result['files'].append({'path':e.filename,'sha':hashlib.sha1(b'blob '+str(len(b)).encode()+b'\\0'+b).hexdigest()})\nprint(json.dumps(result))`;
     return {
       ...JSON.parse(
         await docker([
@@ -528,6 +529,40 @@ async function artifact(action, name, receipt = false) {
   } finally {
     await docker(["exec", "cloudtasks-localstack", "rm", "-f", remote]);
   }
+}
+async function githubSourceTree(commit) {
+  checkedCommit(commit);
+  const json = async (suffix) => {
+    const response = await fetch(
+      "https://api.github.com/repos/" + githubRepository + "/git/" + suffix,
+      {
+        headers: {
+          Accept: "application/vnd.github+json",
+          "User-Agent": "cloudtasks-source-validation",
+        },
+        redirect: "error",
+        signal: AbortSignal.timeout(30000),
+      },
+    );
+    requireValue(response.ok, "GITHUB_PUBLIC_MANIFEST_UNAVAILABLE");
+    const body = await response.text();
+    requireValue(
+      Buffer.byteLength(body) < 8388608,
+      "GITHUB_PUBLIC_MANIFEST_TOO_LARGE",
+    );
+    return JSON.parse(body);
+  };
+  const revision = await json("commits/" + commit);
+  requireValue(
+    revision.sha === commit && /^[a-f0-9]{40}$/.test(revision.tree?.sha ?? ""),
+    "GITHUB_PUBLIC_COMMIT_MISMATCH",
+  );
+  const tree = await json("trees/" + revision.tree.sha + "?recursive=1");
+  requireValue(tree.sha === revision.tree.sha, "GITHUB_PUBLIC_TREE_MISMATCH");
+  return {
+    commit: revision.sha,
+    tree,
+  };
 }
 async function accept(meta) {
   phase = "native-execution";
@@ -572,6 +607,12 @@ async function accept(meta) {
   phase = "native-artifacts";
   const sourceArtifact = await artifact(linked.source, "SourceOutput"),
     buildArtifact = await artifact(linked.build, "BuildOutput", true);
+  const sourceTree = checkedSourceTree(
+    await githubSourceTree(meta.expectedCommit),
+    sourceArtifact,
+    meta.expectedCommit,
+  );
+  delete sourceArtifact.files;
   requireValue(
     build.artifacts?.location ===
       "arn:aws:s3:::" + buildArtifact.bucket + "/" + buildArtifact.key,
@@ -788,6 +829,11 @@ async function accept(meta) {
     codeBuildId: buildId,
     providers: ["CodeStarSourceConnection", "CodeBuild", "ECS"],
     sourceArtifact,
+    sourceTree,
+    nativeArtifactRevisionsPresent: execution.artifactRevisions !== undefined,
+    nativeSourceCommit: linked.source.output.outputVariables.CommitId,
+    nativeSourceExternalId:
+      linked.source.output.executionResult.externalExecutionId,
     buildArtifact: {
       sha256: buildArtifact.sha256,
       bucket: buildArtifact.bucket,

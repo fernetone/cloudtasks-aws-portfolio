@@ -8,6 +8,7 @@ import {
   pipelineDeclaration,
   roleName,
   checkedDeclaration,
+  checkedSourceTree,
 } from "../localstack/github-pipeline-config.mjs";
 
 const commit = "a".repeat(40),
@@ -36,7 +37,10 @@ function native() {
       stageName: "Source",
       actionName: "SourceGitHub",
       status: "Succeeded",
-      output: { outputVariables: { CommitId: commit } },
+      output: {
+        outputVariables: { CommitId: commit },
+        executionResult: { externalExecutionId: commit },
+      },
     },
     {
       pipelineExecutionId: id,
@@ -103,7 +107,7 @@ test("successful actions from a different execution cannot prove this delivery",
     /GITHUB_ACTION_NOT_LINKED_OR_SUCCEEDED/,
   );
 });
-test("both the native GitHub variable and artifact revision must identify the expected commit", () => {
+test("native GitHub commit references and any supplied artifact revision must agree", () => {
   const a = native();
   a.actions[0].output.outputVariables.CommitId = other;
   assert.throws(
@@ -117,11 +121,41 @@ test("both the native GitHub variable and artifact revision must identify the ex
     /GITHUB_NATIVE_REVISION_MISMATCH/,
   );
   const c = native();
+  c.actions[0].output.executionResult.externalExecutionId = other;
+  assert.throws(
+    () => linkedExecution(c.execution, c.actions, commit),
+    /GITHUB_NATIVE_REVISION_MISMATCH/,
+  );
+  const d = native();
   assert.equal(
-    linkedExecution(c.execution, c.actions, commit).build.output.executionResult
+    linkedExecution(d.execution, d.actions, commit).build.output.executionResult
       .externalExecutionId,
     buildId,
   );
+});
+test("an omitted artifactRevisions field still requires both exact native Source commit references", () => {
+  const a = native();
+  delete a.execution.artifactRevisions;
+  assert.equal(
+    linkedExecution(a.execution, a.actions, commit).source,
+    a.actions[0],
+  );
+  for (const change of [
+    (output) => {
+      output.outputVariables.CommitId = other;
+    },
+    (output) => {
+      delete output.executionResult.externalExecutionId;
+    },
+  ]) {
+    const b = native();
+    delete b.execution.artifactRevisions;
+    change(b.actions[0].output);
+    assert.throws(
+      () => linkedExecution(b.execution, b.actions, commit),
+      /GITHUB_NATIVE_REVISION_MISMATCH/,
+    );
+  }
 });
 test("duplicate or failed actions are rejected even if the pipeline reports success", () => {
   const a = native();
@@ -136,6 +170,81 @@ test("duplicate or failed actions are rejected even if the pipeline reports succ
     () => linkedExecution(b.execution, b.actions, commit),
     /GITHUB_ACTION_NOT_LINKED_OR_SUCCEEDED/,
   );
+});
+function sourceTree() {
+  return {
+    commit,
+    tree: {
+      sha: other,
+      truncated: false,
+      tree: [
+        { path: "api", type: "tree", sha: "c".repeat(40) },
+        { path: "Dockerfile", type: "blob", sha: "d".repeat(40) },
+        { path: "api/server.js", type: "blob", sha: "e".repeat(40) },
+      ],
+    },
+  };
+}
+function sourceFiles() {
+  return {
+    files: sourceTree()
+      .tree.tree.filter((file) => file.type === "blob")
+      .map(({ path, sha }) => ({ path, sha })),
+  };
+}
+test("Source ZIP must contain every GitHub blob exactly once with identical content hashes", () => {
+  assert.deepEqual(checkedSourceTree(sourceTree(), sourceFiles(), commit), {
+    tree: other,
+    files: 2,
+    allBlobHashesMatch: true,
+  });
+  for (const change of [
+    (files) => {
+      files[0].sha = other;
+    },
+    (files) => {
+      files.pop();
+    },
+    (files) => {
+      files.push({ path: "extra.js", sha: other });
+    },
+    (files) => {
+      files[1] = structuredClone(files[0]);
+    },
+    (files) => {
+      files[0].path = "../Dockerfile";
+    },
+  ]) {
+    const actual = sourceFiles();
+    change(actual.files);
+    assert.throws(
+      () => checkedSourceTree(sourceTree(), actual, commit),
+      /GITHUB_SOURCE_TREE_MISMATCH/,
+    );
+  }
+});
+test("truncated or unrelated GitHub manifests cannot prove the Source ZIP", () => {
+  for (const change of [
+    (manifest) => {
+      manifest.commit = other;
+    },
+    (manifest) => {
+      manifest.tree.truncated = true;
+    },
+    (manifest) => {
+      manifest.tree.sha = "8089357";
+    },
+    (manifest) => {
+      manifest.tree.tree.push({ path: "module", type: "commit", sha: other });
+    },
+  ]) {
+    const manifest = sourceTree();
+    change(manifest);
+    assert.throws(
+      () => checkedSourceTree(manifest, sourceFiles(), commit),
+      /GITHUB_SOURCE_TREE_INVALID/,
+    );
+  }
 });
 test("the build receipt must belong to the exact successful native build", () => {
   assert.throws(
