@@ -1,0 +1,1253 @@
+{
+  "schemaVersion": 1,
+  "recordDate": "2026-10-10",
+  "scope": "Retomada do projeto BIA após reinício do Windows; verificação atual em Docker/LocalStack e PostgreSQL real.",
+  "reference": {
+    "videoSha256": "c6e4eee64c325c375d62300cb8b1fc13745ab955b184668030dca55feab0e2b5",
+    "matrix": "docs/REFERENCE-VIDEO.md",
+    "originalRepositoryAndRevisionNotIdentified": true,
+    "fullAwsParityPending": true,
+    "executionScope": {
+      "environment": "Docker/LocalStack Student/Pro",
+      "paidAwsProvisioningAuthorized": false,
+      "componentsRemainRequired": true,
+      "awsParityNotClaimed": true,
+      "localCompletionDoesNotRequirePaidAwsDeployment": true
+    },
+    "remainingComponents": [
+      "CloudFront",
+      "CloudWatch",
+      "Amazon Q CLI and ECS/PostgreSQL MCP"
+    ],
+    "paidAwsDeploymentNotAnApprovalBlockerForLocalWork": true
+  },
+  "desktopCommander": {
+    "online": true,
+    "version": "0.2.52",
+    "device": "Monitor"
+  },
+  "recovery": {
+    "sameLocalStackContainerId": "87dbf59bfa793f1e8210be26d20b2d01bdae7010df54aa0922379b2ff3f16e5e",
+    "observedBeforeStart": {
+      "running": false,
+      "lastExitCode": 255,
+      "oomKilled": false,
+      "stoppedAt": "2026-10-09T12:37:10Z",
+      "apiPersistence": false
+    },
+    "physicalDatabaseBackup": {
+      "beforeStartingContainer": true,
+      "files": 3820,
+      "bytes": 144388317,
+      "allCopiedFileSha256Verified": true,
+      "scope": "Cópia física privada do RDS parado; original não iniciado nem alterado durante extração do dump."
+    },
+    "logicalDatabaseBackup": {
+      "scope": "actual database recovered from hash-verified stopped cluster clone after Docker restart",
+      "database": {
+        "serverVersion": "PostgreSQL 17.11 (Debian 17.11-1.pgdg13+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit",
+        "tasks": 0,
+        "taskFingerprint": "d751713988987e9331980363e24189ce",
+        "userTableCount": 1
+      },
+      "dumpSha256": "b4b871713d2d8fe2cddf898271c3b2a978f216441201bc59ac4ef06fe367d89d",
+      "sqlSha256": "9b817e3952f2696a7d22bae7037955d55f9c5fc8612148b8fa16b117da6cb499",
+      "physicalBackupUntouched": true,
+      "cloneOnlyStarted": true,
+      "credentialsPrinted": false,
+      "time": "2026-10-10T07:52:17.869729+00:00"
+    },
+    "managedDatabaseRestore": {
+      "restoredAt": "2026-10-10T08:02:01.104137+00:00",
+      "scope": "actual reboot database recovered from stopped cluster, restored to managed RDS before ECS",
+      "dumpSha256": "b4b871713d2d8fe2cddf898271c3b2a978f216441201bc59ac4ef06fe367d89d",
+      "database": {
+        "serverVersion": "PostgreSQL 17.11 (Debian 17.11-1.pgdg13+2) on x86_64-pc-linux-gnu, compiled by gcc (Debian 14.2.0-19) 14.2.0, 64-bit",
+        "tasks": 0,
+        "taskFingerprint": "d751713988987e9331980363e24189ce",
+        "userTableCount": 1
+      },
+      "newDatabaseWasEmpty": true,
+      "singleTransaction": true,
+      "fingerprintMatches": true,
+      "credentialsPrinted": false
+    },
+    "managedNetworkAndDatabaseOfficialExitCodes": [0, 0],
+    "applicationOfficialStages": [
+      {
+        "stage": "reboot-ecs",
+        "exitCode": 0,
+        "signal": null
+      },
+      {
+        "stage": "reboot-alb",
+        "exitCode": 0,
+        "signal": null
+      },
+      {
+        "stage": "reboot-https",
+        "exitCode": 0,
+        "signal": null
+      },
+      {
+        "stage": "reboot-test-ecs",
+        "exitCode": 0,
+        "signal": null
+      },
+      {
+        "stage": "reboot-test-alb",
+        "exitCode": 0,
+        "signal": null
+      },
+      {
+        "stage": "reboot-test-https",
+        "exitCode": 0,
+        "signal": null
+      }
+    ],
+    "currentRuntime": {
+      "taskDefinition": "arn:aws:ecs:us-east-1:000000000000:task-definition/cloudtasks:1",
+      "recordedAt": "2026-10-10T08:16:35.6448627Z",
+      "clusterName": "cloudtasks-cluster-r20261008153148448",
+      "httpAndHttpsCanonical": true,
+      "running": 2,
+      "localStackContainerId": "87dbf59bfa793f1e8210be26d20b2d01bdae7010df54aa0922379b2ff3f16e5e",
+      "scope": "recovered existing accepted BIA image after reboot; current runtime, not a new pipeline execution",
+      "targetHealth": "2/2",
+      "pending": 0,
+      "runtime": {
+        "digest": "sha256:6949752ca2cf5963f7361e98dcfd57c5bee46be8e92c3ff95a12e604e90cf902",
+        "tasks": [
+          {
+            "port": 3000,
+            "imageId": "sha256:6949752ca2cf5963f7361e98dcfd57c5bee46be8e92c3ff95a12e604e90cf902",
+            "health": "healthy",
+            "taskArn": "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261008153148448/28065ee4-87fe-4872-bd2f-b6cbd2570dfc",
+            "ip": "172.18.0.3",
+            "containerId": "9cb4ea450329f275426dfc93daa19b165422bb4b5c35f4458c1237613bcbf9b5",
+            "digest": "sha256:6949752ca2cf5963f7361e98dcfd57c5bee46be8e92c3ff95a12e604e90cf902"
+          },
+          {
+            "port": 3000,
+            "imageId": "sha256:6949752ca2cf5963f7361e98dcfd57c5bee46be8e92c3ff95a12e604e90cf902",
+            "health": "healthy",
+            "taskArn": "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261008153148448/e8c5f07d-1c22-4aff-a5fa-d5eb124deebb",
+            "ip": "172.18.0.4",
+            "containerId": "bd15b9972872cf6ada6bc89bd24393c8931d77da497455e7bfd855ff1693c322",
+            "digest": "sha256:6949752ca2cf5963f7361e98dcfd57c5bee46be8e92c3ff95a12e604e90cf902"
+          }
+        ],
+        "version": "1.8.2",
+        "releaseId": "pipeline-9a523db2-ed39-4b3a-8a3d-23410e9dab33",
+        "image": "000000000000.dkr.ecr.us-east-1.localhost.localstack.cloud:4566/cloudtasks:pipeline-9a523db2-ed39-4b3a-8a3d-23410e9dab33"
+      },
+      "desired": 2
+    },
+    "applicationRebuilt": false,
+    "acceptedCachedImageRepublishedToEcr": true,
+    "checkpointScope": "A imagem aceita em 08/10 foi recuperada; isto não cria uma nova aprovação de pipeline."
+  },
+  "liveRecoveredApplication": {
+    "api": {
+      "scope": "live LocalStack ECS replicas and real shared PostgreSQL, not AWS parity",
+      "executionId": "9a523db2-ed39-4b3a-8a3d-23410e9dab33",
+      "releaseId": "pipeline-9a523db2-ed39-4b3a-8a3d-23410e9dab33",
+      "version": "1.8.2",
+      "checks": [
+        "two-real-healthy-replicas-and-release-identity",
+        "additive-migration-and-legacy-trigger-in-live-postgresql",
+        "text-create-on-first-read-on-second",
+        "atomic-independent-edits-and-rename-across-replicas",
+        "legacy-iso-write-and-clear-do-not-resurrect-text",
+        "complete-timestamp-null-and-iso-storage",
+        "owned-task-deleted-from-shared-database"
+      ],
+      "databaseServerVersion": "17.11 (Debian 17.11-1.pgdg13+2)",
+      "ownedTaskDeleted": true,
+      "time": "2026-10-10T08:16:37.877Z"
+    },
+    "ui": {
+      "scope": "recovered exact accepted release; live ALB UI and owned-task CRUD",
+      "url": "http://cloudtasks-alb.elb.localhost.localstack.cloud:4566",
+      "releaseId": "pipeline-9a523db2-ed39-4b3a-8a3d-23410e9dab33",
+      "version": "1.8.2",
+      "desktop": true,
+      "mobileNoOverflow": true,
+      "realHealthOnline": true,
+      "aboutNavigation": true,
+      "liveCrudThroughAlb": true,
+      "ownedUiTaskDeleted": true,
+      "sameOriginAssets": [
+        {
+          "url": "http://cloudtasks-alb.elb.localhost.localstack.cloud:4566/assets/index-ClhFVPkv.css",
+          "status": 200
+        },
+        {
+          "url": "http://cloudtasks-alb.elb.localhost.localstack.cloud:4566/assets/index-D0A584JM.js",
+          "status": 200
+        },
+        {
+          "url": "http://cloudtasks-alb.elb.localhost.localstack.cloud:4566/assets/index-ClhFVPkv.css",
+          "status": 304
+        },
+        {
+          "url": "http://cloudtasks-alb.elb.localhost.localstack.cloud:4566/assets/index-D0A584JM.js",
+          "status": 304
+        },
+        {
+          "url": "http://cloudtasks-alb.elb.localhost.localstack.cloud:4566/assets/index-ClhFVPkv.css",
+          "status": 304
+        },
+        {
+          "url": "http://cloudtasks-alb.elb.localhost.localstack.cloud:4566/assets/index-D0A584JM.js",
+          "status": 304
+        },
+        {
+          "url": "http://cloudtasks-alb.elb.localhost.localstack.cloud:4566/assets/index-ClhFVPkv.css",
+          "status": 304
+        },
+        {
+          "url": "http://cloudtasks-alb.elb.localhost.localstack.cloud:4566/assets/index-D0A584JM.js",
+          "status": 304
+        }
+      ],
+      "originChecks": [
+        {
+          "origin": "http://cloudtasks-alb.elb.localhost.localstack.cloud:4566",
+          "status": 200
+        },
+        {
+          "origin": "https://cloudtasks-alb.elb.localhost.localstack.cloud:4566",
+          "status": 200
+        },
+        {
+          "origin": "https://untrusted.invalid",
+          "status": 403
+        }
+      ],
+      "pageErrors": [],
+      "time": "2026-10-10T08:16:49.812Z"
+    },
+    "testsCreatedOnlyOwnedRows": true,
+    "ownedRowsRemoved": true
+  },
+  "diagnosticChange": {
+    "commit": "c97ebfae53868d48762a12150a1d7089e3b77e64",
+    "files": [
+      {
+        "path": "scripts/localstack/blue-green-controller.mjs",
+        "blobSha1": "c1f098a5c580868c1545fed9acc3631407d0b434",
+        "sha256": "9f787cbec9b494093ffdf1e58ca0d7fa40ae10f5b2971beba8df01886287e39b"
+      },
+      {
+        "path": "scripts/localstack/blue-green-localstack.mjs",
+        "blobSha1": "70759cc2921729ce0f444e0de4a85569215ce596",
+        "sha256": "989401e414ed43fbbc51432b8c81f18f16cf0a75e82368432945fb23bc350244"
+      },
+      {
+        "path": "scripts/tests/blue-green-guards.test.mjs",
+        "blobSha1": "95bc93d5c8dd8c134add54a70448ed79e729d9ad",
+        "sha256": "3a5e7356fbc7edabda4961bc07a20a8d21bb929960a7e3575b9345e3d18fb4fd"
+      },
+      {
+        "path": "scripts/tests/blue-green.test.mjs",
+        "blobSha1": "e1d3a3d1d3f86de191a98950fcdb9bcccbb9d2cc",
+        "sha256": "e1ae386e05c0444c8ad5c118bf6c7d8440dba13f441f3d65d688ffa928932e6b"
+      }
+    ],
+    "reason": "Duas execuções históricas registraram AWS_COMMAND_FAILED sem identificar a operação ou a condição do subprocesso.",
+    "fields": [
+      "tool",
+      "operation",
+      "reason",
+      "elapsedMs",
+      "exitCode",
+      "signal"
+    ],
+    "argumentsOrRawStderrCopied": false,
+    "retriesAdded": false,
+    "commandTimeoutSeconds": 40,
+    "rolloutAndOwnershipChecksChanged": false,
+    "redGreenRegressionsObserved": true,
+    "readOnlyReviewFindingsResolved": true,
+    "existingLimitation": "restoreListeners suprime alguns erros individuais; o diagnóstico não cobre integralmente esses caminhos preexistentes.",
+    "historicalRootCauseProved": false
+  },
+  "verification": {
+    "localLinux": {
+      "verifyExitCode": 0,
+      "apiPassed": 22,
+      "postgresIntegrationSkipped": 5,
+      "webPassed": 8,
+      "nodePassed": 42,
+      "totalPassed": 72
+    },
+    "windows": {
+      "verifyExitCode": 0,
+      "apiPassed": 22,
+      "postgresIntegrationSkipped": 5,
+      "webPassed": 8,
+      "nodePassed": 40,
+      "nodePosixSkipped": 2,
+      "totalPassed": 70,
+      "parserExitCode": 0,
+      "regressionsExitCode": 0
+    },
+    "github": {
+      "commit": "c97ebfae53868d48762a12150a1d7089e3b77e64",
+      "runId": 38037416438,
+      "conclusion": "success",
+      "apiPassed": 27,
+      "postgresIntegrationPassed": 5,
+      "webPassed": 8,
+      "nodePassed": 42,
+      "totalPassed": 77,
+      "skipped": 0,
+      "dockerBuildPassed": true,
+      "powershellScriptsParsed": 41,
+      "powershellRegressionsPassed": 56,
+      "scope": "Workflow pull_request valida o merge de teste deste head com main; sem merge do PR."
+    }
+  },
+  "historicalFailures": [
+    {
+      "date": "2026-10-08",
+      "executionId": "dada3b9a-9c0f-4a93-b055-18b244d656fa",
+      "pipelineStatus": "Failed",
+      "receiptStatus": "RECOVERY_REQUIRED",
+      "lastPhase": "CANONICAL_VERIFIED",
+      "administrativeCleanupCompleted": true,
+      "rootCauseNotDetermined": true
+    },
+    {
+      "date": "2026-10-08",
+      "executionId": "f3612059-310b-4963-a96d-78e8e1359d9a",
+      "pipelineStatus": "Failed",
+      "receiptStatus": "ROLLED_BACK",
+      "lastPhase": "TRAFFIC_PROMOTED",
+      "automaticRollbackAndCleanupCompleted": true,
+      "rootCauseNotDetermined": true
+    }
+  ],
+  "currentNativeInvestigation": {
+    "status": "TWO_DISTINCT_EXECUTIONS_ACCEPTED",
+    "sameRuntimeWithoutReset": true,
+    "sameReviewedCode": true,
+    "sourceSha256": "880c4d4f9a7174700d37752b8d4a687b5093082563926caa6b2d0cea766db4dc",
+    "first": {
+      "recordedAt": "2026-10-10T08:40:38.4959428Z",
+      "name": "diagnostic-native-first",
+      "pipelineStatus": "Succeeded",
+      "pipelineVersion": 1,
+      "localStackContainerId": "87dbf59bfa793f1e8210be26d20b2d01bdae7010df54aa0922379b2ff3f16e5e",
+      "acceptedState": {
+        "pipelineName": "cloudtasks-pipeline",
+        "executionId": "ff17f9a8-ce91-4929-bd22-228fc2656c53",
+        "executionMode": "NativeCodePipeline",
+        "pipelineStatus": "Succeeded",
+        "buildArtifactSha256": "85ad6989fef0de151717b45069331cd218af18e2fd9ae864f15ff1ca18d97a11",
+        "buildArtifactBucket": "cloudtasks-pipeline-artifacts",
+        "buildArtifactKey": "cloudtasks-pipeline/BuildOutput/3012705d",
+        "codeBuildId": "cloudtasks-build:e8fdc1fe",
+        "codeBuildImageId": "sha256:3d9f03274c986ae91fa40046c09612304eafcc1c879927d15aabc41cbe5b1c1e",
+        "localStackContainerId": "87dbf59bfa793f1e8210be26d20b2d01bdae7010df54aa0922379b2ff3f16e5e",
+        "localStackImageId": "sha256:801a3dff7f6a23857e7310b7602e67d52a29dfdcb03e09f7c608d5c57d24b792",
+        "sourceVersionId": "AaEk6dx9opgjurKzfrJaXf908WRekxrL",
+        "sourceSha256": "880c4d4f9a7174700d37752b8d4a687b5093082563926caa6b2d0cea766db4dc",
+        "executedAt": "2026-10-10T08:39:42.4710907Z",
+        "clusterName": "cloudtasks-cluster-r20261008153148448",
+        "serviceName": "cloudtasks-service",
+        "previousTaskDefinition": "arn:aws:ecs:us-east-1:000000000000:task-definition/cloudtasks:1",
+        "previousImage": "000000000000.dkr.ecr.us-east-1.localhost.localstack.cloud:4566/cloudtasks:pipeline-9a523db2-ed39-4b3a-8a3d-23410e9dab33",
+        "deployedTaskDefinition": "arn:aws:ecs:us-east-1:000000000000:task-definition/cloudtasks:2",
+        "deployedImage": "000000000000.dkr.ecr.us-east-1.localhost.localstack.cloud:4566/cloudtasks:pipeline-e102cefe-141d-4fd5-b212-0208617c636c",
+        "deployedImageDigest": "sha256:2efe89086e7ab912f62d89b10aae3e291abadb34655a52e8e9f40eb536bc6b29",
+        "sourceBucket": "cloudtasks-pipeline-source",
+        "sourceObjectKey": "cloudtasks-source.zip",
+        "deploymentMode": "LocalStackBlueGreenAdapter",
+        "nativeBlueGreenControllerCertified": false,
+        "deployCodeBuildId": "cloudtasks-bluegreen-deploy:d132d24a",
+        "deployArtifactSha256": "3c57bff1e36b6f31d61290aaf042ce36e7efef00d32c603a5d95fdd791e829a5",
+        "deployArtifactBucket": "cloudtasks-pipeline-artifacts",
+        "deployArtifactKey": "cloudtasks-pipeline/DeployOutput/f6f5d2a8"
+      },
+      "actions": [
+        {
+          "actionName": "DeployBlueGreen",
+          "stageName": "Deploy",
+          "status": "Succeeded",
+          "pipelineExecutionId": "ff17f9a8-ce91-4929-bd22-228fc2656c53",
+          "nativeExternalExecutionId": "cloudtasks-bluegreen-deploy:d132d24a",
+          "sourceVersionId": null,
+          "codebuild": {
+            "id": "cloudtasks-bluegreen-deploy:d132d24a",
+            "status": "SUCCEEDED",
+            "startTime": 1791620944.496604,
+            "endTime": 1791621538.822615,
+            "sourceVersion": "arn:aws:s3:::cloudtasks-pipeline-artifacts/cloudtasks-pipeline/BuildOutput/3012705d",
+            "artifactLocation": "arn:aws:s3:::cloudtasks-pipeline-artifacts/cloudtasks-pipeline/DeployOutput/f6f5d2a8"
+          },
+          "outputArtifacts": [
+            {
+              "name": "DeployOutput",
+              "s3location": {
+                "bucket": "cloudtasks-pipeline-artifacts",
+                "key": "cloudtasks-pipeline/DeployOutput/f6f5d2a8"
+              }
+            }
+          ],
+          "inputArtifacts": [
+            {
+              "name": "BuildOutput",
+              "s3location": {
+                "bucket": "cloudtasks-pipeline-artifacts",
+                "key": "cloudtasks-pipeline/BuildOutput/3012705d"
+              }
+            }
+          ]
+        },
+        {
+          "actionName": "BuildAndPush",
+          "stageName": "Build",
+          "status": "Succeeded",
+          "pipelineExecutionId": "ff17f9a8-ce91-4929-bd22-228fc2656c53",
+          "nativeExternalExecutionId": "cloudtasks-build:e8fdc1fe",
+          "sourceVersionId": null,
+          "codebuild": {
+            "id": "cloudtasks-build:e8fdc1fe",
+            "status": "SUCCEEDED",
+            "startTime": 1791620705.336906,
+            "endTime": 1791620942.472431,
+            "sourceVersion": "arn:aws:s3:::cloudtasks-pipeline-artifacts/cloudtasks-pipeline/SourceOutput/d95c75e7.zip",
+            "artifactLocation": "arn:aws:s3:::cloudtasks-pipeline-artifacts/cloudtasks-pipeline/BuildOutput/3012705d"
+          },
+          "outputArtifacts": [
+            {
+              "name": "BuildOutput",
+              "s3location": {
+                "bucket": "cloudtasks-pipeline-artifacts",
+                "key": "cloudtasks-pipeline/BuildOutput/3012705d"
+              }
+            }
+          ],
+          "inputArtifacts": [
+            {
+              "name": "SourceOutput",
+              "s3location": {
+                "bucket": "cloudtasks-pipeline-artifacts",
+                "key": "cloudtasks-pipeline/SourceOutput/d95c75e7.zip"
+              }
+            }
+          ]
+        },
+        {
+          "actionName": "SourceSnapshot",
+          "stageName": "Source",
+          "status": "Succeeded",
+          "pipelineExecutionId": "ff17f9a8-ce91-4929-bd22-228fc2656c53",
+          "nativeExternalExecutionId": "AaEk6dx9opgjurKzfrJaXf908WRekxrL",
+          "sourceVersionId": "AaEk6dx9opgjurKzfrJaXf908WRekxrL",
+          "codebuild": null,
+          "outputArtifacts": [
+            {
+              "name": "SourceOutput",
+              "s3location": {
+                "bucket": "cloudtasks-pipeline-artifacts",
+                "key": "cloudtasks-pipeline/SourceOutput/d95c75e7.zip"
+              }
+            }
+          ],
+          "inputArtifacts": []
+        }
+      ],
+      "receiptSha256": "3c57bff1e36b6f31d61290aaf042ce36e7efef00d32c603a5d95fdd791e829a5",
+      "receipt": {
+        "executionId": "ff17f9a8-ce91-4929-bd22-228fc2656c53",
+        "agentBuildId": "local:00000000-0000-0000-0000-000000000000",
+        "scenario": "Normal",
+        "bakeSeconds": 60,
+        "mode": "LocalStackBlueGreenAdapter",
+        "nativeBlueGreenControllerCertified": false,
+        "status": "SUCCEEDED",
+        "phases": [
+          "BLUE_VERIFIED",
+          "CANDIDATE_VERIFIED",
+          "TRAFFIC_PROMOTED",
+          "BAKE_PASSED",
+          "CANONICAL_VERIFIED"
+        ],
+        "provenance": {
+          "imageBuildId": "cloudtasks-build:e8fdc1fe",
+          "inputArtifactBucket": "cloudtasks-pipeline-artifacts",
+          "inputArtifactKey": "cloudtasks-pipeline/BuildOutput/3012705d"
+        },
+        "blue": {
+          "definition": "arn:aws:ecs:us-east-1:000000000000:task-definition/cloudtasks:1",
+          "image": "000000000000.dkr.ecr.us-east-1.localhost.localstack.cloud:4566/cloudtasks:pipeline-9a523db2-ed39-4b3a-8a3d-23410e9dab33",
+          "digest": "sha256:6949752ca2cf5963f7361e98dcfd57c5bee46be8e92c3ff95a12e604e90cf902",
+          "releaseId": "pipeline-9a523db2-ed39-4b3a-8a3d-23410e9dab33",
+          "asset": "/assets/index-D0A584JM.js",
+          "bundleSha256": "652767d6287c1ae957008fab3dc679594ca5ea83da15068fda96a0e572097783",
+          "health": "ok",
+          "database": "ok",
+          "tasks": [
+            {
+              "taskArn": "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261008153148448/28065ee4-87fe-4872-bd2f-b6cbd2570dfc",
+              "containerId": "9cb4ea450329f275426dfc93daa19b165422bb4b5c35f4458c1237613bcbf9b5",
+              "imageId": "sha256:6949752ca2cf5963f7361e98dcfd57c5bee46be8e92c3ff95a12e604e90cf902",
+              "digest": "sha256:6949752ca2cf5963f7361e98dcfd57c5bee46be8e92c3ff95a12e604e90cf902",
+              "ip": "172.18.0.3",
+              "port": 3000,
+              "health": "healthy"
+            },
+            {
+              "taskArn": "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261008153148448/e8c5f07d-1c22-4aff-a5fa-d5eb124deebb",
+              "containerId": "bd15b9972872cf6ada6bc89bd24393c8931d77da497455e7bfd855ff1693c322",
+              "imageId": "sha256:6949752ca2cf5963f7361e98dcfd57c5bee46be8e92c3ff95a12e604e90cf902",
+              "digest": "sha256:6949752ca2cf5963f7361e98dcfd57c5bee46be8e92c3ff95a12e604e90cf902",
+              "ip": "172.18.0.4",
+              "port": 3000,
+              "health": "healthy"
+            }
+          ]
+        },
+        "green": {
+          "definition": "arn:aws:ecs:us-east-1:000000000000:task-definition/cloudtasks-candidate:1",
+          "image": "000000000000.dkr.ecr.us-east-1.localhost.localstack.cloud:4566/cloudtasks:pipeline-e102cefe-141d-4fd5-b212-0208617c636c",
+          "digest": "sha256:2efe89086e7ab912f62d89b10aae3e291abadb34655a52e8e9f40eb536bc6b29",
+          "releaseId": "pipeline-e102cefe-141d-4fd5-b212-0208617c636c",
+          "asset": "/assets/index-D0A584JM.js",
+          "bundleSha256": "652767d6287c1ae957008fab3dc679594ca5ea83da15068fda96a0e572097783",
+          "health": "ok",
+          "database": "ok",
+          "tasks": [
+            {
+              "taskArn": "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261008153148448/2e32931b-1706-4f16-a3d5-de230dd583a2",
+              "containerId": "55c4e9c6dec545ec9e37f37aa2cbe31a1b39287b2068422b1ac93736a343ec6f",
+              "imageId": "sha256:2efe89086e7ab912f62d89b10aae3e291abadb34655a52e8e9f40eb536bc6b29",
+              "digest": "sha256:2efe89086e7ab912f62d89b10aae3e291abadb34655a52e8e9f40eb536bc6b29",
+              "ip": "172.18.0.6",
+              "port": 3000,
+              "health": "healthy"
+            },
+            {
+              "taskArn": "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261008153148448/de2a69df-929c-44fe-a012-0259d5412f49",
+              "containerId": "9bd5991172ff06c30bdb74cb642cf785d6b5b6f485217edcc1717fe740b53d07",
+              "imageId": "sha256:2efe89086e7ab912f62d89b10aae3e291abadb34655a52e8e9f40eb536bc6b29",
+              "digest": "sha256:2efe89086e7ab912f62d89b10aae3e291abadb34655a52e8e9f40eb536bc6b29",
+              "ip": "172.18.0.7",
+              "port": 3000,
+              "health": "healthy"
+            }
+          ]
+        },
+        "isolation": {
+          "productionHttp": "blue",
+          "productionHttps": "blue",
+          "testHttp": "green",
+          "testHttps": "green"
+        },
+        "sharedData": {
+          "createBlueReadGreen": true,
+          "updateGreenReadBlue": true,
+          "ownedTaskDeleted": true
+        },
+        "promotion": {
+          "http": "green",
+          "https": "green",
+          "releaseId": "pipeline-e102cefe-141d-4fd5-b212-0208617c636c"
+        },
+        "bake": {
+          "requiredSeconds": 60,
+          "elapsedSeconds": 74.229,
+          "samples": [
+            {
+              "seconds": 21.1,
+              "blueHealthy": 2,
+              "greenHealthy": 2,
+              "blueHttp": "blue",
+              "blueHttps": "blue",
+              "productionRelease": "pipeline-e102cefe-141d-4fd5-b212-0208617c636c",
+              "httpsPinned": true
+            },
+            {
+              "seconds": 45.5,
+              "blueHealthy": 2,
+              "greenHealthy": 2,
+              "blueHttp": "blue",
+              "blueHttps": "blue",
+              "productionRelease": "pipeline-e102cefe-141d-4fd5-b212-0208617c636c",
+              "httpsPinned": true
+            },
+            {
+              "seconds": 74.2,
+              "blueHealthy": 2,
+              "greenHealthy": 2,
+              "blueHttp": "blue",
+              "blueHttps": "blue",
+              "productionRelease": "pipeline-e102cefe-141d-4fd5-b212-0208617c636c",
+              "httpsPinned": true
+            }
+          ]
+        },
+        "final": {
+          "taskDefinition": "arn:aws:ecs:us-east-1:000000000000:task-definition/cloudtasks:2",
+          "image": "000000000000.dkr.ecr.us-east-1.localhost.localstack.cloud:4566/cloudtasks:pipeline-e102cefe-141d-4fd5-b212-0208617c636c",
+          "digest": "sha256:2efe89086e7ab912f62d89b10aae3e291abadb34655a52e8e9f40eb536bc6b29",
+          "releaseId": "pipeline-e102cefe-141d-4fd5-b212-0208617c636c",
+          "tasks": [
+            {
+              "taskArn": "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261008153148448/5121a520-b24d-4224-9efb-b660dcd8aaa8",
+              "containerId": "21c00c58aa329e5e930f5909e43682c3b00e02dcf87d6e567d422cc7909c0f2b",
+              "imageId": "sha256:2efe89086e7ab912f62d89b10aae3e291abadb34655a52e8e9f40eb536bc6b29",
+              "digest": "sha256:2efe89086e7ab912f62d89b10aae3e291abadb34655a52e8e9f40eb536bc6b29",
+              "ip": "172.18.0.3",
+              "port": 3000,
+              "health": "healthy"
+            },
+            {
+              "taskArn": "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261008153148448/34b9642d-573f-48ac-b80d-b7e0ea742303",
+              "containerId": "4217fbb548aa972dea309532d8db75065b213cd95775735c0bcbf54b1b561a4e",
+              "imageId": "sha256:2efe89086e7ab912f62d89b10aae3e291abadb34655a52e8e9f40eb536bc6b29",
+              "digest": "sha256:2efe89086e7ab912f62d89b10aae3e291abadb34655a52e8e9f40eb536bc6b29",
+              "ip": "172.18.0.4",
+              "port": 3000,
+              "health": "healthy"
+            }
+          ],
+          "targetGroup": "arn:aws:elasticloadbalancing:us-east-1:000000000000:targetgroup/cloudtasks-tg/b6f57ea6ec1d453f",
+          "http": "green",
+          "https": "green",
+          "canonicalRetirement": {
+            "taskArns": [
+              "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261008153148448/28065ee4-87fe-4872-bd2f-b6cbd2570dfc",
+              "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261008153148448/e8c5f07d-1c22-4aff-a5fa-d5eb124deebb"
+            ],
+            "emptySamples": 2,
+            "physicalRunning": 0,
+            "productionHttp": "green",
+            "productionHttps": "green"
+          }
+        },
+        "cleanup": {
+          "temporaryServiceRemoved": true,
+          "temporaryRulesRemoved": true,
+          "temporaryGroupRemoved": true,
+          "temporaryDefinitionDeregistered": true,
+          "temporaryContainersRemoved": true,
+          "temporaryLogsRemoved": true
+        },
+        "owned": {
+          "rules": [
+            "arn:aws:elasticloadbalancing:us-east-1:000000000000:listener-rule/app/cloudtasks-alb/6b5fafdf6f944428/b227c171d21341ca/fc933845f4cf4232",
+            "arn:aws:elasticloadbalancing:us-east-1:000000000000:listener-rule/app/cloudtasks-alb/6b5fafdf6f944428/b227c171d21341ca/f56e910863f34462",
+            "arn:aws:elasticloadbalancing:us-east-1:000000000000:listener-rule/app/cloudtasks-alb/6b5fafdf6f944428/6d41d3b8836a41e4/dafdd120165c4ec8",
+            "arn:aws:elasticloadbalancing:us-east-1:000000000000:listener-rule/app/cloudtasks-alb/6b5fafdf6f944428/6d41d3b8836a41e4/58f732e1113f4f89"
+          ],
+          "taskIds": [
+            "2e32931b-1706-4f16-a3d5-de230dd583a2",
+            "de2a69df-929c-44fe-a012-0259d5412f49",
+            "2e32931b-1706-4f16-a3d5-de230dd583a2",
+            "de2a69df-929c-44fe-a012-0259d5412f49",
+            "2e32931b-1706-4f16-a3d5-de230dd583a2",
+            "de2a69df-929c-44fe-a012-0259d5412f49",
+            "2e32931b-1706-4f16-a3d5-de230dd583a2",
+            "de2a69df-929c-44fe-a012-0259d5412f49"
+          ],
+          "definition": "arn:aws:ecs:us-east-1:000000000000:task-definition/cloudtasks-candidate:1",
+          "group": "arn:aws:elasticloadbalancing:us-east-1:000000000000:targetgroup/ct-bg-ff17f9a8-green/f16d88ecc03c4282",
+          "service": "arn:aws:ecs:us-east-1:000000000000:service/cloudtasks-cluster-r20261008153148448/cloudtasks-candidate-ff17f9a8"
+        },
+        "recordedAt": "2026-10-10T08:38:23.940Z"
+      },
+      "lockAbsent": true,
+      "externalFallbackUsed": false
+    },
+    "second": {
+      "recordedAt": "2026-10-10T08:56:23.9840140Z",
+      "name": "diagnostic-native-second",
+      "pipelineStatus": "Succeeded",
+      "pipelineVersion": 1,
+      "localStackContainerId": "87dbf59bfa793f1e8210be26d20b2d01bdae7010df54aa0922379b2ff3f16e5e",
+      "acceptedState": {
+        "pipelineName": "cloudtasks-pipeline",
+        "executionId": "c8430b70-1240-4fa0-a514-1220cf5aa9b5",
+        "executionMode": "NativeCodePipeline",
+        "pipelineStatus": "Succeeded",
+        "buildArtifactSha256": "7133759743d55ae4610d6591f96a702ea22906178d34d3fc6b325ead90289516",
+        "buildArtifactBucket": "cloudtasks-pipeline-artifacts",
+        "buildArtifactKey": "cloudtasks-pipeline/BuildOutput/8905e35a",
+        "codeBuildId": "cloudtasks-build:e4285ec1",
+        "codeBuildImageId": "sha256:3d9f03274c986ae91fa40046c09612304eafcc1c879927d15aabc41cbe5b1c1e",
+        "localStackContainerId": "87dbf59bfa793f1e8210be26d20b2d01bdae7010df54aa0922379b2ff3f16e5e",
+        "localStackImageId": "sha256:801a3dff7f6a23857e7310b7602e67d52a29dfdcb03e09f7c608d5c57d24b792",
+        "sourceVersionId": "AaEk6dx.NqlvRw_Jgbe7qIDjPDi9nzG8",
+        "sourceSha256": "880c4d4f9a7174700d37752b8d4a687b5093082563926caa6b2d0cea766db4dc",
+        "executedAt": "2026-10-10T08:55:31.9149318Z",
+        "clusterName": "cloudtasks-cluster-r20261008153148448",
+        "serviceName": "cloudtasks-service",
+        "previousTaskDefinition": "arn:aws:ecs:us-east-1:000000000000:task-definition/cloudtasks:2",
+        "previousImage": "000000000000.dkr.ecr.us-east-1.localhost.localstack.cloud:4566/cloudtasks:pipeline-e102cefe-141d-4fd5-b212-0208617c636c",
+        "deployedTaskDefinition": "arn:aws:ecs:us-east-1:000000000000:task-definition/cloudtasks:3",
+        "deployedImage": "000000000000.dkr.ecr.us-east-1.localhost.localstack.cloud:4566/cloudtasks:pipeline-59d0bd08-487f-46a6-94ed-88884ec052d2",
+        "deployedImageDigest": "sha256:88608a832aa41d7e24d04bfd0a96952f350ce22af4db9388528c07eb0c915985",
+        "sourceBucket": "cloudtasks-pipeline-source",
+        "sourceObjectKey": "cloudtasks-source.zip",
+        "deploymentMode": "LocalStackBlueGreenAdapter",
+        "nativeBlueGreenControllerCertified": false,
+        "deployCodeBuildId": "cloudtasks-bluegreen-deploy:2a3dadf4",
+        "deployArtifactSha256": "cdee50b47eae8a72f99abb18364e568fa25f7b7fd35a204be71aa9371cddf240",
+        "deployArtifactBucket": "cloudtasks-pipeline-artifacts",
+        "deployArtifactKey": "cloudtasks-pipeline/DeployOutput/b092c35d"
+      },
+      "actions": [
+        {
+          "actionName": "DeployBlueGreen",
+          "stageName": "Deploy",
+          "status": "Succeeded",
+          "pipelineExecutionId": "c8430b70-1240-4fa0-a514-1220cf5aa9b5",
+          "nativeExternalExecutionId": "cloudtasks-bluegreen-deploy:2a3dadf4",
+          "sourceVersionId": null,
+          "codebuild": {
+            "id": "cloudtasks-bluegreen-deploy:2a3dadf4",
+            "status": "SUCCEEDED",
+            "startTime": 1791621984.265376,
+            "endTime": 1791622500.815178,
+            "sourceVersion": "arn:aws:s3:::cloudtasks-pipeline-artifacts/cloudtasks-pipeline/BuildOutput/8905e35a",
+            "artifactLocation": "arn:aws:s3:::cloudtasks-pipeline-artifacts/cloudtasks-pipeline/DeployOutput/b092c35d"
+          },
+          "outputArtifacts": [
+            {
+              "name": "DeployOutput",
+              "s3location": {
+                "bucket": "cloudtasks-pipeline-artifacts",
+                "key": "cloudtasks-pipeline/DeployOutput/b092c35d"
+              }
+            }
+          ],
+          "inputArtifacts": [
+            {
+              "name": "BuildOutput",
+              "s3location": {
+                "bucket": "cloudtasks-pipeline-artifacts",
+                "key": "cloudtasks-pipeline/BuildOutput/8905e35a"
+              }
+            }
+          ]
+        },
+        {
+          "actionName": "BuildAndPush",
+          "stageName": "Build",
+          "status": "Succeeded",
+          "pipelineExecutionId": "c8430b70-1240-4fa0-a514-1220cf5aa9b5",
+          "nativeExternalExecutionId": "cloudtasks-build:e4285ec1",
+          "sourceVersionId": null,
+          "codebuild": {
+            "id": "cloudtasks-build:e4285ec1",
+            "status": "SUCCEEDED",
+            "startTime": 1791621773.841669,
+            "endTime": 1791621982.164713,
+            "sourceVersion": "arn:aws:s3:::cloudtasks-pipeline-artifacts/cloudtasks-pipeline/SourceOutput/009db9c0.zip",
+            "artifactLocation": "arn:aws:s3:::cloudtasks-pipeline-artifacts/cloudtasks-pipeline/BuildOutput/8905e35a"
+          },
+          "outputArtifacts": [
+            {
+              "name": "BuildOutput",
+              "s3location": {
+                "bucket": "cloudtasks-pipeline-artifacts",
+                "key": "cloudtasks-pipeline/BuildOutput/8905e35a"
+              }
+            }
+          ],
+          "inputArtifacts": [
+            {
+              "name": "SourceOutput",
+              "s3location": {
+                "bucket": "cloudtasks-pipeline-artifacts",
+                "key": "cloudtasks-pipeline/SourceOutput/009db9c0.zip"
+              }
+            }
+          ]
+        },
+        {
+          "actionName": "SourceSnapshot",
+          "stageName": "Source",
+          "status": "Succeeded",
+          "pipelineExecutionId": "c8430b70-1240-4fa0-a514-1220cf5aa9b5",
+          "nativeExternalExecutionId": "AaEk6dx.NqlvRw_Jgbe7qIDjPDi9nzG8",
+          "sourceVersionId": "AaEk6dx.NqlvRw_Jgbe7qIDjPDi9nzG8",
+          "codebuild": null,
+          "outputArtifacts": [
+            {
+              "name": "SourceOutput",
+              "s3location": {
+                "bucket": "cloudtasks-pipeline-artifacts",
+                "key": "cloudtasks-pipeline/SourceOutput/009db9c0.zip"
+              }
+            }
+          ],
+          "inputArtifacts": []
+        }
+      ],
+      "receiptSha256": "cdee50b47eae8a72f99abb18364e568fa25f7b7fd35a204be71aa9371cddf240",
+      "receipt": {
+        "executionId": "c8430b70-1240-4fa0-a514-1220cf5aa9b5",
+        "agentBuildId": "local:00000000-0000-0000-0000-000000000000",
+        "scenario": "Normal",
+        "bakeSeconds": 60,
+        "mode": "LocalStackBlueGreenAdapter",
+        "nativeBlueGreenControllerCertified": false,
+        "status": "SUCCEEDED",
+        "phases": [
+          "BLUE_VERIFIED",
+          "CANDIDATE_VERIFIED",
+          "TRAFFIC_PROMOTED",
+          "BAKE_PASSED",
+          "CANONICAL_VERIFIED"
+        ],
+        "provenance": {
+          "imageBuildId": "cloudtasks-build:e4285ec1",
+          "inputArtifactBucket": "cloudtasks-pipeline-artifacts",
+          "inputArtifactKey": "cloudtasks-pipeline/BuildOutput/8905e35a"
+        },
+        "blue": {
+          "definition": "arn:aws:ecs:us-east-1:000000000000:task-definition/cloudtasks:2",
+          "image": "000000000000.dkr.ecr.us-east-1.localhost.localstack.cloud:4566/cloudtasks:pipeline-e102cefe-141d-4fd5-b212-0208617c636c",
+          "digest": "sha256:2efe89086e7ab912f62d89b10aae3e291abadb34655a52e8e9f40eb536bc6b29",
+          "releaseId": "pipeline-e102cefe-141d-4fd5-b212-0208617c636c",
+          "asset": "/assets/index-D0A584JM.js",
+          "bundleSha256": "652767d6287c1ae957008fab3dc679594ca5ea83da15068fda96a0e572097783",
+          "health": "ok",
+          "database": "ok",
+          "tasks": [
+            {
+              "taskArn": "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261008153148448/5121a520-b24d-4224-9efb-b660dcd8aaa8",
+              "containerId": "21c00c58aa329e5e930f5909e43682c3b00e02dcf87d6e567d422cc7909c0f2b",
+              "imageId": "sha256:2efe89086e7ab912f62d89b10aae3e291abadb34655a52e8e9f40eb536bc6b29",
+              "digest": "sha256:2efe89086e7ab912f62d89b10aae3e291abadb34655a52e8e9f40eb536bc6b29",
+              "ip": "172.18.0.3",
+              "port": 3000,
+              "health": "healthy"
+            },
+            {
+              "taskArn": "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261008153148448/34b9642d-573f-48ac-b80d-b7e0ea742303",
+              "containerId": "4217fbb548aa972dea309532d8db75065b213cd95775735c0bcbf54b1b561a4e",
+              "imageId": "sha256:2efe89086e7ab912f62d89b10aae3e291abadb34655a52e8e9f40eb536bc6b29",
+              "digest": "sha256:2efe89086e7ab912f62d89b10aae3e291abadb34655a52e8e9f40eb536bc6b29",
+              "ip": "172.18.0.4",
+              "port": 3000,
+              "health": "healthy"
+            }
+          ]
+        },
+        "green": {
+          "definition": "arn:aws:ecs:us-east-1:000000000000:task-definition/cloudtasks-candidate:2",
+          "image": "000000000000.dkr.ecr.us-east-1.localhost.localstack.cloud:4566/cloudtasks:pipeline-59d0bd08-487f-46a6-94ed-88884ec052d2",
+          "digest": "sha256:88608a832aa41d7e24d04bfd0a96952f350ce22af4db9388528c07eb0c915985",
+          "releaseId": "pipeline-59d0bd08-487f-46a6-94ed-88884ec052d2",
+          "asset": "/assets/index-D0A584JM.js",
+          "bundleSha256": "652767d6287c1ae957008fab3dc679594ca5ea83da15068fda96a0e572097783",
+          "health": "ok",
+          "database": "ok",
+          "tasks": [
+            {
+              "taskArn": "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261008153148448/c91087cc-ce72-4a64-b107-6a73f5da2c79",
+              "containerId": "a1c3cdb5af25f288255b3c63980d3cb6ee32b3d38c7bb220eac107f48f7fe449",
+              "imageId": "sha256:88608a832aa41d7e24d04bfd0a96952f350ce22af4db9388528c07eb0c915985",
+              "digest": "sha256:88608a832aa41d7e24d04bfd0a96952f350ce22af4db9388528c07eb0c915985",
+              "ip": "172.18.0.6",
+              "port": 3000,
+              "health": "healthy"
+            },
+            {
+              "taskArn": "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261008153148448/df623077-7fb6-4edd-bdee-7e2d51f1a037",
+              "containerId": "74468260f97206c4653fca59b4891d3b809940092b1386b03fb71f3989003307",
+              "imageId": "sha256:88608a832aa41d7e24d04bfd0a96952f350ce22af4db9388528c07eb0c915985",
+              "digest": "sha256:88608a832aa41d7e24d04bfd0a96952f350ce22af4db9388528c07eb0c915985",
+              "ip": "172.18.0.7",
+              "port": 3000,
+              "health": "healthy"
+            }
+          ]
+        },
+        "isolation": {
+          "productionHttp": "blue",
+          "productionHttps": "blue",
+          "testHttp": "green",
+          "testHttps": "green"
+        },
+        "sharedData": {
+          "createBlueReadGreen": true,
+          "updateGreenReadBlue": true,
+          "ownedTaskDeleted": true
+        },
+        "promotion": {
+          "http": "green",
+          "https": "green",
+          "releaseId": "pipeline-59d0bd08-487f-46a6-94ed-88884ec052d2"
+        },
+        "bake": {
+          "requiredSeconds": 60,
+          "elapsedSeconds": 96.229,
+          "samples": [
+            {
+              "seconds": 22.3,
+              "blueHealthy": 2,
+              "greenHealthy": 2,
+              "blueHttp": "blue",
+              "blueHttps": "blue",
+              "productionRelease": "pipeline-59d0bd08-487f-46a6-94ed-88884ec052d2",
+              "httpsPinned": true
+            },
+            {
+              "seconds": 55.1,
+              "blueHealthy": 2,
+              "greenHealthy": 2,
+              "blueHttp": "blue",
+              "blueHttps": "blue",
+              "productionRelease": "pipeline-59d0bd08-487f-46a6-94ed-88884ec052d2",
+              "httpsPinned": true
+            },
+            {
+              "seconds": 96.2,
+              "blueHealthy": 2,
+              "greenHealthy": 2,
+              "blueHttp": "blue",
+              "blueHttps": "blue",
+              "productionRelease": "pipeline-59d0bd08-487f-46a6-94ed-88884ec052d2",
+              "httpsPinned": true
+            }
+          ]
+        },
+        "final": {
+          "taskDefinition": "arn:aws:ecs:us-east-1:000000000000:task-definition/cloudtasks:3",
+          "image": "000000000000.dkr.ecr.us-east-1.localhost.localstack.cloud:4566/cloudtasks:pipeline-59d0bd08-487f-46a6-94ed-88884ec052d2",
+          "digest": "sha256:88608a832aa41d7e24d04bfd0a96952f350ce22af4db9388528c07eb0c915985",
+          "releaseId": "pipeline-59d0bd08-487f-46a6-94ed-88884ec052d2",
+          "tasks": [
+            {
+              "taskArn": "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261008153148448/5238f5f4-e9db-47ed-b68d-484cd31c5b66",
+              "containerId": "d054ceb64d1eea109c85a55f950f2122e0c10ef95e995f0cd360938388972b45",
+              "imageId": "sha256:88608a832aa41d7e24d04bfd0a96952f350ce22af4db9388528c07eb0c915985",
+              "digest": "sha256:88608a832aa41d7e24d04bfd0a96952f350ce22af4db9388528c07eb0c915985",
+              "ip": "172.18.0.3",
+              "port": 3000,
+              "health": "healthy"
+            },
+            {
+              "taskArn": "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261008153148448/9654804f-c27d-4551-b852-b96db9c84045",
+              "containerId": "8bf76fd10b39548d91359702edd5f5cea930abd52bdb85206cb77f7cfdc0450f",
+              "imageId": "sha256:88608a832aa41d7e24d04bfd0a96952f350ce22af4db9388528c07eb0c915985",
+              "digest": "sha256:88608a832aa41d7e24d04bfd0a96952f350ce22af4db9388528c07eb0c915985",
+              "ip": "172.18.0.4",
+              "port": 3000,
+              "health": "healthy"
+            }
+          ],
+          "targetGroup": "arn:aws:elasticloadbalancing:us-east-1:000000000000:targetgroup/cloudtasks-tg/b6f57ea6ec1d453f",
+          "http": "green",
+          "https": "green",
+          "canonicalRetirement": {
+            "taskArns": [
+              "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261008153148448/5121a520-b24d-4224-9efb-b660dcd8aaa8",
+              "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261008153148448/34b9642d-573f-48ac-b80d-b7e0ea742303",
+              "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261008153148448/28065ee4-87fe-4872-bd2f-b6cbd2570dfc",
+              "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261008153148448/e8c5f07d-1c22-4aff-a5fa-d5eb124deebb"
+            ],
+            "emptySamples": 2,
+            "physicalRunning": 0,
+            "productionHttp": "green",
+            "productionHttps": "green"
+          }
+        },
+        "cleanup": {
+          "temporaryServiceRemoved": true,
+          "temporaryRulesRemoved": true,
+          "temporaryGroupRemoved": true,
+          "temporaryDefinitionDeregistered": true,
+          "temporaryContainersRemoved": true,
+          "temporaryLogsRemoved": true
+        },
+        "owned": {
+          "rules": [
+            "arn:aws:elasticloadbalancing:us-east-1:000000000000:listener-rule/app/cloudtasks-alb/6b5fafdf6f944428/b227c171d21341ca/df73d38621484ee9",
+            "arn:aws:elasticloadbalancing:us-east-1:000000000000:listener-rule/app/cloudtasks-alb/6b5fafdf6f944428/b227c171d21341ca/892a8fd9baed481c",
+            "arn:aws:elasticloadbalancing:us-east-1:000000000000:listener-rule/app/cloudtasks-alb/6b5fafdf6f944428/6d41d3b8836a41e4/6432097f55124835",
+            "arn:aws:elasticloadbalancing:us-east-1:000000000000:listener-rule/app/cloudtasks-alb/6b5fafdf6f944428/6d41d3b8836a41e4/1317d18af0e94aa0"
+          ],
+          "taskIds": [
+            "c91087cc-ce72-4a64-b107-6a73f5da2c79",
+            "df623077-7fb6-4edd-bdee-7e2d51f1a037",
+            "c91087cc-ce72-4a64-b107-6a73f5da2c79",
+            "df623077-7fb6-4edd-bdee-7e2d51f1a037",
+            "c91087cc-ce72-4a64-b107-6a73f5da2c79",
+            "df623077-7fb6-4edd-bdee-7e2d51f1a037",
+            "c91087cc-ce72-4a64-b107-6a73f5da2c79",
+            "df623077-7fb6-4edd-bdee-7e2d51f1a037"
+          ],
+          "definition": "arn:aws:ecs:us-east-1:000000000000:task-definition/cloudtasks-candidate:2",
+          "group": "arn:aws:elasticloadbalancing:us-east-1:000000000000:targetgroup/ct-bg-c8430b70-green/4b8990a2c9bf416a",
+          "service": "arn:aws:ecs:us-east-1:000000000000:service/cloudtasks-cluster-r20261008153148448/cloudtasks-candidate-c8430b70"
+        },
+        "recordedAt": "2026-10-10T08:54:27.441Z"
+      },
+      "lockAbsent": true,
+      "externalFallbackUsed": false
+    },
+    "historicalFailuresNotReproducedInTheseExecutions": true,
+    "historicalRootCauseNotProved": true,
+    "nativeAwsBlueGreenControllerCertified": false
+  },
+  "finalLiveApplication": {
+    "runtime": {
+      "taskDefinition": "arn:aws:ecs:us-east-1:000000000000:task-definition/cloudtasks:3",
+      "recordedAt": "2026-10-10T09:03:14.1339243Z",
+      "clusterName": "cloudtasks-cluster-r20261008153148448",
+      "httpAndHttpsCanonical": true,
+      "running": 2,
+      "localStackContainerId": "87dbf59bfa793f1e8210be26d20b2d01bdae7010df54aa0922379b2ff3f16e5e",
+      "scope": "current BIA image after second accepted native Blue/Green execution; actual Docker replicas and real PostgreSQL",
+      "targetHealth": "2/2",
+      "pending": 0,
+      "runtime": {
+        "digest": "sha256:88608a832aa41d7e24d04bfd0a96952f350ce22af4db9388528c07eb0c915985",
+        "tasks": [
+          {
+            "port": 3000,
+            "imageId": "sha256:88608a832aa41d7e24d04bfd0a96952f350ce22af4db9388528c07eb0c915985",
+            "health": "healthy",
+            "taskArn": "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261008153148448/5238f5f4-e9db-47ed-b68d-484cd31c5b66",
+            "ip": "172.18.0.3",
+            "containerId": "d054ceb64d1eea109c85a55f950f2122e0c10ef95e995f0cd360938388972b45",
+            "digest": "sha256:88608a832aa41d7e24d04bfd0a96952f350ce22af4db9388528c07eb0c915985"
+          },
+          {
+            "port": 3000,
+            "imageId": "sha256:88608a832aa41d7e24d04bfd0a96952f350ce22af4db9388528c07eb0c915985",
+            "health": "healthy",
+            "taskArn": "arn:aws:ecs:us-east-1:000000000000:task/cloudtasks-cluster-r20261008153148448/9654804f-c27d-4551-b852-b96db9c84045",
+            "ip": "172.18.0.4",
+            "containerId": "8bf76fd10b39548d91359702edd5f5cea930abd52bdb85206cb77f7cfdc0450f",
+            "digest": "sha256:88608a832aa41d7e24d04bfd0a96952f350ce22af4db9388528c07eb0c915985"
+          }
+        ],
+        "version": "1.8.2",
+        "releaseId": "pipeline-59d0bd08-487f-46a6-94ed-88884ec052d2",
+        "image": "000000000000.dkr.ecr.us-east-1.localhost.localstack.cloud:4566/cloudtasks:pipeline-59d0bd08-487f-46a6-94ed-88884ec052d2"
+      },
+      "desired": 2
+    },
+    "api": {
+      "scope": "live LocalStack ECS replicas and real shared PostgreSQL, not AWS parity",
+      "executionId": "c8430b70-1240-4fa0-a514-1220cf5aa9b5",
+      "releaseId": "pipeline-59d0bd08-487f-46a6-94ed-88884ec052d2",
+      "version": "1.8.2",
+      "checks": [
+        "two-real-healthy-replicas-and-release-identity",
+        "additive-migration-and-legacy-trigger-in-live-postgresql",
+        "text-create-on-first-read-on-second",
+        "atomic-independent-edits-and-rename-across-replicas",
+        "legacy-iso-write-and-clear-do-not-resurrect-text",
+        "complete-timestamp-null-and-iso-storage",
+        "owned-task-deleted-from-shared-database"
+      ],
+      "databaseServerVersion": "17.11 (Debian 17.11-1.pgdg13+2)",
+      "ownedTaskDeleted": true,
+      "time": "2026-10-10T09:03:17.221Z"
+    },
+    "ui": {
+      "scope": "second accepted native Blue/Green release; live ALB UI and owned-task CRUD",
+      "url": "http://cloudtasks-alb.elb.localhost.localstack.cloud:4566",
+      "releaseId": "pipeline-59d0bd08-487f-46a6-94ed-88884ec052d2",
+      "version": "1.8.2",
+      "desktop": true,
+      "mobileNoOverflow": true,
+      "realHealthOnline": true,
+      "aboutNavigation": true,
+      "liveCrudThroughAlb": true,
+      "ownedUiTaskDeleted": true,
+      "sameOriginAssets": [
+        {
+          "url": "http://cloudtasks-alb.elb.localhost.localstack.cloud:4566/assets/index-ClhFVPkv.css",
+          "status": 200
+        },
+        {
+          "url": "http://cloudtasks-alb.elb.localhost.localstack.cloud:4566/assets/index-D0A584JM.js",
+          "status": 200
+        },
+        {
+          "url": "http://cloudtasks-alb.elb.localhost.localstack.cloud:4566/assets/index-ClhFVPkv.css",
+          "status": 304
+        },
+        {
+          "url": "http://cloudtasks-alb.elb.localhost.localstack.cloud:4566/assets/index-D0A584JM.js",
+          "status": 304
+        },
+        {
+          "url": "http://cloudtasks-alb.elb.localhost.localstack.cloud:4566/assets/index-D0A584JM.js",
+          "status": 304
+        },
+        {
+          "url": "http://cloudtasks-alb.elb.localhost.localstack.cloud:4566/assets/index-ClhFVPkv.css",
+          "status": 304
+        },
+        {
+          "url": "http://cloudtasks-alb.elb.localhost.localstack.cloud:4566/assets/index-D0A584JM.js",
+          "status": 304
+        },
+        {
+          "url": "http://cloudtasks-alb.elb.localhost.localstack.cloud:4566/assets/index-ClhFVPkv.css",
+          "status": 304
+        }
+      ],
+      "originChecks": [
+        {
+          "origin": "http://cloudtasks-alb.elb.localhost.localstack.cloud:4566",
+          "status": 200
+        },
+        {
+          "origin": "https://cloudtasks-alb.elb.localhost.localstack.cloud:4566",
+          "status": 200
+        },
+        {
+          "origin": "https://untrusted.invalid",
+          "status": 403
+        }
+      ],
+      "pageErrors": [],
+      "time": "2026-10-10T09:03:30.621Z"
+    },
+    "stages": [
+      {
+        "stage": "final-native-live-api",
+        "exitCode": 0,
+        "signal": null
+      },
+      {
+        "stage": "final-native-live-ui",
+        "exitCode": 0,
+        "signal": null
+      }
+    ]
+  },
+  "security": {
+    "firstImage": {
+      "scope": "exact Docker images including all manifest layers and configuration, current reboot-session local credentials in memory",
+      "historicalDatabasePasswordsRechecked": false,
+      "results": [
+        {
+          "executionId": "ff17f9a8-ce91-4929-bd22-228fc2656c53",
+          "imageId": "sha256:2efe89086e7ab912f62d89b10aae3e291abadb34655a52e8e9f40eb536bc6b29",
+          "outerArchiveBytes": 65082880,
+          "manifestLayers": 10,
+          "gzipLayers": 10,
+          "uncompressedLayerBytes": 192452608,
+          "credentialMatches": 0
+        }
+      ],
+      "credentialKinds": ["localstack-license", "database-password"],
+      "rawCredentialValuesPrinted": false,
+      "time": "2026-10-10T08:42:44.403Z"
+    },
+    "firstArtifacts": {
+      "scope": "exact native Source versions and linked Build/Deploy artifacts for one LocalStack Blue/Green execution",
+      "codeCommit": "c97ebfae53868d48762a12150a1d7089e3b77e64",
+      "artifacts": [
+        {
+          "executionId": "ff17f9a8-ce91-4929-bd22-228fc2656c53",
+          "kind": "source",
+          "file": "ff17f9a8-ce91-4929-bd22-228fc2656c53-source.zip",
+          "sha256": "880c4d4f9a7174700d37752b8d4a687b5093082563926caa6b2d0cea766db4dc",
+          "bytes": 97097,
+          "sourceVersion": "AaEk6dx9opgjurKzfrJaXf908WRekxrL",
+          "reviewedGitBlobsMatched": 40,
+          "activeCredentialMatches": 0
+        },
+        {
+          "executionId": "ff17f9a8-ce91-4929-bd22-228fc2656c53",
+          "kind": "build",
+          "file": "ff17f9a8-ce91-4929-bd22-228fc2656c53-build.zip",
+          "sha256": "85ad6989fef0de151717b45069331cd218af18e2fd9ae864f15ff1ca18d97a11",
+          "bytes": 15006,
+          "sourceVersion": null,
+          "reviewedGitBlobsMatched": 3,
+          "activeCredentialMatches": 0
+        },
+        {
+          "executionId": "ff17f9a8-ce91-4929-bd22-228fc2656c53",
+          "kind": "deploy",
+          "file": "ff17f9a8-ce91-4929-bd22-228fc2656c53-deploy.zip",
+          "sha256": "3c57bff1e36b6f31d61290aaf042ce36e7efef00d32c603a5d95fdd791e829a5",
+          "bytes": 2103,
+          "sourceVersion": null,
+          "reviewedGitBlobsMatched": 0,
+          "activeCredentialMatches": 0
+        }
+      ],
+      "scannedCredentialKinds": ["database-password", "localstack-license"],
+      "credentialMatches": 0,
+      "credentialsPrinted": false,
+      "historicalPasswordsRechecked": false
+    },
+    "secondImage": {
+      "scope": "exact Docker images including all manifest layers and configuration, current reboot-session local credentials in memory",
+      "historicalDatabasePasswordsRechecked": false,
+      "results": [
+        {
+          "executionId": "c8430b70-1240-4fa0-a514-1220cf5aa9b5",
+          "imageId": "sha256:88608a832aa41d7e24d04bfd0a96952f350ce22af4db9388528c07eb0c915985",
+          "outerArchiveBytes": 65082880,
+          "manifestLayers": 10,
+          "gzipLayers": 10,
+          "uncompressedLayerBytes": 192452608,
+          "credentialMatches": 0
+        }
+      ],
+      "credentialKinds": ["localstack-license", "database-password"],
+      "rawCredentialValuesPrinted": false,
+      "time": "2026-10-10T09:02:31.295Z"
+    },
+    "secondArtifacts": {
+      "scope": "exact native Source versions and linked Build/Deploy artifacts for one LocalStack Blue/Green execution",
+      "codeCommit": "c97ebfae53868d48762a12150a1d7089e3b77e64",
+      "artifacts": [
+        {
+          "executionId": "c8430b70-1240-4fa0-a514-1220cf5aa9b5",
+          "kind": "source",
+          "file": "c8430b70-1240-4fa0-a514-1220cf5aa9b5-source.zip",
+          "sha256": "880c4d4f9a7174700d37752b8d4a687b5093082563926caa6b2d0cea766db4dc",
+          "bytes": 97097,
+          "sourceVersion": "AaEk6dx.NqlvRw_Jgbe7qIDjPDi9nzG8",
+          "reviewedGitBlobsMatched": 40,
+          "activeCredentialMatches": 0
+        },
+        {
+          "executionId": "c8430b70-1240-4fa0-a514-1220cf5aa9b5",
+          "kind": "build",
+          "file": "c8430b70-1240-4fa0-a514-1220cf5aa9b5-build.zip",
+          "sha256": "7133759743d55ae4610d6591f96a702ea22906178d34d3fc6b325ead90289516",
+          "bytes": 15006,
+          "sourceVersion": null,
+          "reviewedGitBlobsMatched": 3,
+          "activeCredentialMatches": 0
+        },
+        {
+          "executionId": "c8430b70-1240-4fa0-a514-1220cf5aa9b5",
+          "kind": "deploy",
+          "file": "c8430b70-1240-4fa0-a514-1220cf5aa9b5-deploy.zip",
+          "sha256": "cdee50b47eae8a72f99abb18364e568fa25f7b7fd35a204be71aa9371cddf240",
+          "bytes": 2154,
+          "sourceVersion": null,
+          "reviewedGitBlobsMatched": 0,
+          "activeCredentialMatches": 0
+        }
+      ],
+      "scannedCredentialKinds": ["database-password", "localstack-license"],
+      "credentialMatches": 0,
+      "credentialsPrinted": false,
+      "historicalPasswordsRechecked": false
+    },
+    "historicalPasswordsRechecked": false,
+    "credentialValuesPrinted": false
+  }
+}

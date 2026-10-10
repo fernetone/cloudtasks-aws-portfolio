@@ -1,14 +1,14 @@
-# LocalStack Student â€” laboratÃ³rio AWS local do CloudTasks
+# LocalStack Student — execução local do projeto BIA
 
-CloudTasks usa LocalStack para exercitar a arquitetura AWS sem provisionar recursos faturÃ¡veis. O laboratÃ³rio local Ã© **determinÃ­stico e efÃªmero**: a infraestrutura AWS emulada Ã© reconstruÃ­da por scripts idempotentes em cada nova sessÃ£o, em vez de depender de snapshots de serviÃ§os com runtimes/ports internos.
+O projeto usa Docker/LocalStack Student/Pro como ambiente executável autorizado, sem provisionar recursos faturáveis. Isso não dispensa componentes do vídeo nem validações funcionais. O laboratório local é **determinístico e efêmero**: a infraestrutura AWS emulada é reconstruída por scripts idempotentes em cada nova sessão, em vez de depender de snapshots de serviços com runtimes/ports internos.
 
-## Por que a persistÃªncia AWS do emulador foi desativada
+## Por que a persistência AWS do emulador foi desativada
 
-Durante a homologaÃ§Ã£o, snapshots restaurados produziram estados de runtime inconsistentes em RDS, ECS e ECR. O caso decisivo foi um repositÃ³rio ECR restaurado que existia no control plane, mas `DescribeImages` falhava internamente porque o endpoint do registry associado ao runtime anterior nÃ£o estava mais materializado.
+Durante a homologação, snapshots restaurados produziram estados de runtime inconsistentes em RDS, ECS e ECR. O caso decisivo foi um repositório ECR restaurado que existia no control plane, mas `DescribeImages` falhava internamente porque o endpoint do registry associado ao runtime anterior não estava mais materializado.
 
-A arquitetura AWS real continua persistente. Esta decisÃ£o vale apenas para o laboratÃ³rio LocalStack e melhora a reprodutibilidade do portfÃ³lio.
+A arquitetura AWS real continua persistente. Esta decisão vale apenas para o laboratório LocalStack e melhora a reprodutibilidade do portfólio.
 
-## SeguranÃ§a do token
+## Segurança do token
 
 O Personal Auth Token fica em `.env.localstack`, ignorado pelo Git e pelo contexto Docker.
 
@@ -23,19 +23,19 @@ Set-ExecutionPolicy -Scope Process Bypass
 .\scripts\localstack\start-localstack.ps1
 ```
 
-ConfiguraÃ§Ã£o principal:
+Configuração principal:
 
 - `localstack/localstack-pro:latest`;
 - gateway `http://localhost:4566`;
-- regiÃ£o `us-east-1`;
+- região `us-east-1`;
 - `PERSISTENCE=0`;
-- um bind mount **novo por sessÃ£o** em `%USERPROFILE%\.cloudtasks\localstack-runtime\session-*`;
+- um bind mount **novo por sessão** em `%USERPROFILE%\.cloudtasks\localstack-runtime\session-*`;
 - `/var/lib/localstack` continua sendo `type=bind`, requisito do executor Docker do CodeBuild;
 - Docker socket montado;
 - rede `cloudtasks-localstack-network`;
 - `RDS_PG_CUSTOM_VERSIONS=0`;
-- `EXTRA_CORS_ALLOWED_ORIGINS` restrito Ã s origens HTTP/HTTPS `cloudtasks-alb.elb.localhost.localstack.cloud:4566`;
-- containers com falha de ECS/CodeBuild preservados durante homologaÃ§Ã£o.
+- `EXTRA_CORS_ALLOWED_ORIGINS` restrito às origens HTTP/HTTPS `cloudtasks-alb.elb.localhost.localstack.cloud:4566`;
+- containers com falha de ECS/CodeBuild preservados durante homologação.
 
 ## Construir/reconciliar a infraestrutura completa
 
@@ -52,7 +52,7 @@ Esse comando garante RDS/Secrets, ECR/imagem, ECS 2/2, ALB/Target Group e HTTPS/
 .\scripts\localstack\status-persistence.ps1
 ```
 
-O segundo comando manteve o nome por compatibilidade, mas agora valida que a **persistÃªncia estÃ¡ intencionalmente desativada** e que o bind mount necessÃ¡rio ao CodeBuild estÃ¡ correto.
+O segundo comando manteve o nome por compatibilidade, mas agora valida que a **persistência está intencionalmente desativada** e que o bind mount necessário ao CodeBuild está correto.
 
 ## ECR
 
@@ -61,7 +61,7 @@ O segundo comando manteve o nome por compatibilidade, mas agora valida que a **p
 .\scripts\localstack\push-ecr-image.ps1
 ```
 
-URI tÃ­pica:
+URI típica:
 
 ```text
 000000000000.dkr.ecr.us-east-1.localhost.localstack.cloud:4566/cloudtasks
@@ -84,7 +84,7 @@ URI tÃ­pica:
 .\scripts\localstack\test-cicd.ps1
 ```
 
-A pipeline local usa Source S3 versionado, CodePipeline V1, CodeBuild, ECR e ECS. A aprovaÃ§Ã£o exige Source/Build/Deploy nativos e CodeBuild vinculado; a versÃ£o 1.7.1 removeu os fallbacks de entrega externa. Se o execution engine nÃ£o completa as aÃ§Ãµes, a etapa 8 permanece pendente. Consulte [PIPELINE.md](PIPELINE.md).
+A pipeline local usa Source S3 versionado, CodePipeline V1, CodeBuild, ECR e ECS. A aprovação exige Source/Build/Deploy nativos e CodeBuild vinculado; a versão 1.7.1 removeu os fallbacks de entrega externa. Se o execution engine não completa as ações, a etapa 8 permanece pendente. Consulte [PIPELINE.md](PIPELINE.md).
 
 ## Desligar
 
@@ -92,14 +92,18 @@ A pipeline local usa Source S3 versionado, CodePipeline V1, CodeBuild, ECR e ECS
 .\scripts\localstack\stop-localstack.ps1
 ```
 
-O estado AWS emulado da sessÃ£o Ã© descartÃ¡vel por design. CÃ³digo-fonte, Git, cache Docker e `.env.localstack` nÃ£o sÃ£o apagados.
+O estado AWS emulado da sessão é descartável por design. Código-fonte, Git, cache Docker e `.env.localstack` não são apagados.
 
 ## Acesso da interface pelo navegador
 
-Em 08/10, HTML e probes sem Origin respondiam, mas JS/CSS com a origem do prÃ³prio ALB recebiam 403. A configuraÃ§Ã£o restrita acima permite o carregamento da interface; a verificaÃ§Ã£o mantÃ©m uma origem externa rejeitada. NÃ£o hÃ¡ wildcard nem desativaÃ§Ã£o dos checks CORS/CSRF. Essa variÃ¡vel exige uma nova execuÃ§Ã£o do serviÃ§o para ser carregada neste runtime.
+Em 08/10, HTML e probes sem Origin respondiam, mas JS/CSS com a origem do próprio ALB recebiam 403. A configuração restrita acima permite o carregamento da interface; a verificação mantém uma origem externa rejeitada. Não há wildcard nem desativação dos checks CORS/CSRF. Essa variável exige uma nova execução do serviço para ser carregada neste runtime.
 
-Antes da troca de sessÃ£o, foram preservados banco e artifacts. O banco foi restaurado em transaÃ§Ã£o antes de subir o ECS e teve quantidade de tabelas, tarefas e fingerprint conferidas. `resume-environment.ps1` sozinho continua sem restaurar dados de uma sessÃ£o anterior. [Registro desta manutenÃ§Ã£o](EVIDENCE-BIA-20261008.json).
+Antes da troca de sessão, foram preservados banco e artifacts. O banco foi restaurado em transação antes de subir o ECS e teve quantidade de tabelas, tarefas e fingerprint conferidas. `resume-environment.ps1` sozinho continua sem restaurar dados de uma sessão anterior. [Registro desta manutenção](EVIDENCE-BIA-20261008.json).
 
 ## Paridade
 
-LocalStack nÃ£o Ã© AWS real. No laboratÃ³rio, ECS Ã© Docker-backed e nÃ£o existem container instances EC2 reais. A arquitetura alvo do portfÃ³lio continua ECS sobre EC2 com ALB, RDS, ECR, CodePipeline/CodeBuild e demais serviÃ§os documentados.
+LocalStack não é AWS real. No laboratório, ECS é Docker-backed e não existem container instances EC2 reais. A arquitetura alvo do portfólio continua ECS sobre EC2 com ALB, RDS, ECR, CodePipeline/CodeBuild e demais serviços documentados.
+
+## Retomada validada em 10/10/2026
+
+Com `PERSISTENCE=0`, iniciar até o mesmo container pode descartar estados emulados. A retomada preservou primeiro os arquivos físicos RDS, extraiu o banco anterior e restaurou seus dados antes do ECS. O container LocalStack foi mantido; duas novas entregas Blue/Green passaram sem reset entre elas. Não usar uma reconstrução indiscriminada como conferência de saúde. [Evidências](EVIDENCE-REBOOT-20261010.json).
