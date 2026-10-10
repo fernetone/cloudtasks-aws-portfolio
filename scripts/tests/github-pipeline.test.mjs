@@ -12,8 +12,9 @@ import {
 
 const commit = "a".repeat(40),
   other = "b".repeat(40),
-  id = "execution-a";
+  id = "628c012e-f077-45c7-9596-6bd8f336fe7a";
 const buildId = "cloudtasks-github-build:aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee";
+const delivery = { commit, executionId: id, codeBuildId: buildId };
 const repositoryUri =
   "000000000000.dkr.ecr.us-east-1.localhost.localstack.cloud:4566/cloudtasks";
 const image = repositoryUri + ":pipeline-aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee";
@@ -21,6 +22,7 @@ const environment = {
   EXPECTED_SOURCE_COMMIT: commit,
   SOURCE_COMMIT_ID: commit,
   CODEBUILD_BUILD_ID: buildId,
+  PIPELINE_EXECUTION_ID: id,
 };
 function native() {
   const execution = {
@@ -59,6 +61,14 @@ function artifact() {
     sha256: "c".repeat(64),
   };
 }
+test("source receipt binds the pipeline execution even when the local agent build ID differs", () => {
+  const receipt = sourceReceipt({
+    ...environment,
+    CODEBUILD_BUILD_ID: "local:00000000-0000-0000-0000-000000000000",
+  });
+  assert.equal(receipt.pipelineExecutionId, id);
+  assert.equal(receipt.commit, commit);
+});
 test("rejects abbreviated, absent and injected commit values", () => {
   for (const v of [
     undefined,
@@ -133,7 +143,7 @@ test("the build receipt must belong to the exact successful native build", () =>
       checkedBuildArtifact(
         artifact(),
         { id: "cloudtasks-github-build:bbbbbbbb", buildStatus: "SUCCEEDED" },
-        commit,
+        delivery,
         repositoryUri,
       ),
     /GITHUB_BUILD_RECEIPT_MISMATCH/,
@@ -143,7 +153,7 @@ test("the build receipt must belong to the exact successful native build", () =>
       checkedBuildArtifact(
         artifact(),
         { id: buildId, buildStatus: "FAILED" },
-        commit,
+        delivery,
         repositoryUri,
       ),
     /GITHUB_BUILD_RECEIPT_MISMATCH/,
@@ -152,7 +162,7 @@ test("the build receipt must belong to the exact successful native build", () =>
     checkedBuildArtifact(
       artifact(),
       { id: buildId, buildStatus: "SUCCEEDED" },
-      commit,
+      delivery,
       repositoryUri,
     ),
     image,
@@ -176,7 +186,7 @@ test("artifact image cannot name another container, mutable tag or external regi
         checkedBuildArtifact(
           { ...artifact(), images },
           { id: buildId, buildStatus: "SUCCEEDED" },
-          commit,
+          delivery,
           repositoryUri,
         ),
       /GITHUB_BUILD_IMAGE_IDENTITY_INVALID/,

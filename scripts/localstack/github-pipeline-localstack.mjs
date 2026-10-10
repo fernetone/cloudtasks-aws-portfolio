@@ -575,7 +575,11 @@ async function accept(meta) {
   const image = checkedBuildArtifact(
       buildArtifact,
       build,
-      meta.expectedCommit,
+      {
+        commit: meta.expectedCommit,
+        executionId: meta.executionId,
+        codeBuildId: buildId,
+      },
       repository.repositoryUri,
     ),
     tag = image.slice(image.lastIndexOf(":") + 1);

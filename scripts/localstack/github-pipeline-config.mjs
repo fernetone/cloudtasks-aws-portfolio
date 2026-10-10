@@ -25,16 +25,16 @@ export function sourceReceipt(environment) {
     "GITHUB_SOURCE_COMMIT_MISMATCH",
   );
   requireValue(
-    /^cloudtasks-github-build:[a-f0-9-]+$/.test(
-      environment.CODEBUILD_BUILD_ID ?? "",
+    /^[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89ab][a-f0-9]{3}-[a-f0-9]{12}$/.test(
+      environment.PIPELINE_EXECUTION_ID ?? "",
     ),
-    "GITHUB_BUILD_ID_INVALID",
+    "GITHUB_PIPELINE_EXECUTION_ID_INVALID",
   );
   return {
     repository: githubRepository,
     branch: githubBranch,
     commit: expected,
-    codeBuildId: environment.CODEBUILD_BUILD_ID,
+    pipelineExecutionId: environment.PIPELINE_EXECUTION_ID,
     provider: "CodeStarSourceConnection",
   };
 }
@@ -103,6 +103,11 @@ export function pipelineDeclaration(runtime, connectionArn, roleArn) {
                 {
                   name: "SOURCE_COMMIT_ID",
                   value: "#{SourceVariables.CommitId}",
+                  type: "PLAINTEXT",
+                },
+                {
+                  name: "PIPELINE_EXECUTION_ID",
+                  value: "#{codepipeline.PipelineExecutionId}",
                   type: "PLAINTEXT",
                 },
               ]),
@@ -197,19 +202,16 @@ export function checkedDeclaration(actual, expected) {
     "GITHUB_PIPELINE_DECLARATION_CHANGED",
   );
 }
-export function checkedBuildArtifact(
-  artifact,
-  build,
-  expectedCommit,
-  repositoryUri,
-) {
+export function checkedBuildArtifact(artifact, build, delivery, repositoryUri) {
   const images = artifact.images;
   requireValue(
-    artifact.receipt?.commit === checkedCommit(expectedCommit) &&
+    artifact.receipt?.commit === checkedCommit(delivery.commit) &&
       artifact.receipt.repository === githubRepository &&
       artifact.receipt.branch === githubBranch &&
       artifact.receipt.provider === "CodeStarSourceConnection" &&
-      artifact.receipt.codeBuildId === build.id &&
+      artifact.receipt.pipelineExecutionId === delivery.executionId &&
+      build.id === delivery.codeBuildId &&
+      /^cloudtasks-github-build:[a-f0-9-]+$/.test(build.id ?? "") &&
       build.buildStatus === "SUCCEEDED",
     "GITHUB_BUILD_RECEIPT_MISMATCH",
   );
