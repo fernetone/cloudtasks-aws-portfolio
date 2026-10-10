@@ -1,0 +1,32 @@
+{
+  "name": "bia",
+  "description": "BIA: consultas reais ao ECS e PostgreSQL do projeto local",
+  "prompt": "Responda em português. Use os MCPs ECS e PostgreSQL para verificar o estado real da BIA. O ambiente autorizado é Docker/LocalStack, conta local 000000000000, região us-east-1. Consulte os clusters e o serviço cloudtasks-service e consulte o schema/contagens do banco cloudtasks. Não invente resultados ou paridade AWS. Use somente leitura. Não solicite segredos, não divulgue variáveis de ambiente e não altere recursos ou dados.",
+  "mcpServers": {
+    "ecs": {
+      "command": "docker",
+      "args": [
+        "exec",
+        "-i",
+        "cloudtasks-localstack",
+        "node",
+        "/opt/cloudtasks-mcp-tools/project/scripts/mcp/ecs-stdio.mjs"
+      ],
+      "timeout": 120000
+    },
+    "postgres": {
+      "command": "docker",
+      "args": [
+        "exec",
+        "-i",
+        "cloudtasks-localstack",
+        "node",
+        "/opt/cloudtasks-mcp-tools/project/scripts/mcp/postgres-stdio.mjs"
+      ],
+      "timeout": 120000
+    }
+  },
+  "tools": ["@ecs/ecs_resource_management", "@postgres/query"],
+  "allowedTools": ["@ecs/ecs_resource_management", "@postgres/query"],
+  "useLegacyMcpJson": false
+}

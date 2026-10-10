@@ -1,0 +1,264 @@
+{
+  "schemaVersion": 1,
+  "recordDate": "2026-10-10",
+  "scope": "LocalStack CloudFront functional proxy; not AWS CDN parity",
+  "codeReview": "ownership/concurrency and error-redaction reviewed; 11 isolated tests pass",
+  "live": {
+    "scope": "functional CloudFront proxy in Docker/LocalStack; AWS edge caching and AWS certificate parity not certified",
+    "cacheHitsCertified": false,
+    "checks": [
+      "enabled-state-read-through-cloudfront-api",
+      "pinned-https-cloudfront-alb-ecs-real-postgresql",
+      "html-javascript-css-match-current-alb-bytes",
+      "real-owned-task-crud-through-cdn-shared-with-alb",
+      "disabled-state-restored-with-etag-and-verified"
+    ],
+    "recordedAt": "2026-10-10T09:33:22.841Z",
+    "localStackContainerId": "87dbf59bfa793f1e8210be26d20b2d01bdae7010df54aa0922379b2ff3f16e5e",
+    "cluster": "cloudtasks-cluster-r20261008153148448",
+    "service": "cloudtasks-service",
+    "distributionId": "bdf15dae",
+    "alias": "cloudtasks-cdn.localhost.localstack.cloud",
+    "origin": "cloudtasks-alb.elb.localhost.localstack.cloud",
+    "releaseId": "pipeline-59d0bd08-487f-46a6-94ed-88884ec052d2",
+    "version": "1.8.2",
+    "distributionUrl": "https://bdf15dae.cloudfront.localhost.localstack.cloud:4566",
+    "alternateAliasTrafficVerified": false,
+    "tlsGatewayPin": "95174d79e4823d5bd0288e7aef0cb3f8718449f5b159bc07b532ed343448ef7e",
+    "assets": [
+      {
+        "path": "/assets/index-D0A584JM.js",
+        "sha256": "652767d6287c1ae957008fab3dc679594ca5ea83da15068fda96a0e572097783",
+        "status": 200
+      },
+      {
+        "path": "/assets/index-ClhFVPkv.css",
+        "sha256": "cbf4e90a1e75018aa6e9d8f5f5791e88c63a111c6ccab8c14fdb2b52093a987b",
+        "status": 200
+      }
+    ],
+    "ownedTaskDeleted": true,
+    "httpStatus": 200,
+    "httpRedirectEnforced": false,
+    "finalEnabled": false,
+    "configuration": {
+      "CallerReference": "cloudtasks-cdn-87dbf59bfa79",
+      "Aliases": {
+        "Quantity": 1,
+        "Items": ["cloudtasks-cdn.localhost.localstack.cloud"]
+      },
+      "DefaultRootObject": "index.html",
+      "Origins": {
+        "Quantity": 1,
+        "Items": [
+          {
+            "Id": "cloudtasks-alb",
+            "DomainName": "cloudtasks-alb.elb.localhost.localstack.cloud",
+            "OriginPath": "",
+            "CustomHeaders": {
+              "Quantity": 0
+            },
+            "CustomOriginConfig": {
+              "HTTPPort": 4566,
+              "HTTPSPort": 4566,
+              "OriginProtocolPolicy": "http-only",
+              "OriginSslProtocols": {
+                "Quantity": 1,
+                "Items": ["TLSv1.2"]
+              },
+              "OriginReadTimeout": 30,
+              "OriginKeepaliveTimeout": 5
+            },
+            "ConnectionAttempts": 3,
+            "ConnectionTimeout": 10,
+            "OriginShield": {
+              "Enabled": false
+            },
+            "OriginAccessControlId": ""
+          }
+        ]
+      },
+      "OriginGroups": {
+        "Quantity": 0
+      },
+      "DefaultCacheBehavior": {
+        "TargetOriginId": "cloudtasks-alb",
+        "TrustedSigners": {
+          "Enabled": false,
+          "Quantity": 0
+        },
+        "TrustedKeyGroups": {
+          "Enabled": false,
+          "Quantity": 0
+        },
+        "ViewerProtocolPolicy": "redirect-to-https",
+        "AllowedMethods": {
+          "Quantity": 7,
+          "Items": ["HEAD", "DELETE", "POST", "GET", "OPTIONS", "PUT", "PATCH"],
+          "CachedMethods": {
+            "Quantity": 2,
+            "Items": ["HEAD", "GET"]
+          }
+        },
+        "SmoothStreaming": false,
+        "Compress": true,
+        "LambdaFunctionAssociations": {
+          "Quantity": 0
+        },
+        "FunctionAssociations": {
+          "Quantity": 0
+        },
+        "FieldLevelEncryptionId": "",
+        "GrpcConfig": {
+          "Enabled": false
+        },
+        "ForwardedValues": {
+          "QueryString": true,
+          "Cookies": {
+            "Forward": "none"
+          },
+          "Headers": {
+            "Quantity": 1,
+            "Items": ["Content-Type"]
+          },
+          "QueryStringCacheKeys": {
+            "Quantity": 0
+          }
+        },
+        "MinTTL": 0,
+        "DefaultTTL": 0,
+        "MaxTTL": 0
+      },
+      "CacheBehaviors": {
+        "Quantity": 1,
+        "Items": [
+          {
+            "PathPattern": "/assets/*",
+            "TargetOriginId": "cloudtasks-alb",
+            "TrustedSigners": {
+              "Enabled": false,
+              "Quantity": 0
+            },
+            "TrustedKeyGroups": {
+              "Enabled": false,
+              "Quantity": 0
+            },
+            "ViewerProtocolPolicy": "redirect-to-https",
+            "AllowedMethods": {
+              "Quantity": 3,
+              "Items": ["HEAD", "GET", "OPTIONS"],
+              "CachedMethods": {
+                "Quantity": 2,
+                "Items": ["HEAD", "GET"]
+              }
+            },
+            "SmoothStreaming": false,
+            "Compress": true,
+            "LambdaFunctionAssociations": {
+              "Quantity": 0
+            },
+            "FunctionAssociations": {
+              "Quantity": 0
+            },
+            "FieldLevelEncryptionId": "",
+            "GrpcConfig": {
+              "Enabled": false
+            },
+            "ForwardedValues": {
+              "QueryString": false,
+              "Cookies": {
+                "Forward": "none"
+              },
+              "Headers": {
+                "Quantity": 0
+              },
+              "QueryStringCacheKeys": {
+                "Quantity": 0
+              }
+            },
+            "MinTTL": 0,
+            "DefaultTTL": 86400,
+            "MaxTTL": 31536000
+          }
+        ]
+      },
+      "CustomErrorResponses": {
+        "Quantity": 0
+      },
+      "Comment": "BIA / CloudTasks - CloudFront local; reference state Disabled",
+      "Logging": {
+        "Enabled": false,
+        "IncludeCookies": false,
+        "Bucket": "",
+        "Prefix": ""
+      },
+      "PriceClass": "PriceClass_100",
+      "Enabled": false,
+      "ViewerCertificate": {
+        "CloudFrontDefaultCertificate": true,
+        "SSLSupportMethod": "vip",
+        "MinimumProtocolVersion": "TLSv1",
+        "CertificateSource": "cloudfront"
+      },
+      "Restrictions": {
+        "GeoRestriction": {
+          "RestrictionType": "none",
+          "Quantity": 0
+        }
+      },
+      "WebACLId": "",
+      "HttpVersion": "http2",
+      "IsIPV6Enabled": false,
+      "ContinuousDeploymentPolicyId": "",
+      "Staging": false
+    },
+    "disabledHttpsStatus": 200,
+    "disabledTrafficBlocked": false,
+    "status": "PASSED"
+  },
+  "stages": [
+    {
+      "stage": "cloudfront-unit",
+      "exitCode": 0,
+      "signal": null
+    },
+    {
+      "stage": "cloudfront-parser",
+      "exitCode": 0,
+      "signal": null
+    },
+    {
+      "stage": "cloudfront-create",
+      "exitCode": 0,
+      "signal": null
+    },
+    {
+      "stage": "cloudfront-status",
+      "exitCode": 0,
+      "signal": null
+    },
+    {
+      "stage": "cloudfront-test",
+      "exitCode": 0,
+      "signal": null
+    }
+  ],
+  "historicalFailure": {
+    "scope": "functional CloudFront proxy in Docker/LocalStack; AWS edge caching and AWS certificate parity not certified",
+    "cacheHitsCertified": false,
+    "checks": ["enabled-state-read-through-cloudfront-api"],
+    "recordedAt": "2026-10-10T09:26:16.269Z",
+    "localStackContainerId": "87dbf59bfa793f1e8210be26d20b2d01bdae7010df54aa0922379b2ff3f16e5e",
+    "cluster": "cloudtasks-cluster-r20261008153148448",
+    "service": "cloudtasks-service",
+    "distributionId": "bdf15dae",
+    "alias": "cloudtasks-cdn.localhost.localstack.cloud",
+    "origin": "cloudtasks-alb.elb.localhost.localstack.cloud",
+    "releaseId": "pipeline-59d0bd08-487f-46a6-94ed-88884ec052d2",
+    "version": "1.8.2",
+    "tlsGatewayPin": "95174d79e4823d5bd0288e7aef0cb3f8718449f5b159bc07b532ed343448ef7e",
+    "status": "FAILED",
+    "error": "INVALID_JSON_FROM_ALTERNATE_HOST",
+    "rawProviderBodyNotPublished": true
+  }
+}

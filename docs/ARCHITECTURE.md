@@ -27,7 +27,7 @@ Os dois Source nodes são alternativas de ambiente, não duas ações simultâne
 
 ```mermaid
 flowchart TD
-  user["Usuário"] --> cf["CloudFront — etapa 10"]
+  user["Usuário"] --> cf["CloudFront local — Disabled"]
   cf --> alb["ALB + HTTPS/ACM"]
   alb --> tg["Target Group /health"]
   tg --> t1["Task 1: React + Express"]
@@ -40,7 +40,7 @@ flowchart TD
   t2 --> logs
 ```
 
-CloudFront ainda não está implementado; o acesso atual entra pelo ALB/gateway LocalStack. O React compilado é servido pelo Express no mesmo container. `GET /health` verifica o PostgreSQL; `/api/tasks` implementa CRUD com validação e SQL parametrizado.
+CloudFront está configurado e o proxy pelo domínio gerado foi verificado com HTML/assets/CRUD. O estado final é Disabled, como na referência; cache, redirect e bloqueio de tráfego Disabled não são aplicados como na AWS. O acesso pelo navegador continua entrando pelo ALB/gateway LocalStack. [Configuração, provas e limites](CLOUDFRONT.md). O React compilado é servido pelo Express no mesmo container. `GET /health` verifica o PostgreSQL; `/api/tasks` implementa CRUD com validação e SQL parametrizado.
 
 ## Rede e compute
 
@@ -77,3 +77,9 @@ O script solicita listener HTTP 80; o provider deste runtime reporta HTTP 4566. 
 ## Estado confirmado em 10/10/2026
 
 O banco anterior ao reinício foi recuperado de cópia física verificada, sem substituir dados por um banco vazio. Duas execuções nativas do adaptador Blue/Green passaram no mesmo container LocalStack, com o mesmo Source e imagens diferentes, sem reset. A segunda revisão tem duas tasks Docker saudáveis e foi verificada no PostgreSQL e no navegador. Essas provas encerram a retomada e o aceite local positivo dessa revisão, preservando as falhas históricas e a ausência de certificação do controlador AWS. [Evidência](EVIDENCE-REBOOT-20261010.json).
+
+## Observabilidade e agente BIA
+
+O monitor no Windows cruza as tasks físicas atuais com os targets do ALB, mede `/health` com banco e publica métricas customizadas, logs, dashboard e alarmes no CloudWatch emulado. O ensaio HTTP isolado comprovou OK → ALARM → OK por avaliação de dados, sem forçar estado de alarme nem interromper a BIA. [Operação](OBSERVABILITY.md).
+
+Amazon Q 1.19.7 roda em container temporário separado com DNS externo normal para login. Por Docker stdio, chama os servidores oficiais ECS e PostgreSQL dentro do LocalStack. O ECS recebe endpoint local, chaves fictícias e escrita desabilitada; PostgreSQL usa role própria SELECT-only e segredo em runtime. Dependências ficam no filesystem Linux interno, evitando o atraso do bind mount Windows. O agente expõe somente duas ferramentas de leitura. Login Builder ID e chat autenticado são provas separadas dos testes MCP. [Operação e evidências](AMAZON-Q-MCP.md).

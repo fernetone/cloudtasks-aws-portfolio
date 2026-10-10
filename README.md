@@ -12,7 +12,7 @@ A BIA 1.8.2 está servida pelo [ALB local](http://cloudtasks-alb.elb.localhost.l
 
 A segunda imagem foi novamente verificada no PostgreSQL real e no navegador desktop/celular: CRUD, prazo textual, prioridade, conclusão, edição e recarga passaram; as tarefas criadas pelos testes foram excluídas. Source, Build, Deploy e todas as camadas das duas imagens foram examinados para a senha atual do banco e a licença LocalStack, sem ocorrências. [Evidências desta retomada](docs/EVIDENCE-REBOOT-20261010.json).
 
-As duas tentativas Blue/Green falhas de 08/10 continuam reprovadas no [histórico](docs/EVIDENCE-BIA-20261008.json). As falhas antigas não foram reproduzidas nas duas entregas atuais e sua causa continua sem comprovação. Os novos diagnósticos registram somente operação, duração e motivo permitido, sem argumentos, stderr ou credenciais. CloudFront, observabilidade ampliada e Amazon Q/MCP seguem no plano autorizado; igualdade integral com a revisão filmada ainda não foi certificada.
+As duas tentativas Blue/Green falhas de 08/10 continuam reprovadas no [histórico](docs/EVIDENCE-BIA-20261008.json). As falhas antigas não foram reproduzidas nas duas entregas atuais e sua causa continua sem comprovação. Os novos diagnósticos registram somente operação, duração e motivo permitido, sem argumentos, stderr ou credenciais. CloudFront e observabilidade ampliada têm configuração e execução verificadas no ambiente local. O Amazon Q 1.19.7 está instalado; sua validação e o chat dependem do login Builder ID. Os dois MCPs passaram na inicialização, consultas reais e negação de escrita, preservando tarefas. A operação está descrita em [AMAZON-Q-MCP.md](docs/AMAZON-Q-MCP.md). A igualdade integral com a revisão filmada continua sem certificação.
 
 ## Arquitetura e estado
 
@@ -27,7 +27,7 @@ Alvo: GitHub/CodeConnections → CodePipeline → CodeBuild → Docker/ECR → E
 | HTTPS        | ALB termina TLS com ACM              | Listener/ACM no control plane; TLS efetivo no gateway LocalStack `:4566` |
 | Estado       | Recursos e dados persistentes AWS    | `PERSISTENCE=0`, bind mount novo por sessão                              |
 
-Aplicação, GitHub Actions, Docker, ECR, rede, RDS/Secrets, duas réplicas compartilhando o banco, CloudWatch Logs, ALB/TG, failover, HTTP e HTTPS/ACM têm execução anterior relatada pelo responsável pelo laboratório. **A etapa 8, CI/CD, foi homologada neste laboratório em 03/10/2026.** Blue/Green local está descrito abaixo; CloudFront e Amazon Q/MCP são etapas posteriores.
+Aplicação, GitHub Actions, Docker, ECR, rede, RDS/Secrets, duas réplicas compartilhando o banco, CloudWatch Logs, ALB/TG, failover, HTTP e HTTPS/ACM têm execução anterior relatada pelo responsável pelo laboratório. **A etapa 8, CI/CD, foi homologada neste laboratório em 03/10/2026.** Blue/Green local está descrito abaixo. Os componentes adicionais e seus limites estão em [CloudFront](docs/CLOUDFRONT.md), [observabilidade](docs/OBSERVABILITY.md) e [Amazon Q/MCP](docs/AMAZON-Q-MCP.md).
 
 A homologação da etapa 8 comprovou duas entregas, mudança visível por HTTPS e CodeBuild FAILED por quality gate sem iniciar Deploy. A imagem recebe UUID v4 gerado no build; o artifact nativo `imagedefinitions.json`, Source VersionId/SHA256, CodeBuild vinculado, digest e tasks físicas formam a cadeia de identidade. [Evidência CI/CD](docs/EVIDENCE-CICD.json); [CI no GitHub](docs/EVIDENCE-GITHUB.json).
 
@@ -35,7 +35,7 @@ Em 04/10/2026, após a higienização autorizada do Docker Desktop e reconstruç
 
 **Etapa 9 local:** o modo explícito `LocalStackBlueGreenAdapter` executa Blue/Green dentro de uma ação CodeBuild da CodePipeline nativa. Mantém duas tasks blue e duas green durante testes e bake, promove HTTP/HTTPS e, após a janela aprovada, converge o serviço principal enquanto green atende. A validação final e as evidências estão em [BLUE-GREEN.md](docs/BLUE-GREEN.md). A homologação do controlador AWS nativo continua separada e não é reivindicada; as tentativas nativas reprovadas ficam no histórico.
 
-A versão 1.8.0 preserva UI/CRUD, RDS/Secrets, cluster principal, bridge, ALB/TG e HTTPS/ACM. Adiciona dois módulos Node sem dependências, um buildspec de deploy, testes e verificação de recibos/artifacts. `/release.json` é uma identidade pública imutável da imagem, sem mudança visual na interface. O modo padrão de CI/CD permanece Rolling. CloudFront (10), observabilidade ampliada (11) e Amazon Q/MCP (12) continuam posteriores.
+A versão 1.8.0 preserva UI/CRUD, RDS/Secrets, cluster principal, bridge, ALB/TG e HTTPS/ACM. Adiciona dois módulos Node sem dependências, um buildspec de deploy, testes e verificação de recibos/artifacts. `/release.json` é uma identidade pública imutável da imagem, sem mudança visual na interface. O modo padrão de CI/CD permanece Rolling. CloudFront (10), observabilidade ampliada (11) e Amazon Q/MCP (12) possuem scripts próprios de criação, status e teste; seus resultados atuais são registrados separadamente.
 
 A versão 1.8.1 serializa a criação do schema entre réplicas com transação e advisory lock. A versão 1.8.2 alinha os elementos observáveis da BIA: tela escura compacta, formulário vertical, textos, tema persistente, indicador de saúde real, prazo textual e alteração de prioridade. A migração adiciona `due_text` e preserva `due_date`; updates parciais evitam perder alterações concorrentes. [Compatibilidade e limites](docs/DATABASE.md).
 
@@ -58,7 +58,7 @@ npm ci
 npm run verify
 ```
 
-`verify` executa lint, 22 testes API, 8 frontend, 42 testes Node do controlador/adaptador e build dos dois componentes. Há mais 5 testes de integração PostgreSQL, executados no CI com banco real; sem `TEST_DATABASE_URL` eles ficam explicitamente skipped. A formatação possui comando próprio; consulte [DEPENDENCY-POLICY.md](docs/DEPENDENCY-POLICY.md).
+`verify` executa lint, 22 testes API, 8 frontend, 42 testes Node do controlador/adaptador, 24 testes CloudFront/observabilidade/MCP e build dos dois componentes. Há mais 5 testes de integração PostgreSQL, executados no CI com banco real; sem `TEST_DATABASE_URL` eles ficam explicitamente skipped. A formatação possui comando próprio; consulte [DEPENDENCY-POLICY.md](docs/DEPENDENCY-POLICY.md).
 
 ## Execução do projeto no LocalStack
 
@@ -112,6 +112,21 @@ O diagnóstico diferencia o build vinculado à ação de um candidato recente se
 Exige Source/Build/Deploy nativos, dois CodeBuilds vinculados, artifacts, digest e recibo exatos. O bake exige 2 blue + 2 green por pelo menos 60 segundos, HTTP/HTTPS e banco compartilhado. Rejeição e rollback mantêm a tentativa nativa falha; recuperação incompleta retém lock/recursos que atendem. O ALB conserva a associação com ambos os TGs durante a troca. Após o bake, a convergência esvazia o serviço principal antes de iniciar a revisão aceita, com green atendendo durante a transição.
 
 O histórico e os controles negativos constam de [BLUE-GREEN.md](docs/BLUE-GREEN.md) e [EVIDENCE-BLUE-GREEN-ADAPTER.json](docs/EVIDENCE-BLUE-GREEN-ADAPTER.json). Alternar para o modo Rolling altera a declaração da pipeline; registrar evidências antes de mudar de modo. Não resetar a sessão ou apagar lock de recuperação para contornar uma falha.
+
+## CloudFront, observabilidade e Amazon Q/MCP
+
+```powershell
+.\scripts\localstack\create-cloudfront.ps1
+.\scripts\localstack\test-cloudfront.ps1
+.\scripts\localstack\create-observability.ps1
+.\scripts\localstack\test-observability.ps1
+.\scripts\localstack\create-mcp.ps1
+.\scripts\localstack\test-mcp.ps1
+.\scripts\localstack\create-q-agent.ps1
+.\scripts\localstack\status-q-agent.ps1
+```
+
+CloudFront termina Disabled, como no vídeo; proxy/CRUD/TLS do gateway foram verificados, mas cache, redirect, alias e bloqueio Disabled não têm comportamento AWS certificado. O monitor publica medições reais e avalia alarmes, sem indisponibilidade induzida na BIA. O Q usa a interface legada 1.19.7, dois MCPs em modo de leitura e perfil privado; login do usuário é necessário para validar o agente e demonstrar o chat. Consulte os três guias antes de executar os comandos de autenticação.
 
 ## Scripts e documentação
 

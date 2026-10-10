@@ -14,8 +14,9 @@
     "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "test": "npm run test -w apps/api && npm run test -w apps/web && npm run test:bluegreen",
+    "test": "npm run test -w apps/api && npm run test -w apps/web && npm run test:bluegreen && npm run test:infra",
     "test:bluegreen": "node --test scripts/tests/blue-green*.test.mjs",
+    "test:infra": "node --test scripts/tests/cloudfront.test.mjs scripts/tests/observability.test.mjs scripts/tests/mcp.test.mjs",
     "verify": "npm run lint && npm test && npm run build"
   },
   "devDependencies": {

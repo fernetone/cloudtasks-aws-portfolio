@@ -107,3 +107,7 @@ LocalStack não é AWS real. No laboratório, ECS é Docker-backed e não existe
 ## Retomada validada em 10/10/2026
 
 Com `PERSISTENCE=0`, iniciar até o mesmo container pode descartar estados emulados. A retomada preservou primeiro os arquivos físicos RDS, extraiu o banco anterior e restaurou seus dados antes do ECS. O container LocalStack foi mantido; duas novas entregas Blue/Green passaram sem reset entre elas. Não usar uma reconstrução indiscriminada como conferência de saúde. [Evidências](EVIDENCE-REBOOT-20261010.json).
+
+## Componentes adicionais na sessão saudável
+
+CloudFront, observabilidade e Amazon Q/MCP têm scripts próprios `create-*`, `status-*` e `test-*`. Não reconstruir a sessão para instalá-los. Consulte [CLOUDFRONT.md](CLOUDFRONT.md), [OBSERVABILITY.md](OBSERVABILITY.md) e [AMAZON-Q-MCP.md](AMAZON-Q-MCP.md) para comandos e limites verificados. O monitor precisa ser retomado após reiniciar Windows; dependências MCP dentro de `/opt/cloudtasks-mcp-tools` precisam ser reinstaladas se o container LocalStack for recriado. O perfil Q privado fica no computador e não entra no repositório.

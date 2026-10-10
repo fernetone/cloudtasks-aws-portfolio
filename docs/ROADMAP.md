@@ -8,7 +8,8 @@ A sequência de 13 etapas abaixo foi organizada para o trabalho; não foi fornec
 - [x] Substituir o indicador fixo por saúde real; aceitar prazo textual com migração compatível e permitir editar prioridade. Contratos ocultos do original continuam não verificados.
 - [x] Preservar e verificar rede, banco, duas réplicas ECS, ALB/TG e transporte TLS no LocalStack. ECS/EC2 e TG instance permanecem diferenças arquiteturais explícitas do executor Docker, sem provisionamento pago.
 - [ ] Integrar Source GitHub por conexão autorizada e provar commit -> CodeBuild -> ação ECS padrão -> aplicação atualizada.
-- [ ] Implantar e verificar CloudFront e Amazon Q com MCP ECS e PostgreSQL.
+- [x] Configurar e testar o proxy CloudFront; preservar Disabled e documentar limites de cache/redirect/alias/bloqueio.
+- [ ] Concluir a validação e demonstração do agente Amazon Q após login Builder ID; testar os dois MCPs independentemente.
 - [ ] Identificar a revisão original e registrar as configurações não observáveis no recorte; não declarar igualdade integral sem essas fontes.
 - [x] Reconectar o Windows, ler as sete etapas aprovadas da tentativa de 04/10 e verificar as sessões de 08/10 separadamente. [Evidências atuais](EVIDENCE-BIA-20261008.json).
 
@@ -78,16 +79,21 @@ As duas entregas nativas 1.8.1 e a entrega 1.8.2 anteriores à troca CORS passar
 
 ## 10. CloudFront
 
-- [ ] Configurar distribuição/origin ALB e regras para `/api/*`.
-- [ ] Validar tráfego efetivo, cache e TLS da CDN.
+- [x] Configurar distribuição/origin ALB, métodos CRUD e TTL zero para rotas dinâmicas; assets com política separada.
+- [x] Verificar proxy HTTPS, bytes dos assets, CRUD/banco e restauração de Disabled por ETag.
+- [ ] Cache de edge, redirect, alias alternativo e bloqueio de tráfego Disabled não são aplicados como na AWS pelo provider. [Resultado verificado](CLOUDFRONT.md).
 
 ## 11. Observabilidade / CloudWatch
 
-- [ ] Métricas, alarmes, dashboard e falha controlada; ampliar logs já existentes.
+- [x] Métricas reais Docker/ALB/health, logs sanitizados, dashboard lido de volta e monitor contínuo.
+- [x] Alarme avaliado por HTTP isolado 200/503/200, sem SetAlarmState nem indisponibilidade induzida na BIA. [Operação e evidência](OBSERVABILITY.md).
 
 ## 12. Amazon Q + MCP
 
-- [ ] Integração, permissões, prompts e demonstração segura.
+- [x] Instalar Amazon Q 1.19.7 com integridade conferida, perfil privado e configuração do agente bia limitada a duas ferramentas de leitura.
+- [x] Criar role PostgreSQL somente leitura, preservar tarefas e provar negação real de escrita pelo banco.
+- [x] Inicializar os dois servidores pelo protocolo MCP e consultar ECS/schema/banco reais, negar escrita e preservar tarefas.
+- [ ] Validar o agente e demonstrar o chat autenticado após login Builder ID. [Operação](AMAZON-Q-MCP.md).
 
 ## 13. Apresentação e encerramento do projeto
 

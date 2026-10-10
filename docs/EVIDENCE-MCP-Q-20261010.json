@@ -1,0 +1,338 @@
+{
+  "schemaVersion": 1,
+  "recordDate": "2026-10-10",
+  "scope": "real official ECS and PostgreSQL stdio MCP; legacy Amazon Q CLI installed, authenticated agent/chat still pending",
+  "functionalMcp": {
+    "schemaVersion": 1,
+    "status": "PASSED",
+    "scope": "real stdio MCP initialization, tools, local ECS and PostgreSQL queries; Q chat not yet authenticated",
+    "localStackContainerId": "87dbf59bfa793f1e8210be26d20b2d01bdae7010df54aa0922379b2ff3f16e5e",
+    "cluster": "cloudtasks-cluster-r20261008153148448",
+    "service": "cloudtasks-service",
+    "dbIdentifier": "cloudtasks-postgres-r20261008152558596",
+    "ecs": {
+      "package": "awslabs.ecs-mcp-server",
+      "packageVersion": "0.1.36",
+      "server": {
+        "name": "AWS ECS MCP Server",
+        "version": "3.4.8"
+      },
+      "resourceToolLoaded": true,
+      "clusterRead": true,
+      "service": {
+        "name": "cloudtasks-service",
+        "runningCount": 2,
+        "desiredCount": 2,
+        "pendingCount": 0,
+        "taskDefinition": "arn:aws:ecs:us-east-1:000000000000:task-definition/cloudtasks:3"
+      },
+      "taskDefinitionRead": true,
+      "sensitiveValueScanPassed": true,
+      "writeDenied": true
+    },
+    "postgres": {
+      "package": "@modelcontextprotocol/server-postgres",
+      "packageVersion": "0.6.2",
+      "archivedPackage": true,
+      "server": {
+        "name": "example-servers/postgres",
+        "version": "0.1.0"
+      },
+      "queryToolLoaded": true,
+      "schemaColumns": [
+        {
+          "name": "id",
+          "type": "uuid"
+        },
+        {
+          "name": "created_at",
+          "type": "timestamp with time zone"
+        },
+        {
+          "name": "updated_at",
+          "type": "timestamp with time zone"
+        },
+        {
+          "name": "due_date",
+          "type": "date"
+        },
+        {
+          "name": "important",
+          "type": "boolean"
+        },
+        {
+          "name": "completed",
+          "type": "boolean"
+        },
+        {
+          "name": "title",
+          "type": "character varying"
+        },
+        {
+          "name": "due_text",
+          "type": "text"
+        }
+      ],
+      "identity": {
+        "role": "cloudtasks_mcp_readonly",
+        "database": "cloudtasks",
+        "version": "17.11 (Debian 17.11-1.pgdg13+2)"
+      },
+      "readOnlyTransactionDeniedWrite": true,
+      "databaseRoleDeniedTransactionEscape": true,
+      "before": {
+        "count": 0,
+        "fingerprint": "d751713988987e9331980363e24189ce"
+      },
+      "after": {
+        "count": 0,
+        "fingerprint": "d751713988987e9331980363e24189ce"
+      },
+      "bootstrap": {
+        "schemaVersion": 1,
+        "status": "PASSED",
+        "localStackContainerId": "87dbf59bfa793f1e8210be26d20b2d01bdae7010df54aa0922379b2ff3f16e5e",
+        "cluster": "cloudtasks-cluster-r20261008153148448",
+        "service": "cloudtasks-service",
+        "dbIdentifier": "cloudtasks-postgres-r20261008152558596",
+        "role": "cloudtasks_mcp_readonly",
+        "secretName": "cloudtasks/mcp-postgres",
+        "credentialsStoredInRuntimeSecretOnly": true,
+        "secretRequestPrivateTemporaryFileRemoved": true,
+        "privileges": {
+          "role": "cloudtasks_mcp_readonly",
+          "can_select": true,
+          "can_insert": false,
+          "can_update": false,
+          "can_delete": false
+        },
+        "databasePermissionDenialVerified": true,
+        "writeDenialSqlState": "42501",
+        "before": {
+          "count": 0,
+          "fingerprint": "d751713988987e9331980363e24189ce"
+        },
+        "after": {
+          "count": 0,
+          "fingerprint": "d751713988987e9331980363e24189ce"
+        },
+        "recordedAt": "2026-10-10T14:12:32.928Z"
+      }
+    },
+    "serversInitialized": 2,
+    "serversClosed": true,
+    "qChatVerified": false,
+    "recordedAt": "2026-10-10T14:32:09.861Z",
+    "shutdown": {
+      "verification": "SDK client and stdio transport close promises completed",
+      "outcomes": [
+        {
+          "name": "postgres-stdio.mjs",
+          "clientClosed": true,
+          "transportClosed": true
+        },
+        {
+          "name": "ecs-stdio.mjs",
+          "clientClosed": true,
+          "transportClosed": true
+        }
+      ]
+    }
+  },
+  "finalMcpStages": [
+    {
+      "name": "test",
+      "exitCode": 0,
+      "signal": null,
+      "durationMs": 79968
+    },
+    {
+      "name": "status",
+      "exitCode": 0,
+      "signal": null,
+      "durationMs": 1205
+    }
+  ],
+  "pythonPins": {
+    "ecs": "0.1.36",
+    "fastmcp": "3.4.8",
+    "mcp": "1.30.0",
+    "toolsRoot": "/opt/cloudtasks-mcp-tools"
+  },
+  "postgresBootstrapCheckpoint": {
+    "schemaVersion": 1,
+    "status": "PASSED",
+    "localStackContainerId": "87dbf59bfa793f1e8210be26d20b2d01bdae7010df54aa0922379b2ff3f16e5e",
+    "cluster": "cloudtasks-cluster-r20261008153148448",
+    "service": "cloudtasks-service",
+    "dbIdentifier": "cloudtasks-postgres-r20261008152558596",
+    "role": "cloudtasks_mcp_readonly",
+    "secretName": "cloudtasks/mcp-postgres",
+    "credentialsStoredInRuntimeSecretOnly": true,
+    "secretRequestPrivateTemporaryFileRemoved": true,
+    "privileges": {
+      "role": "cloudtasks_mcp_readonly",
+      "can_select": true,
+      "can_insert": false,
+      "can_update": false,
+      "can_delete": false
+    },
+    "databasePermissionDenialVerified": true,
+    "writeDenialSqlState": "42501",
+    "before": {
+      "count": 0,
+      "fingerprint": "d751713988987e9331980363e24189ce"
+    },
+    "after": {
+      "count": 0,
+      "fingerprint": "d751713988987e9331980363e24189ce"
+    },
+    "recordedAt": "2026-10-10T13:38:33.626Z"
+  },
+  "qInstall": {
+    "schemaVersion": 1,
+    "status": "PASSED",
+    "version": "q 1.19.7",
+    "localStackContainerId": "87dbf59bfa793f1e8210be26d20b2d01bdae7010df54aa0922379b2ff3f16e5e",
+    "cluster": "cloudtasks-cluster-r20261008153148448",
+    "service": "cloudtasks-service",
+    "runtimeImage": "sha256:801a3dff7f6a23857e7310b7602e67d52a29dfdcb03e09f7c608d5c57d24b792",
+    "downloadURL": "https://desktop-release.q.us-east-1.amazonaws.com/1.19.7/q-x86_64-linux.zip",
+    "archiveSha256": "b935501672c0dfa3b44024d127248e25d6546863182c18eb17188f6dd22e97f6",
+    "archiveIntegrityVerified": true,
+    "binaries": [
+      {
+        "name": "q",
+        "sha256": "aca8796d3dc087b7bf2fbc53175a82321690810ee5bad43dc7966fcc51479809"
+      },
+      {
+        "name": "qchat",
+        "sha256": "a4a0e918a2d16b6bf7e905fee12b14c4d55ba407087a92ef2e0b1c64cc9d29de"
+      }
+    ],
+    "externalDnsVerified": true,
+    "dns": {
+      "addresses": ["3.174.83.16", "3.174.83.27", "3.174.83.47", "3.174.83.67"]
+    },
+    "qChatVerified": false,
+    "recordedAt": "2026-10-10T13:46:59.267Z"
+  },
+  "qValidation": {
+    "schemaVersion": 1,
+    "status": "BLOCKED",
+    "error": "Q_AUTHENTICATION_REQUIRED",
+    "version": "q 1.19.7",
+    "agentName": "bia",
+    "agentValidated": false,
+    "agentDiscovered": false,
+    "mcpServersConfigured": 2,
+    "qChatVerified": false,
+    "recordedAt": "2026-10-10T14:07:25.968Z"
+  },
+  "qChatVerified": false,
+  "priorAttempts": [
+    {
+      "attempt": 1,
+      "status": "FAILED",
+      "phase": "create",
+      "error": "MCP_DATABASE_SCOPE_INVALID",
+      "correction": "Bind secret endpoint to the current owned RDS API endpoint; generic LocalStack hostname supported only on exact endpoint match"
+    },
+    {
+      "attempt": 2,
+      "status": "FAILED",
+      "phase": "create",
+      "error": "MCP_AWS_FAILED",
+      "correction": "AWS CLI JSON input uses a private temporary 0600 file, removed in finally; child stdin is a socket and cannot be opened as /dev/stdin"
+    },
+    {
+      "attempt": 3,
+      "status": "FAILED",
+      "phase": "ecs-initialize",
+      "error": "MCP_SERVER_INITIALIZATION_TIMEOUT",
+      "diagnostic": {
+        "pythonFileStat100Seconds": 12.649,
+        "storage": "Windows 9p bind mount"
+      },
+      "correction": "Official dependencies moved to native container filesystem"
+    },
+    {
+      "attempt": 4,
+      "status": "FAILED",
+      "phase": "ecs-initialize",
+      "error": "UPSTREAM_FASTMCP_API_INCOMPATIBLE",
+      "diagnostic": {
+        "installedFastMcp": "4.1.0",
+        "removedMethod": "add_tool_transformation"
+      },
+      "correction": "Pin compatible official FastMCP 3.4.8 and MCP Python 1.30.0; vendor security unchanged"
+    },
+    {
+      "attempt": 5,
+      "status": "FAILED",
+      "phase": "postgres-write-denial",
+      "error": "MCP_POSTGRES_ROLE_ESCAPE_NOT_DENIED",
+      "correction": "Negative test explicitly begins a READ WRITE transaction after COMMIT, so database role privileges are measured independently from readonly defaults"
+    },
+    {
+      "attempt": 6,
+      "status": "FAILED",
+      "phase": "runtime",
+      "error": "MCP_AWS_TIMEOUT",
+      "runtimeDiagnostics": {
+        "dockerApiHttp500Observed": true,
+        "windowsTotalMemoryKiB": 8275948,
+        "windowsFreeMemoryKiB": 686232,
+        "ownedMcpProcessesRemaining": 0
+      },
+      "correction": "No environment reset; final repeat after inspection/API responses resumed"
+    },
+    {
+      "attempt": 7,
+      "status": "PASSED",
+      "testExitCode": 0,
+      "statusExitCode": 0
+    }
+  ],
+  "verification": {
+    "linux": {
+      "lintPassed": true,
+      "unitPassed": 96,
+      "postgresIntegrationSkipped": 5,
+      "buildPassed": true
+    },
+    "windows": {
+      "qualityExitCode": 0,
+      "parserExitCode": 0,
+      "powershellScriptsParsed": 55,
+      "regressionsExitCode": 0,
+      "powershellRegressionsPassed": 56,
+      "stages": [
+        {
+          "name": "quality",
+          "exitCode": 0,
+          "signal": null,
+          "durationMs": 284994
+        },
+        {
+          "name": "parser",
+          "exitCode": 0,
+          "signal": null,
+          "durationMs": 11205
+        },
+        {
+          "name": "regressions",
+          "exitCode": 0,
+          "signal": null,
+          "durationMs": 154502
+        }
+      ]
+    },
+    "independentReview": "CloudFront and observability reviewed. MCP partial review found lockfile and shutdown issues, both corrected; final MCP changes self-reviewed and functionally tested.",
+    "limits": {
+      "exactQVideoVersionIdentified": false,
+      "postgresPackageArchived": true,
+      "paidAwsResourcesCreated": false
+    }
+  }
+}
